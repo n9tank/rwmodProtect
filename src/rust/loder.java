@@ -115,13 +115,12 @@ public class loder {
   HashMap pu=put;
   HashMap re=ini;
   HashMap map=new HashMap();
-  put(map, pu, false);
-  as(map);
-  put(pu, ini, true);
+  put(map, pu,true);
+  put(pu,re,false);
   HashMap hash=new HashMap();
-  put(hash, pu, false);
-  as = hash;
+  put(hash,pu,true);
   as(hash);
+  as=hash;
   HashMap need=new HashMap();
   HashMap def=rwmodProtect.Res;
   Iterator ite=hash.entrySet().iterator();
@@ -176,9 +175,6 @@ public class loder {
    }
   }
  }
- public void put(loder lod) {
-  if (lod != null)put(put, lod.put, false);
- }
  public static void put(HashMap map, HashMap map2, boolean skip) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
@@ -190,15 +186,10 @@ public class loder {
     map.put(key, ((HashMap)hash).clone());
    } else {
     HashMap set=(HashMap)o;
-    if (skip) {
-     o = set.get("@copyFrom_skipThisSection");
-     String k;
-     if (o == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
+    String k;
+     if (skip||(o=set.get("@copyFrom_skipThisSection")) == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
       set.putAll((HashMap)hash);
      }
-    } else {
-     set.putAll((HashMap)hash);
-    }
    }
   }
  }
@@ -259,9 +250,8 @@ public class loder {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
       key=off.off(map,loc,key);
-      if(key==null)return null;
-       buff.append(key);
-     }
+      }
+      buff.append(key);
      j = i = ++n;
     } else break;
    } else break;

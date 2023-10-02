@@ -143,19 +143,19 @@ public class rwmodProtect implements Runnable {
     i = ++fileIndex;
     break;
   }
-  if(i>=0){
-  String d=ini > 0 ?iniD: fileD;
-  int l=d.length();
-  do{
-   int u=i % l;
-   i /= l;
-   buff.append(d.charAt(u));
-  }while(i > 0);
-  if (ini > 0) {
-   buff.append(".ini");
-  } else if (ini == -1) {
-   buff.append(".ogg");
-  }
+  if (i >= 0) {
+   String d=ini > 0 ?iniD: fileD;
+   int l=d.length();
+   do{
+    int u=i % l;
+    i /= l;
+    buff.append(d.charAt(u));
+   }while(i > 0);
+   if (ini > 0) {
+    buff.append(".ini");
+   } else if (ini == -1) {
+    buff.append(".ogg");
+   }
   }
   buff.append('/');
   return buff.toString();
@@ -180,12 +180,12 @@ public class rwmodProtect implements Runnable {
   } catch (Exception e) {
   }
  }
- public loder replace(String str,boolean isini) {
+ public loder replace(String str, boolean isini) {
   loder lod=null;
   str = toPath(str);
   byte type;
   Object o;
-  if (!isini||(o=iniMap.get(str)) == null) {
+  if (!isini || (o = iniMap.get(str)) == null) {
    type = 0;
    HashMap map=iniHide;
    o = map.get(str);
@@ -196,17 +196,18 @@ public class rwmodProtect implements Runnable {
      map.put(str, lod);
     } catch (Exception e) {
     }
-   }else lod=(loder)o;
-  } else{
-  type = 1;
-  lod=(loder)o;
+   } else lod = (loder)o;
+  } else {
+   type = 1;
+   lod = (loder)o;
   }
   if (lod.str == null) {
    String r=FileName(type);
    lod.str = r;
    StringBuilder buff=new StringBuilder();
-   replaceCopy(lod, str, getType(str) > 0, buff);
-   replaceAllRes(lod, str, buff);
+   replaceCopy(lod, str, isini, buff);
+   if (isini)replaceAllRes(lod, str, buff);
+   else loder.put(lod.put, lod.ini, false);
    write(lod, r);
   }
   return lod;
@@ -261,8 +262,8 @@ public class rwmodProtect implements Runnable {
     buff.append("all-units.template");
     str = buff.toString();
     if (inihide.containsKey(str)) {
-     put = replace(str,false);
-     ini.put(put);
+     put = replace(str, false);
+     loder.put(ini.put, put.put, true);
      buff.setLength(0);
      buff.append(put.str);
      buff.append(',');
@@ -284,13 +285,13 @@ public class rwmodProtect implements Runnable {
     int i=0,n=list.length;
     do {
      String path=list[i].trim();
-     str = toPath(loder.getPath(str, file));
-     loder lod=null;
+     str = loder.getPath(str, file);
      if (str != null) {
-      lod =replace(str,getType(str)>0);
+      str = toPath(str);
+      loder lod =replace(str, getType(str) > 0);
       path = lod.str;
-     } else lod = getloder(str);
-     ini.put(lod);
+      loder.put(ini.put, lod.put, true);
+     }
      buff.append(path);
      buff.append(',');
     }while(++i < n);
@@ -371,7 +372,7 @@ public class rwmodProtect implements Runnable {
     if (j != null) {
      str = (String)j;
      str = ini.get(str, as, list);
-     if (str==null||str.equals("IGNORE") || str.equalsIgnoreCase("none"))continue;
+     if (str == null || str.equals("IGNORE") || str.equalsIgnoreCase("none"))continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      i = en2.getValue();
      buff.setLength(0);
@@ -394,7 +395,7 @@ public class rwmodProtect implements Runnable {
      }
      i = buff.length();
      if (--i >= 0)buff.setLength(i);
-     list.put(s,buff.toString());
+     list.put(s, buff.toString());
     }
    }
   }
@@ -447,8 +448,8 @@ public class rwmodProtect implements Runnable {
       map.put("sourceFolder", "");
      }
     }
-    ini.as=ini.put;
-    write(ini,"mod-info.txt/");
+    ini.as = ini.put;
+    write(ini, "mod-info.txt/");
    }
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
@@ -465,7 +466,7 @@ public class rwmodProtect implements Runnable {
        if (o != null) {
         HashMap map=(HashMap)o;
         String str=(String)map.get("dont_load");
-        if ("1".equals(str) || "true".equalsIgnoreCase(str)){
+        if ("1".equals(str) || "true".equalsIgnoreCase(str)) {
          type = 0;
          map.remove("dont_load");
         }
