@@ -21,9 +21,9 @@ import java.util.zip.ZipOutputStream;
 
 public class rwmodProtect implements Runnable {
  public String In;
- public int iniIndex=-1;
- public int fileIndex;
- public int oggIndex=-1;
+ public int iniIndex=-2;
+ public int fileIndex=-1;
+ public int oggIndex=-2;
  public ZipFile Zip;
  public ZipOutputStream Zipout;
  public HashMap Filemap;
@@ -134,13 +134,13 @@ public class rwmodProtect implements Runnable {
   int i;
   switch (ini) {
    case 1:
-    i = iniIndex++;
+    i = ++iniIndex;
     break;
    case -3:
-    i = oggIndex++;
+    i = ++oggIndex;
     break;
    default:
-    i = fileIndex++;
+    i = ++fileIndex;
     break;
   }
   if(i>=0){
