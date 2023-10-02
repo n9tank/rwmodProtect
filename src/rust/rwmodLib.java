@@ -3,8 +3,11 @@ import java.util.HashMap;
 import java.util.zip.ZipFile;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.Iterator;
+import java.util.Map;
 
 public class rwmodLib{
+public StringBuilder Buff;
 public ZipFile Zip;
 public HashMap iniMap;
 public HashMap iniHide;
@@ -20,7 +23,7 @@ public rwmodLib(String file) {
   iniHide=inihide;
   HashMap inimap=new HashMap();
   iniMap=inimap;
-  StringBuilder buff=new StringBuilder();
+  Buff=new StringBuilder();
   try {
    ZipFile zip=new ZipFile(file);
    Zip=zip;
@@ -37,8 +40,17 @@ public rwmodLib(String file) {
     }
     }
    }
-  } catch (Exception e) {
+  Iterator ite=inimap.entrySet().iterator();
+  while(ite.hasNext()){
+   Map.Entry en=(Map.Entry)ite.next();
+   String key=(String)en.getKey();
+   loder lod=(loder)en.getValue();
+   if(lod.str==null){
+    lodAllCopy(lod,key,true);
+   }
   }
+ } catch (Exception e) {
+ }
  }
  public static boolean dontlod(loder lod){
   HashMap map=lod.ini;
@@ -80,7 +92,7 @@ public rwmodLib(String file) {
   }else lod=(loder)o;
   if(lod.str==null){
   lod.str=str;
-  replaceCopy(lod,str,isini(str),new StringBuilder());
+  lodAllCopy(lod,str,isini(str));
   }
   return lod;
  }
@@ -92,10 +104,10 @@ public rwmodLib(String file) {
    return true;
   }else return false;
  }
- public void replaceCopy(loder lod,String file,boolean isini,StringBuilder buff){
+ public void lodAllCopy(loder lod,String file,boolean isini){
   String str=loder.getSuperPath(lod.str);
   if(isini){
-   loder put=getSpuerAll(file, buff);
+   loder put=getSpuerAll(file,Buff);
    if(put!=null)loder.put(lod.put, put.put, false);
   }
   Object o=lod.ini.get("core");
@@ -132,9 +144,12 @@ public rwmodLib(String file) {
     str = buff.toString();
     if (inihide.containsKey(str)) {
      buff.setLength(0);
-     return replace(str,false);
+     loder lod=replace(str, false);
+     buff.append(lod.str);
+     buff.append(',');
+     return lod;
     }
-   i = str.lastIndexOf("/", --i);
+    i = str.lastIndexOf("/", --i);
    }while(i > 0);
    buff.setLength(0);
    return null;
