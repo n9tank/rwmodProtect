@@ -65,26 +65,26 @@ public class loder {
   int i=0;
   String vl=str;
   do{
-   i = str.indexOf("_", ++i);
-   if (i > 0) {
-    vl = str.substring(0,i+1);
-   }
    if (set.contains(vl)) {
     return vl;
    }
-  }while(--m >= 0 && i > 0);
+   i = str.indexOf("_", ++i);
+   if (i > 0) {
+    vl = str.substring(0,i+1);
+   }else break;
+  }while(--m >= 0);
   return null;
  }
  public static Object wh(String str, HashMap map, int m) {
   int i=0;
   String vl=str;
   do{
+   Object o=map.get(vl);
+   if (o != null)return o;
    i = str.indexOf("_", ++i);
    if (i > 0) {
     vl = str.substring(0,i+1);
-   }
-   Object o=map.get(vl);
-   if (o != null)return o;
+   }else break;
   }while(--m >= 0 && i > 0);
   return null;
  }
@@ -112,6 +112,7 @@ public class loder {
  }
  public HashMap<String,ArrayList> eqz() {
   HashMap pu=put;
+  HashMap re=ini;
   HashMap map=new HashMap();
   put(map, pu, false);
   as(map);
@@ -129,20 +130,24 @@ public class loder {
    Object o=wh(key, def, rwmodProtect.max);
    if (o != null) {
     ArrayList needL=new ArrayList();
-    need.put(key, needL);
     HashMap <String, Integer> list=(HashMap)o;
     HashMap<String,String> list2=(HashMap)en.getValue();
     HashMap list3=(HashMap)map.get(key);
+    HashMap list4=(HashMap)re.get(key);
     Iterator<Map.Entry<String, String>> ite2=list2.entrySet().iterator();
     while (ite2.hasNext()) {
      Map.Entry<String, String> en2=ite2.next();
-     key = en2.getKey();
+     String ke = en2.getKey();
      String value=en2.getValue();
      String ov=null;
-     if (list.get(key) != null && (list3 == null || (ov = (String)list3.get(key)) == null || !get(value, hash, list2).equals(get(ov, map, list3)))) {
-      needL.add(key);
+     boolean eqz=true;
+     if (list.get(ke) != null && (list3 == null || (ov = (String)list3.get(ke)) == null || (eqz=!get(value, hash, list2).equals(get(ov, map, list3))))) {
+      needL.add(ke);
+     }else if(list4!=null&&!eqz){
+      list4.remove(ke);
      }
     }
+    if(needL.size()>0)need.put(key,needL);
    }
   }
   return need;
