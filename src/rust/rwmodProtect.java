@@ -19,17 +19,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-public class rwmodProtect implements Runnable {
+public class rwmodProtect extends rwmodLib implements Runnable {
  public String In;
  public int iniIndex=-2;
  public int fileIndex=-1;
  public int oggIndex=-2;
- public ZipFile Zip;
  public ZipOutputStream Zipout;
  public HashMap Filemap;
  public HashMap Oggmap;
- public HashMap iniMap;
- public HashMap iniHide;
  public ByteBuffer Warp;
  public WritableByteChannel Out;
  public OutputStreamWriter Ow;
@@ -180,13 +177,13 @@ public class rwmodProtect implements Runnable {
   } catch (Exception e) {
   }
  }
- public loder replace(String str, boolean isini) {
+ public loder replace(String str,boolean isini) {
   loder lod=null;
   str = toPath(str);
-  byte type;
   Object o;
-  if (!isini || (o = iniMap.get(str)) == null) {
-   type = 0;
+  tag:
+  {
+  if (!isini|| (o = iniMap.get(str)) == null) {
    HashMap map=iniHide;
    o = map.get(str);
    if (o == null) {
@@ -196,13 +193,13 @@ public class rwmodProtect implements Runnable {
      map.put(str, lod);
     } catch (Exception e) {
     }
-   } else lod = (loder)o;
-  } else {
-   type = 1;
-   lod = (loder)o;
+    break tag;
+   }
+  }
+  lod=(loder)o;
   }
   if (lod.str == null) {
-   String r=FileName(type);
+   String r=FileName(isini?1:0);
    lod.str = r;
    StringBuilder buff=new StringBuilder();
    replaceCopy(lod, str, isini, buff);
@@ -211,14 +208,6 @@ public class rwmodProtect implements Runnable {
    write(lod, r);
   }
   return lod;
- }
- public loder getloder(String filename) {
-  Object o;
-  o = iniMap.get(filename);
-  if (o == null) {
-   o = iniHide.get(filename);
-  }
-  return (loder)o;
  }
  public void replaceR(String str, String path, StringBuilder buff, boolean isimg) {
   String file;
@@ -249,38 +238,21 @@ public class rwmodProtect implements Runnable {
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
   HashMap inihide=iniHide;
-  loder put;
+  file = loder.getSuperPath(file);
   tag:
   if (isini) {
-   String str=file;
-   int i=str.length();
-   buff.setLength(0);
-   buff.append(file);
-   do{
-    i = str.lastIndexOf("/", --i);
-    buff.setLength(i + 1);
-    buff.append("all-units.template");
-    str = buff.toString();
-    if (inihide.containsKey(str)) {
-     put = replace(str, false);
-     loder.put(ini.put, put.put, true);
-     buff.setLength(0);
-     buff.append(put.str);
-     buff.append(',');
-     break tag;
-    }
-   }while(i > 0);
-   buff.setLength(0);
-  }
-  file = loder.getSuperPath(file);
+  loder lod=getSpuerAll(file,buff);
+  if(lod!=null)loder.put(ini.put,lod.put,true);
+ }
   boolean v=buff.length() > 0;
   HashMap map=ini.ini;
   Object o=map.get("core");
+  HashMap libs=lib;
   if (o != null) {
    HashMap core=(HashMap)o;
    o = core.get("copyFrom");
    String str;
-   if (o != null && (str = (String)o).length() != 0 && !str.equals("IGNORE")) {
+   if((str=skip(o,""))!=null) {
     String list[]=str.split(",");
     int i=0,n=list.length;
     do {
@@ -288,9 +260,11 @@ public class rwmodProtect implements Runnable {
      str = loder.getPath(str, file);
      if (str != null) {
       str = toPath(str);
-      loder lod =replace(str, getType(str) > 0);
+      loder lod =replace(str,getType(str)>0);
       path = lod.str;
       loder.put(ini.put, lod.put, true);
+     }else if(libs!=null){
+      
      }
      buff.append(path);
      buff.append(',');
@@ -337,17 +311,6 @@ public class rwmodProtect implements Runnable {
   }
   return -2;
  }
- public String toPath(String str) {
-  str = str.replaceAll("//+", "/").replaceAll("^//", "");
-  ZipFile zip=Zip;
-  if (!str.endsWith("/")) {
-   ZipEntry en=zip.getEntry(str);
-   if (en == null) {
-    str = str.concat("/");
-   }
-  }
-  return str;
- }
  public void replaceAllRes(loder ini, String filename, StringBuilder buff) {
   String str;
   HashMap<String, HashMap> res=Res;
@@ -372,7 +335,7 @@ public class rwmodProtect implements Runnable {
     if (j != null) {
      str = (String)j;
      str = ini.get(str, as, list);
-     if (str == null || str.equals("IGNORE") || str.equalsIgnoreCase("none"))continue;
+     if (skip(o,"none")!=null)continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      i = en2.getValue();
      buff.setLength(0);
@@ -462,15 +425,7 @@ public class rwmodProtect implements Runnable {
       byte type=getType(fileName);
       if (type >= 0) {
        loder lod=new loder(zip.getInputStream(zipEntry));
-       Object o=lod.ini.get("core");
-       if (o != null) {
-        HashMap map=(HashMap)o;
-        String str=(String)map.get("dont_load");
-        if ("1".equals(str) || "true".equalsIgnoreCase(str)) {
-         type = 0;
-         map.remove("dont_load");
-        }
-       }
+       if(rwmodLib.dontlod(lod))type=0;
        if (type > 0) {
         inimap.put(fileName, lod);
        } else {

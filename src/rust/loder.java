@@ -209,7 +209,7 @@ public class loder {
   if (i > 0) {
    return str.substring(0, ++i);
   }
-  return null;
+  return "";
  }
  public static String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
@@ -265,7 +265,7 @@ public class loder {
    str = null;
   } else if (str.startsWith("ROOT:")) {
    str = str.substring(5);
-  } else if (path != null) {
+  } else if (path.length()>0) {
    str = path.concat(str);
   }
   return str;
