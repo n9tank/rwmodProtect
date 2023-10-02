@@ -258,9 +258,10 @@ public class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      key = off.off(map, loc, key);
+      key=off.off(map,loc,key);
+      if(key==null)return null;
+       buff.append(key);
      }
-     buff.append(key);
      j = i = ++n;
     } else break;
    } else break;

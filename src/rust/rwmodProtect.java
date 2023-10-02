@@ -371,7 +371,7 @@ public class rwmodProtect implements Runnable {
     if (j != null) {
      str = (String)j;
      str = ini.get(str, as, list);
-     if (str.equals("IGNORE") || str.equalsIgnoreCase("none"))continue;
+     if (str==null||str.equals("IGNORE") || str.equalsIgnoreCase("none"))continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      i = en2.getValue();
      buff.setLength(0);

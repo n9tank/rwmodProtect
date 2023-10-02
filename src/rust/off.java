@@ -64,7 +64,7 @@ public final class off {
     }
     key=(String)o;
    }
-   if(key==null)key=str;
+   if(key==null)return key;
    buff.append(key);
   }
   j=str.length();
