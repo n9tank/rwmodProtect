@@ -1,10 +1,8 @@
 package rust;
 
-import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class ui {
  public String path;
@@ -14,7 +12,7 @@ public class ui {
  ui ui=new ui();
  ui.path=path;
  rwmodProtect rw=new rwmodProtect(path,ui);
- pool.submit(rw);
+ pool.execute(rw);
  }
  public void finsh(){
   System.out.println(path);

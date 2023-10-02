@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import java.util.BitSet;
 
 public class rwmodProtect implements Runnable {
  public String In;
@@ -156,7 +155,7 @@ public class rwmodProtect implements Runnable {
   } else if (ini == -1) {
    buff.append(".ogg");
   }
-  buff.append('/');
+ // buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
@@ -195,10 +194,10 @@ public class rwmodProtect implements Runnable {
      map.put(str, lod);
     } catch (Exception e) {
     }
-   } else lod = (loder)o;
-  } else {
-   lod = (loder)o;
-   type = 1;
+   }else lod=(loder)o;
+  } else{
+  type = 1;
+  lod=(loder)o;
   }
   if (lod.str == null) {
    String r=FileName(type);
@@ -250,16 +249,17 @@ public class rwmodProtect implements Runnable {
   loder put;
   tag:
   if (isini) {
-   int i=file.length();
+   String str=file;
+   int i=str.length();
    buff.setLength(0);
    buff.append(file);
    do{
-    i = file.lastIndexOf("/", --i);
+    i = str.lastIndexOf("/", --i);
     buff.setLength(i + 1);
     buff.append("all-units.template");
-    file = buff.toString();
-    if (inihide.containsKey(file)) {
-     put = replace(file,false);
+    str = buff.toString();
+    if (inihide.containsKey(str)) {
+     put = replace(str,false);
      ini.put(put);
      buff.setLength(0);
      buff.append(put.str);
@@ -506,7 +506,6 @@ public class rwmodProtect implements Runnable {
      }
     }
    } catch (Exception e) {
-    e.printStackTrace();
    }
    wt.close();
    out.close();

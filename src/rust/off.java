@@ -1,11 +1,10 @@
 
 package rust;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.HashSet;
-import java.util.HashMap;
-import android.os.Build;
 
 public final class off {
  public static final HashSet set;

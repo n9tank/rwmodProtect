@@ -4,12 +4,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class loder {
  final static HashSet em=new HashSet();
@@ -61,7 +61,7 @@ public class loder {
   } catch (Exception e) {
   }
  }
- public static boolean wh(String str, HashSet set, int m) {
+ public static String wh(String str, HashSet set, int m) {
   int i=0;
   String vl=str;
   do{
@@ -70,10 +70,10 @@ public class loder {
     vl = str.substring(0,i+1);
    }
    if (set.contains(vl)) {
-    return true;
+    return vl;
    }
   }while(--m >= 0 && i > 0);
-  return false;
+  return null;
  }
  public static Object wh(String str, HashMap map, int m) {
   int i=0;
@@ -153,11 +153,12 @@ public class loder {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    HashMap hash=(HashMap)en.getValue();
-   if (wh(key, vlset, vlmax)) {
+   String vl;
+   if((vl=wh(key, vlset, vlmax))!=null) {
     Object o=hash.get("copyFrom");
     if (o != null) {
      key = (String)o;
-     HashMap set=(HashMap)map.get(key);
+     HashMap set=(HashMap)map.get(vl.concat(key));
      hash.putAll(set);
     }
    }
