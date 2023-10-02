@@ -21,8 +21,8 @@ import java.util.zip.ZipOutputStream;
 
 public class rwmodProtect implements Runnable {
  public String In;
- public int iniIndex;
- public int fileIndex;
+ public int iniIndex=-1;
+ public int fileIndex=-1;
  public int oggIndex;
  public ZipFile Zip;
  public ZipOutputStream Zipout;
@@ -143,6 +143,7 @@ public class rwmodProtect implements Runnable {
     i = fileIndex++;
     break;
   }
+  if(i>=0){
   String d=ini > 0 ?iniD: fileD;
   int l=d.length();
   do{
@@ -155,7 +156,9 @@ public class rwmodProtect implements Runnable {
   } else if (ini == -1) {
    buff.append(".ogg");
   }
- // buff.append('/');
+  }
+  buff.append('/');
+  //copyFrom可以不填（但降低防护效果）
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
