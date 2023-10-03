@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class loder {
  final static HashSet em=new HashSet();
@@ -22,7 +21,7 @@ public class loder {
  public static int vlmax;
  public static HashSet vlset;
  public static HashMap<String,HashSet> line=new HashMap();
- public loder(InputStream input) {
+ public loder(InputStream input) throws Exception {
   this(new InputStreamReader(input));
  }
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
@@ -45,23 +44,22 @@ public class loder {
    writeKeys(map, ite.hasNext(), out);
   }
  }
- public void write(OutputStreamWriter out) {
+ public void write(OutputStreamWriter out) throws Exception {
   HashMap map=ini;
   HashMap gloab=(HashMap)ini.get("");
   ini.remove("");
   boolean size=gloab.size() > 0;
   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-  try {
-   if (ite.hasNext()) {
-    write(ite, out);
-   } else if (size) {
-    out.write("[]\n");
-   }
-   if (size)writeKeys(gloab, ite.hasNext(), out);
-   while (ite.hasNext())write(ite, out);
-   out.flush();
-  } catch (Exception e) {
-   rwmodLib.debug(e);
+  try{
+  if (ite.hasNext()) {
+   write(ite, out);
+  } else if (size) {
+   out.write("[]\n");
+  }
+  if (size)writeKeys(gloab, ite.hasNext(), out);
+  while (ite.hasNext())write(ite, out);
+  }finally{
+  out.flush();
   }
  }
  public static String wh(String str, HashSet set, int m) {
@@ -73,8 +71,8 @@ public class loder {
    }
    i = str.indexOf("_", ++i);
    if (i > 0) {
-    vl = str.substring(0,i+1);
-   }else break;
+    vl = str.substring(0, i + 1);
+   } else break;
   }while(--m >= 0);
   return null;
  }
@@ -86,43 +84,43 @@ public class loder {
    if (o != null)return o;
    i = str.indexOf("_", ++i);
    if (i > 0) {
-    vl = str.substring(0,i+1);
-   }else break;
+    vl = str.substring(0, i + 1);
+   } else break;
   }while(--m >= 0 && i > 0);
   return null;
  }
  public void put(HashMap need) {
   HashMap hash=as;
-   HashMap put=ini;
-   Iterator ite=need.entrySet().iterator();
-   while(ite.hasNext()){
+  HashMap put=ini;
+  Iterator ite=need.entrySet().iterator();
+  while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String str=(String)en.getKey();
    HashMap map=(HashMap)hash.get(str);
    Object o=put.get(str);
    HashMap putall;
-   if(o==null){
-   putall=new HashMap();
-   put.put(str,putall);
-   }else putall=(HashMap)o;
+   if (o == null) {
+    putall = new HashMap();
+    put.put(str, putall);
+   } else putall = (HashMap)o;
    ArrayList list=(ArrayList)en.getValue();
    int i=list.size();
-   while(--i>=0){
-   str=(String)list.get(i);
-   putall.put(str,map.get(str));
+   while (--i >= 0) {
+    str = (String)list.get(i);
+    putall.put(str, map.get(str));
    }
-   }
+  }
  }
  public HashMap<String,ArrayList> eqz() {
   HashMap pu=put;
   HashMap re=ini;
   HashMap map=new HashMap();
-  put(map, pu,true);
-  put(pu,re,false);
+  put(map, pu, true);
+  put(pu, re, false);
   HashMap hash=new HashMap();
-  put(hash,pu,true);
+  put(hash, pu, true);
   as(hash);
-  as=hash;
+  as = hash;
   HashMap need=new HashMap();
   HashMap def=rwmodProtect.Res;
   Iterator ite=hash.entrySet().iterator();
@@ -143,13 +141,13 @@ public class loder {
      String value=en2.getValue();
      String ov=null;
      boolean eqz=true;
-     if (list.get(ke) != null && (list3 == null || (ov = (String)list3.get(ke)) == null || (eqz=!get(value, hash, list2).equals(get(ov, map, list3))))) {
+     if (list.get(ke) != null && (list3 == null || (ov = (String)list3.get(ke)) == null || (eqz = !get(value, hash, list2).equals(get(ov, map, list3))))) {
       needL.add(ke);
-     }else if(list4!=null&&!eqz){
+     } else if (list4 != null && !eqz) {
       list4.remove(ke);
      }
     }
-    if(needL.size()>0)need.put(key,needL);
+    if (needL.size() > 0)need.put(key, needL);
    }
   }
   return need;
@@ -161,7 +159,7 @@ public class loder {
    String key=(String)en.getKey();
    HashMap hash=(HashMap)en.getValue();
    String vl;
-   if((vl=wh(key, vlset, vlmax))!=null) {
+   if ((vl = wh(key, vlset, vlmax)) != null) {
     Object o=hash.get("copyFrom");
     if (o != null) {
      key = (String)o;
@@ -189,9 +187,9 @@ public class loder {
    } else {
     HashMap set=(HashMap)o;
     String k;
-     if (skip||(o=set.get("@copyFrom_skipThisSection")) == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
-      set.putAll((HashMap)hash);
-     }
+    if (skip || (o = set.get("@copyFrom_skipThisSection")) == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
+     set.putAll((HashMap)hash);
+    }
    }
   }
  }
@@ -231,7 +229,7 @@ public class loder {
    shadow = true;
    str = str.substring(7);
   }
-  if (!root && path.length()>0) {
+  if (!root && path.length() > 0) {
    str = path.concat(str);
   }
   if (shadow) {
@@ -251,9 +249,9 @@ public class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      key=off.off(map,loc,key);
-      }
-      buff.append(key);
+      key = off.off(map, loc, key);
+     }
+     buff.append(key);
      j = i = ++n;
     } else break;
    } else break;
@@ -267,12 +265,12 @@ public class loder {
    str = null;
   } else if (str.startsWith("ROOT:")) {
    str = str.substring(5);
-  } else if (path.length()>0) {
+  } else if (path.length() > 0) {
    str = path.concat(str);
   }
   return str;
  }
- public loder(InputStreamReader input) {
+ public loder(InputStreamReader input)throws Exception {
   HashMap map=new HashMap();
   HashMap global=new HashMap();
   put = map;
@@ -330,13 +328,8 @@ public class loder {
      } else continue;
     }
    }
-  } catch (Exception e) {
-   rwmodLib.debug(e);
-  }
-  try {
+  }finally {
    buff.close();
-  } catch (Exception e) {
-   rwmodLib.debug(e);
   }
  }
 }

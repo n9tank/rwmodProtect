@@ -32,7 +32,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public OutputStreamWriter Ow;
  public StringBuilder Buff;
  public String musicPath;
- public ui ui;
  public static int max;
  public static String fileD;
  public static String iniD;
@@ -84,7 +83,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return map;
  }
- public static void init(String def) {
+ public static void init(String def,ui ui) {
   HashMap<String,HashMap> map;
   try {
    map = new loder(new FileReader(def)).ini;
@@ -119,12 +118,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.put(image, music, false);
    Res = image;
   } catch (Exception e) {
-   debug(e);
+   ui.fali(e);
   }
  }
  public rwmodProtect(String in, ui def) {
   In = in;
-  ui = def;
+  Ui = def;
  }
  public String FileName(int ini) {
   StringBuilder buff=Buff;
@@ -169,12 +168,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      warp.clear();
     }
    } catch (Exception e) {
-    debug(e);
+    Ui.fali(e);
    }
    in.close();
    zipw.closeEntry();
   } catch (Exception e) {
-   debug(e);
+   Ui.fali(e);
   }
  }
  public loder replace(String str, boolean isini) {
@@ -191,7 +190,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod = new loder(zip.getInputStream(zip.getEntry(str)));
       map.put(str, lod);
      } catch (Exception e) {
-      debug(e);
+      Ui.fali(e);
      }
      break tag;
     }
@@ -290,7 +289,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    ini.write(out);
    zip.closeEntry();
   } catch (Exception e) {
-   debug(e);
+   Ui.fali(e);
   }
  }
  public byte getType(String file) {
@@ -372,7 +371,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   ini.put(need);
  }
- public void run() {
+ public void run(){
+  ui ui=Ui;
   HashMap filemap = new HashMap();
   Filemap = filemap;
   HashMap inimap = new HashMap();
@@ -435,6 +435,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       String fileName=zipEntry.getName();   
       byte type=getType(fileName);
       if (type >= 0) {
+       try{
        loder lod=new loder(zip.getInputStream(zipEntry));
         if (rwmodLib.dontlod(lod))type=0;
         if (type > 0) {
@@ -442,6 +443,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         } else {
          inihide.put(fileName, lod);
         }
+      }catch(Exception e){
+       ui.fali(e);
+      }
       }
      }
     }
@@ -475,13 +479,13 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      }
     }
    } catch (Exception e) {
-    debug(e);
+    ui.fali(e);
    }
    wt.close();
    out.close();
    zip.close();
   } catch (Exception e) {
-   debug(e);
+   ui.fali(e);
   }
   ui.finsh();
  }
