@@ -25,7 +25,6 @@ public class loder {
  public loder(InputStream input) {
   this(new InputStreamReader(input));
  }
- 
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -62,6 +61,7 @@ public class loder {
    while (ite.hasNext())write(ite, out);
    out.flush();
   } catch (Exception e) {
+   debug(e);
   }
  }
  public static String wh(String str, HashSet set, int m) {
@@ -286,9 +286,8 @@ public class loder {
   try {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
-    char c=str.charAt(0);
-    if (c == '#')continue;
-    if (c == '[') {
+    if (str.startsWith("#"))continue;
+    if (str.startsWith("[")) {
      str = str.substring(1, str.length() - 1).trim();
      if (str.contains("]"))continue;
      if (str.startsWith("comment_")) {
@@ -332,10 +331,12 @@ public class loder {
     }
    }
   } catch (Exception e) {
+   debug(e);
   }
   try {
    buff.close();
   } catch (Exception e) {
+   debug(e);
   }
  }
 }

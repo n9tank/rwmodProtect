@@ -12,6 +12,9 @@ public ZipFile Zip;
 public HashMap iniMap;
 public HashMap iniHide;
 public static rwmodLib lib;
+public static void debug(Exception e){
+ 
+}
 public static void init(String str){
  rwmodLib rw=new rwmodLib(str);
  HashMap ini=rw.iniMap;
@@ -35,8 +38,7 @@ public rwmodLib(String file) {
     if(!zipEntry.isDirectory()){
     String fileName=zipEntry.getName();
     loder lod=new loder(zip.getInputStream(zipEntry));
-    HashMap map;
-    if(isini(fileName)&&(map=(HashMap)lod.ini.get("core"))!=null&&!dontlod(map)){
+    if(isini(fileName)&&dontlod(lod)){
      inimap.put(fileName,lod);
     }else{
     inihide.put(fileName,lod);
@@ -55,12 +57,16 @@ public rwmodLib(String file) {
  } catch (Exception e) {
  }
  }
- public static boolean dontlod(HashMap map){
-   Object o=map.get("dont_load");
+ public static boolean dontlod(loder lod){
+  Object o=lod.ini.get("core");
+  if (o != null) {
+   HashMap map=(HashMap)o;
+   o=map.get("dont_load");
    if (o != null) {
-    String str=(String)o;
+   String str=(String)o;
    map.remove("dont_load");
    return "1".equals(str) ||"true".equalsIgnoreCase(str);
+   }
    }
   return false;
  }
@@ -112,7 +118,7 @@ public rwmodLib(String file) {
   if(o!=null){
    HashMap map=(HashMap)o;
    o=map.get("copyFrom");
-   if((str=skip(o,""))!=null){
+   if(o!=null&&(str=(String)o).length()>0&&str.equals("IGNORE")){
     String list[]=str.split(",");
     int i=0,l=list.length;
     do{
@@ -124,12 +130,6 @@ public rwmodLib(String file) {
    }
   }
  loder.put(lod.put,lod.ini,false);
- }
- public static String skip(Object o,String c){
-  if(o==null)return null;
-  String str=(String)o;
-  if(str.equals(c)||str.equals("IGNORE"))return null;
-  return str;
  }
  public loder getSpuerAll(String str,StringBuilder buff){
    int i=str.length();
