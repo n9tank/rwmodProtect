@@ -61,7 +61,7 @@ public class loder {
    while (ite.hasNext())write(ite, out);
    out.flush();
   } catch (Exception e) {
-   debug(e);
+   rwmodLib.debug(e);
   }
  }
  public static String wh(String str, HashSet set, int m) {
@@ -331,12 +331,12 @@ public class loder {
     }
    }
   } catch (Exception e) {
-   debug(e);
+   rwmodLib.debug(e);
   }
   try {
    buff.close();
   } catch (Exception e) {
-   debug(e);
+   rwmodLib.debug(e);
   }
  }
 }

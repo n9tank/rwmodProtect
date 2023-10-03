@@ -13,7 +13,6 @@ public HashMap iniMap;
 public HashMap iniHide;
 public static rwmodLib lib;
 public static void debug(Exception e){
- 
 }
 public static void init(String str){
  rwmodLib rw=new rwmodLib(str);
