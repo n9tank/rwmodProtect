@@ -18,6 +18,7 @@ public static void init(String str){
  ini.putAll(rw.iniHide);
  lib=ini;
 }
+public rwmodLib(){}
 public rwmodLib(String file) {
   HashMap inihide=new HashMap();
   iniHide=inihide;
@@ -144,10 +145,7 @@ public rwmodLib(String file) {
     str = buff.toString();
     if (inihide.containsKey(str)) {
      buff.setLength(0);
-     loder lod=replace(str, false);
-     buff.append(lod.str);
-     buff.append(',');
-     return lod;
+     return replace(str, false);
     }
     i = str.lastIndexOf("/", --i);
    }while(i > 0);

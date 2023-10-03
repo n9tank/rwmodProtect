@@ -242,7 +242,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   tag:
   if (isini) {
   loder lod=getSpuerAll(file,buff);
-  if(lod!=null)loder.put(ini.put,lod.put,true);
+  if(lod!=null){
+   buff.append(lod.str);
+   buff.append(',');
+   loder.put(ini.put,lod.put,true);
+   }
  }
   boolean v=buff.length() > 0;
   HashMap map=ini.ini;
