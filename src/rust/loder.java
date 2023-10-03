@@ -25,6 +25,7 @@ public class loder {
  public loder(InputStream input) {
   this(new InputStreamReader(input));
  }
+ 
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -46,10 +47,11 @@ public class loder {
   }
  }
  public void write(OutputStreamWriter out) {
-  HashMap pu=as;
-  HashMap gloab=(HashMap)pu.get("");
+  HashMap map=ini;
+  HashMap gloab=(HashMap)ini.get("");
+  ini.remove("");
   boolean size=gloab.size() > 0;
-  Iterator<Map.Entry<String,HashMap>> ite=ini.entrySet().iterator();
+  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
   try {
    if (ite.hasNext()) {
     write(ite, out);
@@ -229,7 +231,7 @@ public class loder {
    shadow = true;
    str = str.substring(7);
   }
-  if (!root && path != null) {
+  if (!root && path.length()>0) {
    str = path.concat(str);
   }
   if (shadow) {
@@ -273,12 +275,12 @@ public class loder {
  public loder(InputStreamReader input) {
   HashMap map=new HashMap();
   HashMap global=new HashMap();
-  map.put("", global);
   put = map;
   BufferedReader buff=new BufferedReader(input);
   String str;
   HashMap list=null;
   HashMap table=new LinkedHashMap();
+  table.put("",global);
   ini = table;
   HashSet hashset=em;
   try {

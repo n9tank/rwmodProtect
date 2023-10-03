@@ -236,12 +236,15 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append(str);
   buff.append(',');
  }
- public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
+ public boolean replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
   HashMap inihide=iniHide;
   file = loder.getSuperPath(file);
   tag:
-  if (isini) {
+  if (isini){
   loder lod=getSpuerAll(file,buff);
+  if(file.startsWith("/")){
+  return false;
+  }
   if(lod!=null){
    buff.append(lod.str);
    buff.append(',');
@@ -251,7 +254,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   boolean v=buff.length() > 0;
   HashMap map=ini.ini;
   Object o=map.get("core");
-  HashMap libs=lib;
   if (o != null) {
    HashMap core=(HashMap)o;
    o = core.get("copyFrom");
@@ -267,8 +269,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       loder lod =replace(str,getType(str)>0);
       path = lod.str;
       loder.put(ini.put, lod.put, true);
-     }else if(libs!=null){
-      
      }
      buff.append(path);
      buff.append(',');
@@ -278,6 +278,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (--i >= 0)buff.setLength(i);
    if (o != null || v)core.put("copyFrom", buff.toString());
   }
+  return true;
  }
  public void write(loder ini, String name) {
   ZipOutputStream zip=Zipout;
@@ -415,7 +416,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       map.put("sourceFolder", "");
      }
     }
-    ini.as = ini.put;
+    String str=inf.getName();
+    ini.put=ini.ini;
+    ini.str=str;
+    inihide.put(str,ini);
     write(ini, "mod-info.txt/");
    }
    WritableByteChannel out = Channels.newChannel(zipout);
@@ -429,12 +433,19 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       byte type=getType(fileName);
       if (type >= 0) {
        loder lod=new loder(zip.getInputStream(zipEntry));
-       if(rwmodLib.dontlod(lod))type=0;
+      HashMap core=(HashMap)lod.ini.get("core");
+      if(core!=null){
+       if(rwmodLib.dontlod(core))type=0;
+       if(fileName.startsWith("/")){
+       Object o=core.get("copyFrom");
+       if(o!=null)continue;
+       }
        if (type > 0) {
         inimap.put(fileName, lod);
        } else {
         inihide.put(fileName, lod);
        }
+      }
       }
      }
     }
@@ -449,9 +460,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      if (r == null) {
       r = FileName(type);
       loder.str = r;
-      replaceCopy(loder, filename, true, buff);
+      if(replaceCopy(loder, filename, true, buff)){
       replaceAllRes(loder, filename, buff);
       write(loder, r);
+      }
      }
     }
     zipEntrys = zip.entries();

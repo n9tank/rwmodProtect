@@ -11,12 +11,13 @@ public StringBuilder Buff;
 public ZipFile Zip;
 public HashMap iniMap;
 public HashMap iniHide;
-public static HashMap lib;
+public static rwmodLib lib;
 public static void init(String str){
  rwmodLib rw=new rwmodLib(str);
  HashMap ini=rw.iniMap;
  ini.putAll(rw.iniHide);
- lib=ini;
+ rw.iniHide=null;
+ lib=rw;
 }
 public rwmodLib(){}
 public rwmodLib(String file) {
@@ -34,7 +35,8 @@ public rwmodLib(String file) {
     if(!zipEntry.isDirectory()){
     String fileName=zipEntry.getName();
     loder lod=new loder(zip.getInputStream(zipEntry));
-    if(isini(fileName)&&!dontlod(lod)){
+    HashMap map;
+    if(isini(fileName)&&(map=(HashMap)lod.ini.get("core"))!=null&&!dontlod(map)){
      inimap.put(fileName,lod);
     }else{
     inihide.put(fileName,lod);
@@ -53,23 +55,18 @@ public rwmodLib(String file) {
  } catch (Exception e) {
  }
  }
- public static boolean dontlod(loder lod){
-  HashMap map=lod.ini;
-  Object o=map.get("core");
-  if (o != null) {
-   map=(HashMap)o;
-   o=map.get("dont_load");
-   if(o!=null){
-   String str=(String)o;
+ public static boolean dontlod(HashMap map){
+   Object o=map.get("dont_load");
+   if (o != null) {
+    String str=(String)o;
    map.remove("dont_load");
    return "1".equals(str) ||"true".equalsIgnoreCase(str);
    }
-  }
   return false;
  }
  public String toPath(String str) {
-  str = str.replaceAll("//+", "/").replaceAll("^//", "");
-  if (!str.endsWith("/")) {
+  str=str.replaceAll("/{2}","/").replaceAll("^/","");
+  if (!str.endsWith("/")){
    ZipEntry en=Zip.getEntry(str);
    if (en == null) {
     str = str.concat("/");
