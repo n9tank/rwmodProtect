@@ -285,7 +285,7 @@ public class loder {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
     if (str.startsWith("#"))continue;
-    if (str.startsWith("[")) {
+    if (str.startsWith("[")&&str.endsWith("]")) {
      str = str.substring(1, str.length() - 1).trim();
      if (str.contains("]"))continue;
      if (str.startsWith("comment_")) {
