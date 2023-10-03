@@ -1,28 +1,30 @@
 package rust;
 
-import java.util.LinkedHashSet;
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ui{
- public String path;
+ public String show;
  public Exception err;
- public static ui def=new ui();
+ public static final ui def=new ui("def");
  public final static ExecutorService pool=Executors.newCachedThreadPool();
- public static void exec(String path){
-  ui ui=new ui();
-  ui.path=path;
-  rwmodProtect rw=new rwmodProtect(path, ui);
+ public ui(String show){
+  this.show=show;
+ }
+ public static void exec(File path){
+  rwmodProtect rw=new rwmodProtect(path,new ui(path.getPath()));
   pool.execute(rw);
  }
  public void finsh(){
   Exception er=err;
-  System.out.print(path);
+  System.out.print(show);
   if(err==null){
   System.out.println(":finsh");
   }else{
   System.out.println(":error");
   er.printStackTrace();
+  err=null;
   }
  }
  public void fali(Exception e){

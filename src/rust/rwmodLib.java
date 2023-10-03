@@ -1,10 +1,11 @@
 package rust;
-import java.util.HashMap;
-import java.util.zip.ZipFile;
+import java.io.File;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class rwmodLib {
  public StringBuilder Buff;
@@ -13,15 +14,16 @@ public class rwmodLib {
  public HashMap iniHide;
  public ui Ui;
  public static rwmodLib lib;
- public static void init(String str, ui ui) {
-  rwmodLib rw=new rwmodLib(str, ui);
+ public static void init(File str) {
+  if(!str.exists())return;
+  rwmodLib rw=new rwmodLib(str,ui.def);
   HashMap ini=rw.iniMap;
   ini.putAll(rw.iniHide);
   rw.iniHide = null;
   lib = rw;
  }
- public rwmodLib() {}
- public rwmodLib(String file, ui ui) {
+ rwmodLib(){}
+ public rwmodLib(File file, ui ui) {
   Ui=ui;
   HashMap inihide=new HashMap();
   iniHide = inihide;
@@ -56,7 +58,6 @@ public class rwmodLib {
   } catch (Exception e) {
    ui.fali(e);
   }
-  ui.finsh();
  }
  public static boolean dontlod(loder lod) {
   Object o=lod.ini.get("core");

@@ -1,10 +1,10 @@
 
+import java.io.File;
+import rust.rwmodLib;
 import rust.rwmodProtect;
 import rust.ui;
-import java.util.zip.ZipFile;
 public class Main {
  public static void main(String[] args) throws Exception {
-  rwmodProtect.init("sdcard/rustedWarfare/.ini",ui.def);
-  ui.exec("sdcard/a.rwmod");
+  ui.exec(new File("sdcard/a.rwmod"));
  }
 }

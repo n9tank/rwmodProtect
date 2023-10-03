@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class rwmodProtect extends rwmodLib implements Runnable {
- public String In;
+ public File In;
  public int iniIndex=-2;
  public int fileIndex=-1;
  public int oggIndex=-2;
@@ -83,7 +83,15 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return map;
  }
- public static void init(String def,ui ui) {
+ static{
+  String str=System.getProperty("user.dir");
+  if(str.length()==1){
+   str="sdcard/rustedWarfare/rwmod";
+  }
+  init(new File(str,".ini"));
+  ui.def.finsh();
+ }
+ public static void init(File def) {
   HashMap<String,HashMap> map;
   try {
    map = new loder(new FileReader(def)).ini;
@@ -118,10 +126,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.put(image, music, false);
    Res = image;
   } catch (Exception e) {
-   ui.fali(e);
+   ui.def.fali(e);
   }
+  rwmodLib.init(new File(def.getParent(),"lib.zip"));
  }
- public rwmodProtect(String in, ui def) {
+ public rwmodProtect(File in, ui def) {
   In = in;
   Ui = def;
  }
@@ -385,7 +394,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   Buff = new StringBuilder();
   StringBuilder buff=new StringBuilder();
   String musicpath=null;
-  File ou=new File(In);
+  File ou=In;
   try {
    ZipFile zip = new ZipFile(ou);
    String name=ou.getName();
