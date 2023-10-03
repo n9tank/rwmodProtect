@@ -273,7 +273,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      }else if(libs!=null){
       map=libs.iniMap;
       str=path.substring(5);
-      loder lod=(loder)map.get(libs.toPath(strl));
+      loder lod=(loder)map.get(libs.toPath(str));
       loder.put(ini.put,lod.put,true);
      }
      buff.append(path);
