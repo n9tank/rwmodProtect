@@ -132,20 +132,20 @@ public rwmodLib(String file) {
   return str;
  }
  public loder getSpuerAll(String str,StringBuilder buff){
-   int i=str.length()-1;
+   int i=str.length();
    buff.setLength(0);
    buff.append(str);
    HashMap inihide=iniHide;
    do{
+    i = str.lastIndexOf("/", --i);
     buff.setLength(i + 1);
     buff.append("all-units.template");
     str = buff.toString();
-    if (inihide.containsKey(str)) {
+    if (inihide.containsKey(str)||inihide.containsKey(str=str.concat("/"))) {
      buff.setLength(0);
      return replace(str, false);
     }
-    i = str.lastIndexOf("/", --i);
-   }while(i > 0);
+    }while(i>0);
    buff.setLength(0);
    return null;
  }
