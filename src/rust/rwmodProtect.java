@@ -261,6 +261,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if((str=skip(o,""))!=null) {
     String list[]=str.split(",");
     int i=0,n=list.length;
+    rwmodLib libs=rwmodLib.lib;
     do {
      String path=list[i].trim();
      str = loder.getPath(str, file);
@@ -269,6 +270,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       loder lod =replace(str,getType(str)>0);
       path = lod.str;
       loder.put(ini.put, lod.put, true);
+     }else if(libs!=null){
+      map=libs.iniMap;
+      str=path.substring(5);
+      loder lod=(loder)map.get(libs.toPath(strl));
+      loder.put(ini.put,lod.put,true);
      }
      buff.append(path);
      buff.append(',');
