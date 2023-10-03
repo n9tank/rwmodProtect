@@ -52,6 +52,7 @@ public class rwmodLib {
     String key=(String)en.getKey();
     loder lod=(loder)en.getValue();
     if (lod.str == null) {
+     lod.str="";
      lodAllCopy(lod, key, true);
     }
    }
@@ -98,7 +99,7 @@ public class rwmodLib {
    }
   } else lod = (loder)o;
   if (lod.str == null) {
-   lod.str = str;
+   lod.str ="";
    lodAllCopy(lod, str, isini(str));
   }
   return lod;
@@ -112,7 +113,7 @@ public class rwmodLib {
   } else return false;
  }
  public void lodAllCopy(loder lod, String file, boolean isini) {
-  String str=loder.getSuperPath(lod.str);
+  String str=loder.getSuperPath(file);
   if (isini) {
    loder put=getSpuerAll(file, Buff);
    if (put != null)loder.put(lod.put, put.put, false);
