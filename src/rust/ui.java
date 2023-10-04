@@ -28,9 +28,10 @@ public class ui{
   }
  }
  public void fali(Exception e){
-  Exception ers=err;
+  e.printStackTrace();
+  /*Exception ers=err;
   if(ers==null){
    err=e;
-  }else ers.addSuppressed(e);
+  }else ers.addSuppressed(e);*/
  }
 }

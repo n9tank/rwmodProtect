@@ -208,10 +208,15 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return lod;
  }
- public void replaceR(String str, String path, StringBuilder buff, boolean isimg) {
+ public void replaceR(String str, String path, StringBuilder buff,int isimg) {
   String file;
+  String list[]=null;
   tag: {
-   if (!isimg) {
+   if(isimg==2){
+    list=str.split("\\*");
+    str=list[0];
+   }
+   if (isimg>2) {
     if (music.contains(str))break tag;
     file = loder.getPath(str, path);
    } else file = loder.getImagePath(str, path, buff);
@@ -227,12 +232,16 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     Object o=map.get(file);
     if (o == null) {
      str = FileName(type);
-     copy(str, Zip.getEntry(file));
+     copy(str,Zip.getEntry(file));
      map.put(file, str);
     } else str = (String)o;
    }
   }
   buff.append(str);
+  if(list!=null&&list.length>1){
+  buff.append("*");
+  buff.append(list[1]);
+  }
   buff.append(',');
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
@@ -347,20 +356,17 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      i = en2.getValue();
      buff.setLength(0);
      switch (i) {
-      case 1:
-       replaceR(str, loder.getSuperPath(filename), buff, true);
-       break;
       case 2:
        String path = loder.getSuperPath(filename);
        String list2[]=str.split(",");
        int l=0,size=list2.length;
        do {
         str = list2[l].trim();
-        replaceR(str, path, buff, true);
+        replaceR(str,path, buff, i);
        }while(++l < size);
        break;
-      case 3:
-       replaceR(str, loder.getSuperPath(filename), buff, false);
+      default:
+       replaceR(str,loder.getSuperPath(filename), buff,i);
        break;
      }
      i = buff.length();
@@ -471,8 +477,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String file=en.getName();
      byte type= getType(file);
      if (type < 0) {
-      if (type == -1 && !filemap.containsKey(file)) {
-       copy(file.concat("/"), en);
+      if (type == -1 && !inihide.containsKey(file)&&!filemap.containsKey(file)) {
+       if(!file.endsWith("/"))file=file.concat("/");
+       copy(file,en);
       } else if (type == -3) {
        copy(FileName(type), en);
       }
