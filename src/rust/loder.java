@@ -193,6 +193,13 @@ public class loder {
    }
   }
  }
+ public static String getRoot(String str){
+  int i=str.indexOf("/");
+  if(i>=0){
+   return str.substring(0,++i);
+  }
+  return null;
+ }
  public static String getName(String file) {
   int i=file.length();
   if (file.endsWith("/")) {
