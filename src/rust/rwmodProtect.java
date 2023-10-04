@@ -221,6 +221,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    } else file = loder.getImagePath(str, path, buff);
    if (file != null) {
     file = toPath(file);
+    if(file==null){
+     System.out.println(str);
+    }
     byte type=getType(file);
     HashMap map;
     if (type == -2) {
@@ -349,7 +352,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     if (j != null) {
      str = (String)j;
      str = ini.get(str, as, list);
-     if(str.equalsIgnoreCase("none")||str.equals("IGNORE"))continue;
+     if(str==null||str.equalsIgnoreCase("none")||str.equals("IGNORE"))continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      i = en2.getValue();
      buff.setLength(0);
@@ -429,7 +432,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     name=ZipEntry.getName();
     name=loder.getRoot(name);
     if("".equals(name)){
-     rootPath=name;
+     rootPath="";
+     break;
     }else if(rootPath==null){
      rootPath=name;
     }else if(!rootPath.equals(name)){
@@ -476,7 +480,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        o = map.get("sourceFolder");
        if (o != null) {
         musicpath = (String)o;
-        if (musicpath.length() != 0) {
+        if (musicpath.length()!= 0) {
          if (!musicpath.endsWith("/")) {
           musicpath = musicpath.concat("/");
          }
@@ -489,7 +493,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       ini.put = ini.ini;
       ini.str = str;
       inihide.put(str, ini);
-      write(ini, "mod-info.txt/");
+      write(ini,"mod-info.txt/");
      }
     }
     }

@@ -38,7 +38,10 @@ public final class off {
    if (list.length > 1) {
     HashMap loc;
     if (key.equals("section.key"))loc = setion;
-    else loc = (HashMap)map.get(key);
+    else{
+    loc = (HashMap)map.get(key);
+    if(loc==null)return null;
+    }
     group = (String)loc.get(list[1]);
    } else {
     o = setion.get("@define ".concat(key));
@@ -48,6 +51,7 @@ public final class off {
     group= (String)o;
    }
    }
+   if(group==null)return null;
    buff.append(group);
   }
   j = str.length();

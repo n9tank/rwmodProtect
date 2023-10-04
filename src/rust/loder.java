@@ -164,14 +164,14 @@ public class loder {
     if (o != null) {
      key = (String)o;
      HashMap set=(HashMap)map.get(vl.concat(key));
-     hash.putAll(set);
+     if(set!=null)hash.putAll(set);
     }
    }
    Object o=hash.get("@copyFromSection");
    if (o != null) {
     key = (String)o;
     HashMap set=(HashMap)map.get(key);
-    hash.putAll(set);
+    if(set!=null)hash.putAll(set);
    }
   }
  }
@@ -198,7 +198,7 @@ public class loder {
   if(i>=0){
    return str.substring(0,++i);
   }
-  return null;
+  return "";
  }
  public static String getName(String file) {
   int i=file.length();
@@ -317,16 +317,16 @@ public class loder {
        if (hashset.contains(key)) {
         String with;
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-         str = str.substring(3);
+         set = set.substring(3);
          StringBuilder bf=new StringBuilder();
          do{
-          str = str.trim();
-          if (str.endsWith(with)) {
-           bf.append(str, 0, str.length() - 3);
+          set = set.trim();
+          if (set.endsWith(with)) {
+           bf.append(set, 0, set.length() - 3);
            break;
           }
-          bf.append(str);
-         }while((str = buff.readLine()) != null);
+          bf.append(set);
+         }while((set = buff.readLine()) != null);
          set = bf.toString();
         }
        }
