@@ -74,7 +74,7 @@ public class rwmodLib {
   return false;
  }
  public String toPath(String str) {
-  str = str.replaceAll("/{2}", "/").replaceAll("^/", "");
+  str = str.replaceAll("/{2}", "/").replaceAll("^/","");
   if (!str.endsWith("/")) {
    ZipEntry en=Zip.getEntry(str);
    if (en == null) {
