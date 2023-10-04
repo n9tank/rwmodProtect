@@ -13,6 +13,7 @@ public class rwmodLib {
  public HashMap iniMap;
  public HashMap iniHide;
  public ui Ui;
+ public HashMap<String,String> low;
  public static rwmodLib lib;
  public static void init(File str) {
   if(!str.exists())return;
@@ -29,6 +30,8 @@ public class rwmodLib {
   iniHide = inihide;
   HashMap inimap=new HashMap();
   iniMap = inimap;
+  HashMap lows=new HashMap();
+  low=lows;
   Buff = new StringBuilder();
   try {
    ZipFile zip=new ZipFile(file);
@@ -39,10 +42,14 @@ public class rwmodLib {
     if (!zipEntry.isDirectory()) {
      String fileName=zipEntry.getName();
      loder lod=new loder(zip.getInputStream(zipEntry));
-     if (isini(fileName) && dontlod(lod)) {
+     if (isini(fileName)&&dontlod(lod)) {
       inimap.put(fileName, lod);
      } else {
       inihide.put(fileName, lod);
+     }
+     String lowr=fileName.toLowerCase();
+     if(!lows.containsKey(lowr)){
+     lows.put(lowr,fileName);
      }
     }
    }
@@ -74,11 +81,19 @@ public class rwmodLib {
   return false;
  }
  public String toPath(String str) {
-  str = str.replaceAll("/{2}", "/").replaceAll("^/","");
-  if (!str.endsWith("/")) {
-   ZipEntry en=Zip.getEntry(str);
-   if (en == null) {
-    str = str.concat("/");
+  str = str.replaceAll("/+", "/").replaceAll("^/","");
+  HashMap<String, String> lowm=low;
+  ZipFile zip=Zip;
+  ZipEntry en=Zip.getEntry(str);
+  String lows=str.toLowerCase();
+  if (en == null) {
+  String r=lowm.get(lows);
+  if(r!=null)return r;
+  }else return str;
+  if(!str.endsWith("/")) {
+   str=str.concat("/");
+   if(zip.getEntry(str)==null){
+   return lowm.get(lows.concat("/"));
    }
   }
   return str;

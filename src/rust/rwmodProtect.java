@@ -151,7 +151,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    if (ini > 0)buff.append(".ini");
    else if (ini==-3)buff.append(".ogg");
-  buff.append('/');
+ // buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
@@ -202,8 +202,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    lod.str = r;
    StringBuilder buff=new StringBuilder();
    replaceCopy(lod, str,isini, buff);
-   if (isini)replaceAllRes(lod, str, buff);
-   else loder.put(lod.put, lod.ini, false);
+   replaceAllRes(lod, str, buff);
    write(lod, r);
   }
   return lod;
@@ -245,7 +244,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append(',');
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
-  HashMap inihide=iniHide;
   file = loder.getSuperPath(file);
   tag:
   if (isini) {
@@ -269,7 +267,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     rwmodLib libs=rwmodLib.lib;
     do {
      String path=list[i].trim();
-     str = loder.getPath(str, file);
+     str = loder.getPath(path, file);
      if (str != null) {
       str = toPath(str);
       loder lod =replace(str, getType(str)>0);
@@ -365,25 +363,34 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         replaceR(str,path, buff, i);
        }while(++l < size);
        break;
+      case 4:
+       path = loder.getSuperPath(filename);
+       list2=str.split(",");
+       l=0;
+       size=list2.length;
+       do {
+        str = list2[l].trim();
+        replaceR(str,path, buff,i);
+       }while(++l < size);
+      break;
       default:
-       replaceR(str,loder.getSuperPath(filename), buff,i);
-       break;
+      replaceR(str,loder.getSuperPath(filename),buff,i);
+      break;
      }
      i = buff.length();
      if (--i >= 0)buff.setLength(i);
-     list.put(s, buff.toString());
+     list.put(s,buff.toString());
     }
    }
   }
   ini.put(need);
  }
  public String toPath(String str){
-  ZipFile zip=Zip;
   String file=super.toPath(str);
-  if(zip.getEntry(file)==null){
-   return super.toPath(rootPath.concat(str));
+  if(file==null||Zip.getEntry(file)==null){
+  return super.toPath(rootPath.concat(str));
   }
-  return str;
+  return file;
  }
  public void run() {
   ui ui=Ui;
@@ -394,6 +401,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   HashMap inihide = new HashMap();
   iniHide = inihide;
   Oggmap = new HashMap();
+  HashMap lows= new HashMap();
+  low=lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
   Buff = new StringBuilder();
@@ -428,7 +437,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      break;
     }
    }
-   ZipEntry inf=zip.getEntry(super.toPath(rootPath.concat("mod-info.txt")));
+   /*
+   String path=super.toPath(rootPath.concat("mod-info.txt"));
+   ZipEntry inf=zip.getEntry(path);
    if (inf != null) {
     loder ini=new loder(zip.getInputStream(inf));
     HashMap info=ini.ini;
@@ -452,7 +463,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     ini.str = str;
     inihide.put(str, ini);
     write(ini, "mod-info.txt/");
-   }
+   }*/
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
    try {
@@ -460,7 +471,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0) {
-      String fileName=zipEntry.getName();   
+      String fileName=zipEntry.getName();  
+      String lowr=fileName.toLowerCase();
+      if(!lows.containsValue(lowr))lows.put(lowr, fileName);
       byte type=getType(fileName);
       if (type >= 0) {
        try{
