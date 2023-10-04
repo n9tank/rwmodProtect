@@ -216,14 +216,20 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     str=list[0];
    }
    if (isimg>2) {
-    if (music.contains(str))break tag;
-    file = loder.getPath(str, path);
-   } else file = loder.getImagePath(str, path, buff);
+    boolean is=str.startsWith("ROOT:");
+    if(is){
+    file=str.substring(5);
+    }else if(path!=null){
+    file=path.concat(str);
+    }else file=str;
+    list=file.split(":",2);
+    file=list[0];
+    if(!is){
+    if(music.contains(str.split(":",2)[0]))break tag;
+    }
+   }else file = loder.getImagePath(str, path, buff);
    if (file != null) {
     file = toPath(file);
-    if(file==null){
-     System.out.println(str);
-    }
     byte type=getType(file);
     HashMap map;
     if (type == -2) {
@@ -241,7 +247,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   buff.append(str);
   if(list!=null&&list.length>1){
+  if(isimg==2){
   buff.append("*");
+  }else if(isimg>2){
+  buff.append(":");
+  }
   buff.append(list[1]);
   }
   buff.append(',');
