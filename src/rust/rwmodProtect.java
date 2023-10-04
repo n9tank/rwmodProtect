@@ -477,7 +477,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String file=en.getName();
      byte type= getType(file);
      if (type < 0) {
-      if (type == -1 && !inihide.containsKey(file)&&!filemap.containsKey(file)) {
+      if (type == -1 && !inihide.containsKey(file)) {
        if(!file.endsWith("/"))file=file.concat("/");
        copy(file,en);
       } else if (type == -3) {
