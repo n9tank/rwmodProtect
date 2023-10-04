@@ -21,6 +21,7 @@ public final class off {
  public static strictfp boolean isNumber(String string) {
   int n = 0;
   int l=string.length();
+  //-?[0-9]+[.0-9]+
   while (n < l) {
    char c=string.charAt(n);
    if (!Character.isDigit(c) && c != '.' && (c != '-' || n != 0))return false;
@@ -40,7 +41,7 @@ public final class off {
    n = matcher.end();
    String group = matcher.group(0);
    int i=group.length();
-   if (isNumber(group) || ((i == 3 || i == 4) && sset.contains(group)))continue;
+   if (isNumber(group) || ((i == 3 || i == 4) && sset.contains(group))){
    String list[]=str.split("\\.", 2);
    String key=list[0];
    Object o;
@@ -49,15 +50,16 @@ public final class off {
     HashMap loc;
     if (key.equals("section.key"))loc = setion;
     else loc = (HashMap)map.get(key);
-    key = (String)loc.get(list[1]);
+    group = (String)loc.get(list[1]);
    } else {
     o = setion.get("@define ".concat(key));
     if (o == null) {
      o = ((HashMap)map.get("")).get("@global ".concat(key));
     }
-    key = (String)o;
+    group= (String)o;
    }
-   buff.append(key);
+   }
+   buff.append(group);
   }
   j = str.length();
   if (j - n > 0)buff.append(str, n, j);
