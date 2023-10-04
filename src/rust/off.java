@@ -30,7 +30,7 @@ public final class off {
    n = matcher.end();
    String group = matcher.group(0);
    int i=group.length();
-   if(!group.matches("-?[0-9]+[.0-9]+")&& !((i == 3 || i == 4) &&sset.contains(group))){
+   if(!group.matches("-?[0-9.]+")&& !((i == 3 || i == 4) &&sset.contains(group))){
    String list[]=str.split("\\.", 2);
    String key=list[0];
    Object o;
