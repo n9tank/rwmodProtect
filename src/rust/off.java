@@ -16,19 +16,8 @@ public final class off {
   sset.add("sin");
   sset.add("sqrt");
  }
- public static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.]*");;
+ public static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  public static final Pattern find2=Pattern.compile("[-+/*^%()]");
- public static strictfp boolean isNumber(String string) {
-  int n = 0;
-  int l=string.length();
-  //-?[0-9]+[.0-9]+
-  while (n < l) {
-   char c=string.charAt(n);
-   if (!Character.isDigit(c) && c != '.' && (c != '-' || n != 0))return false;
-   ++n;
-  }
-  return true;
- }
  public static final String off(HashMap map, HashMap setion, String str) {
   boolean isNumber=find2.matcher(str).find();
   StringBuilder buff = new StringBuilder();
@@ -41,7 +30,7 @@ public final class off {
    n = matcher.end();
    String group = matcher.group(0);
    int i=group.length();
-   if(!isNumber(group) && !((i == 3 || i == 4) &&sset.contains(group))){
+   if(!group.matches("-?[0-9]+[.0-9]+")&& !((i == 3 || i == 4) &&sset.contains(group))){
    String list[]=str.split("\\.", 2);
    String key=list[0];
    Object o;
