@@ -32,9 +32,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public OutputStreamWriter Ow;
  public StringBuilder Buff;
  public String musicPath;
+ public boolean base96;
  public static int max;
  public static String fileD;
- public static String iniD;
  public static HashMap<String,HashMap> Res;
  public static HashSet music;
  public static HashMap set(Object o, int i) {
@@ -103,15 +103,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    max = Integer.valueOf(list[2]);
    String file= set.get("file");
    fileD = file;
-   String ini=set.get("ini");
-   if (ini == null) {
-    ini = file;
-   } else if (ini.startsWith("+")) {
-    StringBuilder buff=new StringBuilder(file);
-    buff.append(ini, 1, ini.length());
-    ini = buff.toString();
-   }
-   iniD = ini;
    list = set.get("music").split(",");
    HashSet musics=new HashSet();
    music = musics;
@@ -150,7 +141,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     break;
   }
   if (i >= 0) {
-   String d=ini > 0 ?iniD: fileD;
+   String d=fileD;
    int l=d.length();
    do{
     int u=i % l;
