@@ -151,7 +151,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    if (ini > 0)buff.append(".ini");
    else if (ini==-3)buff.append(".ogg");
- // buff.append('/');
+   buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
@@ -178,7 +178,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public loder replace(String str, boolean isini) {
   loder lod=null;
-  str = toPath(str);
+  ZipEntry en=toPath(str);
+  str=en.getName();
   Object o;
   tag: {
    if (!isini || (o = iniMap.get(str)) == null) {
@@ -187,7 +188,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     if (o == null) {
      ZipFile zip=Zip;
      try {
-      lod = new loder(zip.getInputStream(zip.getEntry(str)));
+      lod = new loder(zip.getInputStream(en));
       map.put(str, lod);
      } catch (Exception e) {
       Ui.fali(e);
@@ -229,7 +230,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     }
    }else file = loder.getImagePath(str, path, buff);
    if (file != null) {
-    file = toPath(file);
+    ZipEntry en = toPath(file);
     byte type=getType(file);
     HashMap map;
     if (type == -2) {
@@ -240,7 +241,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     Object o=map.get(file);
     if (o == null) {
      str = FileName(type);
-     copy(str,Zip.getEntry(file));
+     copy(str,en);
      map.put(file, str);
     } else str = (String)o;
    }
@@ -282,14 +283,15 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String path=list[i].trim();
      str = loder.getPath(path, file);
      if (str != null) {
-      str = toPath(str);
-      loder lod =replace(str, getType(str)>0);
+      ZipEntry en = toPath(str);
+      str=en.getName();
+      loder lod =replace(str,getType(str)>0);
       path = lod.str;
       loder.put(ini.put, lod.put, true);
      } else if (libs != null) {
       map = libs.iniMap;
       str = path.substring(5);
-      loder lod=(loder)map.get(libs.toPath(str));
+      loder lod=(loder)map.get(libs.toPath(str).getName());
       loder.put(ini.put, lod.put, true);
      }
      buff.append(path);
@@ -398,9 +400,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   ini.put(need);
  }
- public String toPath(String str){
-  String file=super.toPath(str);
-  if(file==null||Zip.getEntry(file)==null){
+ public ZipEntry toPath(String str){
+  ZipEntry file=super.toPath(str);
+  if(file==null){
   return super.toPath(rootPath.concat(str));
   }
   return file;
@@ -477,11 +479,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       }
      }
     }
-    String path=super.toPath(rootPath.concat("mod-info.txt"));
-    if(path!=null){
-     if(!inihide.containsKey(path)){
-     ZipEntry inf=zip.getEntry(path);
-     if (inf != null) {
+    ZipEntry inf=super.toPath(rootPath.concat("mod-info.txt"));
+    if(inf!=null){
+     String path=inf.getName();
+     if (!inihide.containsKey(path)) {
       loder ini=new loder(zip.getInputStream(inf));
       HashMap info=ini.ini;
       Object o=info.get("music");
@@ -497,7 +498,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         }
         musicPath = musicpath;
         map.put("sourceFolder","");
-       }
       }
       String str=inf.getName();
       ini.put = ini.ini;
@@ -541,9 +541,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        buff.setLength(0);
        buff.append(file,0,i);
        buff.append("_map.png");
-       name=super.toPath(buff.toString());
+       en=super.toPath(buff.toString());
+       name=en.getName();
        if(name!=null){
-        en=zip.getEntry(name);
         copy(loder.getName(name),en);
        }
       } else if (type == -3) {

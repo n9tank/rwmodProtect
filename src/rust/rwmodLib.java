@@ -13,7 +13,7 @@ public class rwmodLib {
  public HashMap iniMap;
  public HashMap iniHide;
  public ui Ui;
- public HashMap<String,String> low;
+ public HashMap<String,ZipEntry> low;
  public static rwmodLib lib;
  public static void init(File str) {
   if(!str.exists())return;
@@ -49,7 +49,7 @@ public class rwmodLib {
      }
      String lowr=fileName.toLowerCase();
      if(!lows.containsKey(lowr)){
-     lows.put(lowr,fileName);
+     lows.put(lowr,zipEntry);
      }
     }
    }
@@ -80,33 +80,33 @@ public class rwmodLib {
   }
   return false;
  }
- public String toPath(String str) {
+ public ZipEntry toPath(String str) {
   str = str.replaceAll("/+", "/").replaceAll("^/","");
-  HashMap<String, String> lowm=low;
+  HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
   String lows=str.toLowerCase();
   if (en == null) {
-  String r=lowm.get(lows);
+  ZipEntry r=lowm.get(lows);
   if(r!=null)return r;
-  }else return str;
+  }else return en;
   if(!str.endsWith("/")) {
    str=str.concat("/");
-   if(zip.getEntry(str)==null){
+   if((en=zip.getEntry(str))==null){
    return lowm.get(lows.concat("/"));
    }
   }
-  return str;
+  return en;
  }
  public loder replace(String str, boolean isini) {
   loder lod;
-  str = toPath(str);
+  ZipEntry en =toPath(str);
   Object o;
   HashMap<String, loder> map=isini ?iniMap: iniHide;
   if ((o = map.get(str)) == null) {
    try {
     ZipFile zip=Zip;
-    lod = new loder(zip.getInputStream(zip.getEntry(str)));
+    lod = new loder(zip.getInputStream(en));
     map.put(str, lod);
    } catch (Exception e) {
     Ui.fali(e);
