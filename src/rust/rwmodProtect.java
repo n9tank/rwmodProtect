@@ -292,7 +292,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       map = libs.iniMap;
       str = path.substring(5);
       loder lod=(loder)map.get(libs.toPath(str).getName());
-      loder.put(ini.put, lod.put, true);
+      loder.put(ini.as,lod.put,true);
      }
      buff.append(path);
      buff.append(',');
@@ -532,11 +532,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       if (type == -1 && !inihide.containsKey(file)) {
        name=loder.getName(file);
        int i=file.length();
-      if(!file.endsWith("/")){
+       if(!file.endsWith("/")){
        name=name.concat("/");
-       --i;
-       }
-       i-=3;
+       }else --i;
+       i-=4;
        copy(name,en);
        buff.setLength(0);
        buff.append(file,0,i);
@@ -544,7 +543,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        en=super.toPath(buff.toString());
        name=en.getName();
        if(name!=null){
-        copy(loder.getName(name),en);
+        name=loder.getName(name);
+        copy(name.concat("/"),en);
        }
       } else if (type == -3) {
        copy(FileName(type), en);

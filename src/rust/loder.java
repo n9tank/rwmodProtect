@@ -117,10 +117,9 @@ public class loder {
   HashMap map=new HashMap();
   put(map, pu, true);
   put(pu, re, false);
-  HashMap hash=new HashMap();
-  put(hash, pu, true);
+  HashMap hash=as;
+  put(hash,pu,true);
   as(hash);
-  as = hash;
   HashMap need=new HashMap();
   HashMap def=rwmodProtect.Res;
   Iterator ite=hash.entrySet().iterator();
@@ -281,6 +280,7 @@ public class loder {
   HashMap map=new HashMap();
   HashMap global=new HashMap();
   put = map;
+  as=new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;
   HashMap list=null;
