@@ -421,6 +421,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ini.put();
  }
  public ZipEntry toPath(String str){
+  str=str.replaceFirst("^/+","");
  //使用"/"根路径，游戏会出现奇奇妙妙的bug 暂不考虑兼容
   ZipEntry file=super.toPath(str);
   if (file == null) {
@@ -449,7 +450,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   iniMap = inimap;
   HashMap inihide = new HashMap();
   iniHide = inihide;
-  HashMap filedmap=new HashMap();
 //  Oggmap = new HashMap();
   HashMap lows= new HashMap();
   low = lows;
@@ -495,14 +495,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      ZipEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0){
       String fileName=zipEntry.getName();  
-      String str=fileName;
-      do{
-       str=loder.getSuperPath(str);
-       String lowstr=str.toLowerCase();
-       if(!filedmap.containsKey(lowstr)){
-        filedmap.put(lowstr,str);
-       }else break;
-      }while(str.length()>0);
       byte type=getType(fileName);
       if (type >= 0) {
        try {
@@ -531,13 +523,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        o = map.get("sourceFolder");
        if (o != null) {
         String musicpath = (String)o;
-        musicpath=path(musicpath);
-        if (musicpath.length()!= 0) {
-         ZipEntry en=super.toPath(musicpath);
-         if(en!=null){
-          musicPath=en.getName();
-         }
-        }else musicpath="";
+        musicpath=musicpath.replaceFirst("^[/\\]","");
+        if(musicpath.length()>0&&!musicpath.endsWith("/"))musicpath=musicpath.concat("/");
+        musicPath=musicpath;
         map.put("sourceFolder","");
        }
       }
