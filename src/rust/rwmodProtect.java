@@ -233,6 +233,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (file != null) {
     ZipEntry en = toPath(file);
     if (en != null) {
+    file=en.getName();
      byte type=getType(file);
      HashMap map;
     // if (type == -2) {
