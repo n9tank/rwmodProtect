@@ -27,7 +27,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public int oggIndex=-2;
  public ZipOutputStream Zipout;
  public HashMap Filemap;
- public HashMap Oggmap;
+// public HashMap Oggmap;
  public ByteBuffer Warp;
  public WritableByteChannel Out;
  public OutputStreamWriter Ow;
@@ -337,23 +337,24 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (file.endsWith("/"))--i;
   i -= 4;
   int ed=i;
-  if (file.startsWith(".ini", i)) {
+  String filel=file.toLowerCase();
+  if (filel.startsWith(".ini", i)) {
    if (!iniHide.containsKey(file)) {
     return 1;
    } else return -2;
-  } else if (file.startsWith(".tmx", i)) {
+  } else if (filel.startsWith(".tmx", i)) {
    return -1;
   } else {
    i -= 14;
    String end="all-units.template";
-   if (file.startsWith(end, i)) {
+   if (filel.startsWith(end, i)) {
     if (i > 0) {
      if (file.startsWith("/", --i))return 0;
     } else if (i == 0)return 0;
    }
   }
   String path=musicPath;
-  if (path != null && file.startsWith(musicPath) && file.startsWith(".ogg",ed)) {
+  if (path != null && file.startsWith(musicPath) && filel.startsWith(".ogg",ed)) {
    return -3;
   }
   return -2;
@@ -447,7 +448,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   iniMap = inimap;
   HashMap inihide = new HashMap();
   iniHide = inihide;
-  Oggmap = new HashMap();
+//  Oggmap = new HashMap();
   HashMap lows= new HashMap();
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
