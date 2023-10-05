@@ -179,7 +179,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public loder replace(String str, boolean isini) {
   loder lod=null;
-  ZipEntry en=toPath(str);
+  ZipEntry en=rootPath(str);
   str = en.getName();
   Object o;
   tag: {
@@ -199,17 +199,19 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    lod = (loder)o;
   }
-  if (lod.str == null) {
-   String r=FileName(isini ?1: 0);
-   lod.str = r;
-   StringBuilder buff=new StringBuilder();
-   replaceCopy(lod, str,isini, buff);
-   replaceAllRes(lod, str,buff,isini);
-   write(lod, r);
-  }
+  write(lod,str,isini,new StringBuilder());
   return lod;
  }
- public void replaceR(String str, String path, StringBuilder buff,int isimg,boolean post) {
+ public void write(loder lod,String path,boolean isini,StringBuilder buff) {
+  if(lod.str!=null)return;
+  String r=FileName(isini ?1: 0);
+  lod.str=r;
+  path=loder.getSuperPath(path);
+  replaceCopy(lod,path,isini, buff);
+  replaceAllRes(lod,path,buff,isini);
+  write(lod,r);
+ }
+ public void replaceR(String str, String path, StringBuilder buff, int isimg, boolean post) {
   String file;
   String list[]=null;
   tag: {
@@ -231,7 +233,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     }
    } else file = loder.getImagePath(str, path, buff);
    if (file != null) {
-    ZipEntry en = toPath(file);
+    ZipEntry en = rootPath(file);
     if (en != null) {
      file=en.getName();
      byte type=getType(file);
@@ -270,7 +272,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append(',');
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
-  file = loder.getSuperPath(file);
   BitSet bit;
   int index=0;
   tag:
@@ -299,7 +300,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String path=list[i].trim();
      str = loder.getPath(path, file);
      if (str != null) {
-      ZipEntry en = toPath(str);
+      ZipEntry en = rootPath(str);
       str = en.getName();
       loder lod =replace(str, getType(str) > 0);
       path = lod.str;
@@ -390,26 +391,24 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      buff.setLength(0);
      switch (i) {
       case 2:
-       String path = loder.getSuperPath(filename);
        String list2[]=str.split(",");
        int l=0,size=list2.length;
        do {
         str = list2[l].trim();
-        replaceR(str, path, buff, i,get);
+        replaceR(str, filename,buff, i,get);
        }while(++l < size);
        break;
       case 4:
-       path = loder.getSuperPath(filename);
        list2 = str.split(",");
        l = 0;
        size = list2.length;
        do {
         str = list2[l].trim();
-        replaceR(str, path, buff, i,get);
+        replaceR(str,filename,buff,i,get);
        }while(++l < size);
        break;
       default:
-       replaceR(str, loder.getSuperPath(filename), buff, i,get);
+       replaceR(str,filename, buff, i,get);
        break;
      }
      i = buff.length();
@@ -420,12 +419,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   ini.put();
  }
- public ZipEntry toPath(String str){
+ public ZipEntry rootPath(String str){
   str=str.replaceFirst("^/+","");
  //使用"/"根路径，游戏会出现奇奇妙妙的bug 暂不考虑兼容
-  ZipEntry file=super.toPath(str);
+  ZipEntry file=toPath(str);
   if (file == null) {
-   return super.toPath(rootPath.concat(str));
+   return toPath(rootPath.concat(str));
   }
   return file;
  }
@@ -511,7 +510,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       }
      }
     }
-    ZipEntry inf=super.toPath(rootPath.concat("mod-info.txt"));
+    ZipEntry inf=toPath(rootPath.concat("mod-info.txt"));
     if (inf != null) {
      String path=inf.getName();
      if (!inihide.containsKey(path)) {
@@ -541,15 +540,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      Map.Entry<String,loder> ini=ite.next();
      String filename=ini.getKey();
      loder loder=ini.getValue();
-     byte type=1;
-     String r=loder.str;
-     if (r == null) {
-      r = FileName(type);
-      loder.str = r;
-      replaceCopy(loder, filename, true, buff);
-      replaceAllRes(loder, filename, buff,true);
-      write(loder, r);
-     }
+     write(loder,filename,true,buff);
     }
     zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
@@ -568,7 +559,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        buff.setLength(0);
        buff.append(file, 0, i);
        buff.append("_map.png");
-       en=super.toPath(buff.toString());
+       en=toPath(buff.toString());
        if (en!=null) {
         name=loder.getName(en.getName());
         copy(name.concat("/"), en);

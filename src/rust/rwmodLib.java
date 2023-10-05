@@ -150,6 +150,9 @@ public class rwmodLib {
   }
   loder.put(lod.put, lod.ini, false);
  }
+ public void write(loder lod,String str,boolean isini,StringBuilder buff){
+ lod.str="";
+ }
  public loder getSpuerAll(String str, StringBuilder buff) {
   int i=str.length();
   buff.setLength(0);
@@ -160,9 +163,13 @@ public class rwmodLib {
    buff.setLength(i + 1);
    buff.append("all-units.template");
    str = buff.toString();
-   if (inihide.containsKey(str) || inihide.containsKey(str = str.concat("/"))) {
+   loder lod;
+   ZipEntry en=toPath(str);
+   if (en!=null) {
+    lod=(loder)iniHide.get(str=en.getName());
     buff.setLength(0);
-    return replace(str, false);
+    if(lod.str==null)write(lod,loder.getSuperPath(str),false,new StringBuilder());
+    return lod;
    }
   }while(i > 0);
   buff.setLength(0);
