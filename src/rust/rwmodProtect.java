@@ -425,6 +425,18 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return file;
  }
+ /*
+ .tmx _map.png .ogg
+ 我认为没有这个必要
+ public boolean used(String str){
+  res res;
+  if(iniHide.get(str)==null){
+   return true;
+  }else if((res=(res)Filemap.get(str))!=null&&!res.close){
+   return true;
+  }
+  return false;
+ }*/
  public void run() {
   ui ui=Ui;
   HashMap filemap = new HashMap();
@@ -546,7 +558,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String file=en.getName();
      byte type= getType(file);
      if (type < 0) {
-      if (type == -1 && !inihide.containsKey(file)) {
+      if (type == -1) {
        name = loder.getName(file);
        int i=file.length();
        if (!file.endsWith("/")) {
@@ -558,12 +570,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        buff.append(file, 0, i);
        buff.append("_map.png");
        en=super.toPath(buff.toString());
-       if (en != null) {
+       if (en!=null) {
         name=loder.getName(en.getName());
         copy(name.concat("/"), en);
        }
-      } else if (type == -3) {
+      } else{
+       if (type==-3) {
        copy(FileName(type), en);
+      }
       }
      }
     }
