@@ -196,7 +196,6 @@ public class loder {
     en= (Map.Entry) ite2.next();
     String key=(String)en.getKey();
     if(tr.get(key)==null)continue;
-    //System.out.println(key);
     o = map.get(key);
     String str;
     int in;
