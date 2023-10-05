@@ -41,7 +41,7 @@ public class rwmodLib {
     ZipEntry zipEntry=ent.nextElement();
     if (!zipEntry.isDirectory()) {
      String fileName=zipEntry.getName();
-     loder lod=new loder(zip.getInputStream(zipEntry));
+     loderLib lod=new loderLib(zip.getInputStream(zipEntry));
      if (isini(fileName)&&dontlod(lod)) {
       inimap.put(fileName, lod);
      } else {
@@ -57,7 +57,7 @@ public class rwmodLib {
    while (ite.hasNext()) {
     Map.Entry en=(Map.Entry)ite.next();
     String key=(String)en.getKey();
-    loder lod=(loder)en.getValue();
+    loderLib lod=(loderLib)en.getValue();
     if (lod.str == null) {
      lod.str="";
      lodAllCopy(lod, key, true);
@@ -67,7 +67,7 @@ public class rwmodLib {
    ui.fali(e);
   }
  }
- public static boolean dontlod(loder lod) {
+ public static boolean dontlod(loderLib lod) {
   Object o=lod.ini.get("core");
   if (o != null) {
    HashMap map=(HashMap)o;
@@ -98,21 +98,21 @@ public class rwmodLib {
   }
   return en;
  }
- public loder replace(String str, boolean isini) {
-  loder lod;
+ public loderLib replace(String str, boolean isini) {
+  loderLib lod;
   ZipEntry en =toPath(str);
   Object o;
-  HashMap<String, loder> map=isini ?iniMap: iniHide;
+  HashMap<String, loderLib> map=isini ?iniMap: iniHide;
   if ((o = map.get(str)) == null) {
    try {
     ZipFile zip=Zip;
-    lod = new loder(zip.getInputStream(en));
+    lod = new loderLib(zip.getInputStream(en));
     map.put(str, lod);
    } catch (Exception e) {
     Ui.fali(e);
     lod = null;
    }
-  } else lod = (loder)o;
+  } else lod = (loderLib)o;
   if (lod.str == null) {
    lod.str ="";
    lodAllCopy(lod, str, isini(str));
@@ -127,11 +127,11 @@ public class rwmodLib {
    return true;
   } else return false;
  }
- public void lodAllCopy(loder lod, String file, boolean isini) {
-  String str=loder.getSuperPath(file);
+ public void lodAllCopy(loderLib lod, String file, boolean isini) {
+  String str=loderLib.getSuperPath(file);
   if (isini) {
-   loder put=getSpuerAll(file, Buff);
-   if (put != null)loder.put(lod.put, put.put, false);
+   loderLib put=getSpuerAll(file, Buff);
+   if (put != null)loderLib.put(lod.put, put.put, false);
   }
   Object o=lod.ini.get("core");
   if (o != null) {
@@ -142,18 +142,18 @@ public class rwmodLib {
     int i=0,l=list.length;
     do{
      str = list[i];
-     str = loder.getPath(str, file);
-     loder ini=replace(str, isini(str));
-     loder.put(lod.put, ini.put, true);
+     str = loderLib.getPath(str, file);
+     loderLib ini=replace(str, isini(str));
+     loderLib.put(lod.put, ini.put, true);
     }while(++i < l);
    }
   }
-  loder.put(lod.put, lod.ini, false);
+  loderLib.put(lod.put, lod.ini, false);
  }
- public void write(loder lod,String str,boolean isini,StringBuilder buff){
+ public void write(loderLib lod,String str,boolean isini,StringBuilder buff){
  lod.str="";
  }
- public loder getSpuerAll(String str, StringBuilder buff) {
+ public loderLib getSpuerAll(String str, StringBuilder buff) {
   int i=str.length();
   buff.setLength(0);
   buff.append(str);
@@ -163,10 +163,10 @@ public class rwmodLib {
    buff.setLength(i + 1);
    buff.append("all-units.template");
    str = buff.toString();
-   loder lod;
+   loderLib lod;
    ZipEntry en=toPath(str);
    if (en!=null) {
-    lod=(loder)iniHide.get(str=en.getName());
+    lod=(loderLib)iniHide.get(str=en.getName());
     buff.setLength(0);
     if(lod.str==null)write(lod,str,false,new StringBuilder());
     return lod;
