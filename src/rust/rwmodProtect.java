@@ -419,6 +419,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ini.put();
  }
  public ZipEntry toPath(String str) {
+ //使用"/"根路径，游戏会出现奇奇妙妙的bug 暂不考虑兼容
   ZipEntry file=super.toPath(str);
   if (file == null) {
    return super.toPath(rootPath.concat(str));
@@ -426,11 +427,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   return file;
  }
  /*
- .tmx _map.png .ogg
- 我认为没有这个必要
+ .tmx .ogg
+ 这些行为对游戏有影响，我认为没有这个必要
+ _map.png 没有使用场景，不考虑优化
  public boolean used(String str){
   res res;
-  if(iniHide.get(str)==null){
+  if(iniHide.get(str)!=null){
    return true;
   }else if((res=(res)Filemap.get(str))!=null&&!res.close){
    return true;
