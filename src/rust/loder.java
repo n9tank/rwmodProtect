@@ -162,6 +162,10 @@ public class loder {
     putall.put(str,map.get(str));
    }
   }
+  as=null;
+  need=null;
+  bit=null;
+  cou=null;
  }
  public void eqz() {
   HashMap pu=put;
@@ -172,8 +176,8 @@ public class loder {
   HashMap hash=new HashMap();
   as=hash;
   put(hash, pu, true);
-  putoff(hash,re,false);
   int ed=end;
+  putoff(hash,re,false);
   as(hash);
   HashMap cous=cou;
   ArrayList<Map.Entry> need=new ArrayList();
@@ -340,9 +344,8 @@ public class loder {
   return str;
  }
  public loder(InputStreamReader input)throws Exception {
-  HashMap map=new HashMap();
   HashMap global=new HashMap();
-  put = map;
+  put = new HashMap();
   cou=new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;

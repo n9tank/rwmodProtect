@@ -271,7 +271,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append(',');
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
-  BitSet bit;
+  BitSet bit=new BitSet(0);
   int index=0;
   tag:
   if (isini) {
@@ -293,7 +293,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
     String list[]=str.split(",");
     int i=0,n=list.length;
-    bit = new BitSet(index + n);
     rwmodLib libs=rwmodLib.lib;
     do {
      String path=list[i].trim();
@@ -319,7 +318,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (--i >= 0)buff.setLength(i);
    if (o != null || v)core.put("copyFrom", buff.toString());
   } else bit = null;
-  if (bit == null)bit = new BitSet(index);
   ini.bit = bit;
  }
  public void write(loder ini, String name) {
