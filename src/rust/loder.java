@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.BitSet;
 
 public class loder {
  final static HashSet em=new HashSet();
@@ -18,7 +19,10 @@ public class loder {
  public HashMap as;
  public String str;
  public HashMap cou;
+ public ArrayList needs;
+ public BitSet bit;
  public int end;
+ public BitSet isCore;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -91,10 +95,8 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public void put(loder lod,boolean skip){
+ public void putoff(HashMap map,HashMap map2,boolean skip){
   int ed=end;
-  HashMap map=ini;
-  HashMap map2=lod.put;
   HashMap cous=cou;
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
@@ -128,12 +130,7 @@ public class loder {
      while(ite2.hasNext()){
      key=(String) ite2.next();
      if(find.get(key)!=null){
-     Object r=list.get(key);
-     if (r != null) {
-     ((IntOff)r).off=ed;
-     }else{
-     list.put(key,new IntOff());
-     }
+     list.put(key,ed);
     }
     }
    }
@@ -141,14 +138,18 @@ public class loder {
   }
   end=++ed;
  }
- public void put(HashMap need) {
+ public void put() {
   HashMap hash=as;
   HashMap put=ini;
-  Iterator ite=need.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
+  ArrayList need=needs;
+  int l=need.size();
+  while(--l>=0) {
+   Map.Entry en=(Map.Entry)need.get(l);
    String str=(String)en.getKey();
    HashMap map=(HashMap)hash.get(str);
+   if(map==null){
+    System.out.println(str);
+   }
    Object o=put.get(str);
    HashMap putall;
    if (o == null) {
@@ -159,47 +160,51 @@ public class loder {
    int i=list.size();
    while (--i >= 0) {
     str = (String)list.get(i);
-    putall.put(str, map.get(str));
+    putall.put(str,map.get(str));
    }
   }
  }
- public HashMap<String,ArrayList> eqz() {
+ public ArrayList eqz() {
   HashMap pu=put;
   HashMap re=ini;
-  HashMap map=new HashMap();
-  put(map, pu, true);
-  as(map);
-  put(pu, re, false);
-  HashMap hash=as;
-  put(hash,pu,true);
+  HashMap coe=new HashMap();
+  put(coe,pu,true);
+  as(coe);
+  HashMap hash=new HashMap();
+  as=hash;
+  put(hash, pu, true);
+  putoff(hash,re,false);
+  int ed=end;
   as(hash);
-  HashMap need=new HashMap();
+  HashMap cous=cou;
+  ArrayList<Map.Entry> need=new ArrayList();
+  needs=need;
   HashMap def=rwmodProtect.Res;
   Iterator ite = hash.entrySet().iterator();
+  BitSet bset=bit;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   Object o=wh(key,def,rwmodProtect.max);
+   String ac=(String)en.getKey();
+   Object o=wh(ac,def,rwmodProtect.max);
    if (o != null) {
-    ArrayList needL=new ArrayList();
-    HashMap <String, Integer> list=(HashMap)o;
-    HashMap<String,String> list2=(HashMap)en.getValue();
-    HashMap list3=(HashMap)map.get(key);
-    HashMap list4=(HashMap)re.get(key);
-    Iterator<Map.Entry<String, String>> ite2=list2.entrySet().iterator();
-    while (ite2.hasNext()) {
-     Map.Entry<String, String> en2=ite2.next();
-     String ke = en2.getKey();
-     String value=en2.getValue();
-     String ov=null;
-     boolean eqz=true;
-     if (list.get(ke) != null && (list3 == null || (ov = (String)list3.get(ke)) == null || (eqz = !get(value, hash, list2).equals(get(ov, map, list3))))) {
-      needL.add(ke);
-     } else if (list4 != null && !eqz) {
-      list4.remove(ke);
-     }
+    ArrayList arr=new ArrayList();
+    HashMap map=(HashMap)cous.get(ac);
+    HashMap list=(HashMap)en.getValue();
+    HashMap list2=(HashMap)coe.get(ac);
+    Iterator ite2=list.entrySet().iterator();
+    while(ite2.hasNext()){
+    en= (Map.Entry) ite2.next();
+     String key=(String)en.getKey();
+     o = map.get(key);
+     String str;
+    int in;
+    if(o==null||(in=o)==ed||bset.get(in)||list2==null||(str=(String)list2.get(key))==null||!loder.get((String)en.getValue(),hash,list).equals(loder.get(str,coe,list2))){
+    arr.add(key);
     }
-    if (needL.size() > 0)need.put(key, needL);
+    }
+    if(arr.size()>0){
+    need.add(Map.entry(ac,arr));
+    }
    }
   }
   return need;
@@ -217,14 +222,14 @@ public class loder {
     if (o != null) {
      key = (String)o;
      HashMap set=(HashMap)map.get(vl.concat(key));
-     mapput.putAll(set);
+     if(set!=null)mapput.putAll(set);
     }
    }
    Object o=hash.get("@copyFromSection");
    if (o != null) {
     key = (String)o;
     HashMap set=(HashMap)map.get(key);
-    mapput.putAll(set);
+    if(set!=null)mapput.putAll(set);
    }
    if(mapput.size()>0){
     mapput.putAll(hash);

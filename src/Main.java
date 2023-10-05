@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.HashMap;
 public class Main {
  public static void main(String[] args) throws Exception {
-  //ui.exec(new File("sdcard/a.rwmod"));
+  ui.exec(new File("sdcard/a.rwmod"));
   /*ZipFile zip=new ZipFile("sdcard/b.rwmod");
   Enumeration<? extends ZipEntry> en=zip.entries();
   while(en.hasMoreElements()){
