@@ -22,7 +22,6 @@ public class loder {
  public ArrayList needs;
  public BitSet bit;
  public int end;
- public BitSet isCore;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -194,9 +193,9 @@ public class loder {
     Iterator ite2=list.entrySet().iterator();
     while(ite2.hasNext()){
     en= (Map.Entry) ite2.next();
-     String key=(String)en.getKey();
-     o = map.get(key);
-     String str;
+    String key=(String)en.getKey();
+    o = map.get(key);
+    String str;
     int in;
     if(o==null||(in=o)==ed||bset.get(in)||list2==null||(str=(String)list2.get(key))==null||!loder.get((String)en.getValue(),hash,list).equals(loder.get(str,coe,list2))){
     arr.add(key);
@@ -319,6 +318,7 @@ public class loder {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
       key = off.off(map, loc, key);
+      if(key==null)return key;
      }
      buff.append(key);
      j = i = ++n;

@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import java.util.BitSet;
 
 public class rwmodProtect extends rwmodLib implements Runnable {
  public File In;
@@ -152,7 +152,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    if (ini > 0)buff.append(".ini");
    else if (ini==-3)buff.append(".ogg");
-   buff.append('/');
+  // buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
