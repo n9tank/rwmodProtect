@@ -190,10 +190,13 @@ public class loder {
     HashMap map=(HashMap)cous.get(ac);
     HashMap list=(HashMap)en.getValue();
     HashMap list2=(HashMap)coe.get(ac);
+    HashMap tr=(HashMap)o;
     Iterator ite2=list.entrySet().iterator();
     while(ite2.hasNext()){
     en= (Map.Entry) ite2.next();
     String key=(String)en.getKey();
+    if(tr.get(key)==null)continue;
+    //System.out.println(key);
     o = map.get(key);
     String str;
     int in;
@@ -329,8 +332,7 @@ public class loder {
   return buff.toString();
  }
  public static String getPath(String str, String path) {
-  String s;
-  if (str.startsWith(s = "CORE:")) {
+  if (str.startsWith("CORE:")) {
    str = null;
   } else if (str.startsWith("ROOT:")) {
    str = str.substring(5);
