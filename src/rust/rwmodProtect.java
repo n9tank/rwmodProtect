@@ -289,10 +289,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       path = lod.str;
       loder.put(ini.put, lod.put, true);
      } else if (libs != null) {
+      /*
       map = libs.iniMap;
       str = path.substring(5);
       loder lod=(loder)map.get(libs.toPath(str).getName());
-      loder.put(ini.as,lod.put,true);
+      loder.put(ini.put,lod.put,true);
+      */
      }
      buff.append(path);
      buff.append(',');
