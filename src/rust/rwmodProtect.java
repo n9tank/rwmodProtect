@@ -233,7 +233,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (file != null) {
     ZipEntry en = toPath(file);
     if (en != null) {
-    file=en.getName();
+     file=en.getName();
      byte type=getType(file);
      HashMap map;
     // if (type == -2) {
@@ -420,7 +420,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   ini.put();
  }
- public ZipEntry toPath(String str) {
+ public ZipEntry toPath(String str){
  //使用"/"根路径，游戏会出现奇奇妙妙的bug 暂不考虑兼容
   ZipEntry file=super.toPath(str);
   if (file == null) {
@@ -449,6 +449,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   iniMap = inimap;
   HashMap inihide = new HashMap();
   iniHide = inihide;
+  HashMap filedmap=new HashMap();
 //  Oggmap = new HashMap();
   HashMap lows= new HashMap();
   low = lows;
@@ -492,10 +493,16 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
-     String fileName=zipEntry.getName();  
-     String lowr=fileName.toLowerCase();
-     if (!lows.containsValue(lowr))lows.put(lowr,zipEntry);
-     if (zipEntry.getSize() != 0) {
+     if (zipEntry.getSize() != 0){
+      String fileName=zipEntry.getName();  
+      String str=fileName;
+      do{
+       str=loder.getSuperPath(str);
+       String lowstr=str.toLowerCase();
+       if(!filedmap.containsKey(lowstr)){
+        filedmap.put(lowstr,str);
+       }else break;
+      }while(str.length()>0);
       byte type=getType(fileName);
       if (type >= 0) {
        try {
@@ -524,13 +531,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        o = map.get("sourceFolder");
        if (o != null) {
         String musicpath = (String)o;
-        if (musicpath.length() != 0) {
+        musicpath=path(musicpath);
+        if (musicpath.length()!= 0) {
          ZipEntry en=super.toPath(musicpath);
          if(en!=null){
           musicPath=en.getName();
-          map.put("sourceFolder","");
          }
-        }
+        }else musicpath="";
+        map.put("sourceFolder","");
        }
       }
       ini.put = ini.ini;

@@ -80,8 +80,11 @@ public class rwmodLib {
   }
   return false;
  }
+ public String path(String str){
+  return str.replaceAll("/+", "/").replaceAll("^/","");
+ }
  public ZipEntry toPath(String str) {
-  str = str.replaceAll("/+", "/").replaceAll("^/","");
+  str = path(str);
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
