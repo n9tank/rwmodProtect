@@ -168,7 +168,7 @@ public class rwmodLib {
    if (en!=null) {
     lod=(loder)iniHide.get(str=en.getName());
     buff.setLength(0);
-    if(lod.str==null)write(lod,loder.getSuperPath(str),false,new StringBuilder());
+    if(lod.str==null)write(lod,str,false,new StringBuilder());
     return lod;
    }
   }while(i > 0);
