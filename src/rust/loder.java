@@ -21,7 +21,7 @@ public class loder {
  public HashMap cou;
  public ArrayList needs;
  public BitSet bit;
- public int end;
+ public byte end;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -95,7 +95,7 @@ public class loder {
   return null;
  }
  public void putoff(HashMap map,HashMap map2,boolean skip){
-  int ed=end;
+  byte ed=end;
   HashMap cous=cou;
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
@@ -163,7 +163,7 @@ public class loder {
    }
   }
  }
- public ArrayList eqz() {
+ public void eqz() {
   HashMap pu=put;
   HashMap re=ini;
   HashMap coe=new HashMap();
@@ -198,7 +198,7 @@ public class loder {
     if(tr.get(key)==null)continue;
     o = map.get(key);
     String str;
-    int in;
+    byte in;
     if(o==null||(in=o)==ed||bset.get(in)||list2==null||(str=(String)list2.get(key))==null||!loder.get((String)en.getValue(),hash,list).equals(loder.get(str,coe,list2))){
     arr.add(key);
     }
@@ -208,7 +208,6 @@ public class loder {
     }
    }
   }
-  return need;
  }
  public static void as(HashMap map) {
   Iterator ite=map.entrySet().iterator();

@@ -199,11 +199,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    lod = (loder)o;
   }
-  write(lod,str,isini,new StringBuilder());
+  if(lod.str==null)write(lod,str,isini,new StringBuilder());
   return lod;
  }
  public void write(loder lod,String path,boolean isini,StringBuilder buff) {
-  if(lod.str!=null)return;
   String r=FileName(isini ?1: 0);
   lod.str=r;
   path=loder.getSuperPath(path);
@@ -540,7 +539,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      Map.Entry<String,loder> ini=ite.next();
      String filename=ini.getKey();
      loder loder=ini.getValue();
-     write(loder,filename,true,buff);
+     if(loder.str==null)write(loder,filename,true,buff);
     }
     zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
