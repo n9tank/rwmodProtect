@@ -235,11 +235,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     if (en != null) {
      byte type=getType(file);
      HashMap map;
-     if (type == -2) {
+    // if (type == -2) {
       map = Filemap;
-     } else {
+     /*} else {
       map = Oggmap;
-     }
+     }*/
      Object o=map.get(file);
      res res;
      if (o == null) {
@@ -335,8 +335,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public byte getType(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
-  int ed=i;
   i -= 4;
+  int ed=i;
   if (file.startsWith(".ini", i)) {
    if (!iniHide.containsKey(file)) {
     return 1;
@@ -353,7 +353,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
   }
   String path=musicPath;
-  if (path != null && file.startsWith(musicPath) && file.startsWith(".ogg", ed) && !iniHide.containsKey(file)) {
+  if (path != null && file.startsWith(musicPath) && file.startsWith(".ogg",ed)) {
    return -3;
   }
   return -2;
@@ -454,7 +454,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   Warp = warp;
   Buff = new StringBuilder();
   StringBuilder buff=new StringBuilder();
-  String musicpath=null;
   File ou=In;
   try {
    ZipFile zip = new ZipFile(ou);
@@ -491,10 +490,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
+     String fileName=zipEntry.getName();  
+     String lowr=fileName.toLowerCase();
+     if (!lows.containsValue(lowr))lows.put(lowr,zipEntry);
      if (zipEntry.getSize() != 0) {
-      String fileName=zipEntry.getName();  
-      String lowr=fileName.toLowerCase();
-      if (!lows.containsValue(lowr))lows.put(lowr, fileName);
       byte type=getType(fileName);
       if (type >= 0) {
        try {
@@ -522,14 +521,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        HashMap map=(HashMap)o;
        o = map.get("sourceFolder");
        if (o != null) {
-        musicpath = (String)o;
+        String musicpath = (String)o;
         if (musicpath.length() != 0) {
-         if (!musicpath.endsWith("/")) {
-          musicpath = musicpath.concat("/");
+         ZipEntry en=super.toPath(musicpath);
+         if(en!=null){
+          musicPath=en.getName();
+          map.put("sourceFolder","");
          }
         }
-        musicPath = musicpath;
-        map.put("sourceFolder", "");
        }
       }
       ini.put = ini.ini;
