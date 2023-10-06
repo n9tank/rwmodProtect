@@ -30,7 +30,7 @@ public class Main {
  /* Bitmap map=Bitmap.createBitmap(20,20,Bitmap.Config.ALPHA_8);
   Canvas vs=new Canvas(map);*/
   Paint pain=new Paint();
-  pain.setTextSize(50);
+  pain.setTextSize(100);
   charc.paint=pain;
   charc.recs=new Rect();
   /*pain.setAntiAlias(true);
@@ -61,6 +61,7 @@ public class Main {
   do{
   charc c=(charc)crr.get(i);
   buff.write(c.s);
+  System.out.println(c.y);
   }while(++i<size);
   buff.write(dump.toString());
   buff.flush();
