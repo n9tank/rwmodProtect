@@ -15,22 +15,17 @@ public class rwmodLib {
  public HashMap iniHide;
  public ui Ui;
  public HashMap low;
- public static HashMap lib;
  public static HashMap wmap;
  public static loderLib get(String str){
   str=str.replaceFirst("^/+","");
-  HashMap map=lib;
-  HashMap map2=wmap;
+  HashMap map=wmap;
   Object o=map.get(str);
-  String lstr=str.toLowerCase();
+  str=str.toLowerCase();
   if (o == null) {
-   o=map2.get(lstr);
+   o=map.get(str);
   }
   if(o==null&&!str.endsWith("/")){
    o=map.get(str.concat("/"));
-   if(o==null){
-    o=map2.get(lstr.concat("/"));
-   }
   }
   return (loderLib)o;
  }
@@ -40,13 +35,18 @@ public class rwmodLib {
   try {
    rwmodLib rw=new rwmodLib(file, ur);
    HashMap<String,loderLib> ini=rw.iniMap;
-   ini.putAll(rw.iniHide);
-   lib = ini;
+   HashMap<String,loderLib> hide=rw.iniHide;
    HashMap loe=rw.low;
    Iterator ite=loe.entrySet().iterator();
+   //luke 不会发神经写名称冲突的ini
    while (ite.hasNext()) {
     Map.Entry en=(Map.Entry)ite.next();
-    loderLib loder=ini.get(((ZipEntry)en.getValue()).getName());
+    String name=((ZipEntry)en.getValue()).getName();
+    loderLib loder=ini.get(name);
+    if(loder==null){
+    loder=hide.get(name);
+    }
+    loder.ini=null;
     en.setValue(loder);
    }
    wmap=loe;

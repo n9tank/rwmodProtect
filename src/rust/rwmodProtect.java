@@ -292,7 +292,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
     String list[]=str.split(",");
     int i=0,n=list.length;
-    HashMap libs=rwmodLib.lib;
+    HashMap libs=rwmodLib.wmap;
     do {
      String path=list[i].trim();
      str = loderLib.getPath(path,file);
