@@ -273,14 +273,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
   BitSet bit=ini.bit;
-  int index=0;
   tag:
   if (isini) {
    loder lod=(loder)getSpuerAll(file, buff);
    if (lod != null) {
     buff.append(lod.str);
     buff.append(',');
-    index = 1;
     ini.putoff(ini.put, lod.put, true);
    }
   }
@@ -305,9 +303,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod =(loder)replace(str, getType(str) > 0);
       path=lod.str;
      } else if (libs != null) {
-      bit.set(index++);
+      bit.set(ini.end);
       lod=rwmodLib.get(str);
-      }
+     }
      if(lod!=null){
      ini.putoff(ini.put,lod.put,true);
      }
