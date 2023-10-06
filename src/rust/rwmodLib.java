@@ -54,9 +54,9 @@ public class rwmodLib {
      String fileName=zipEntry.getName().toLowerCase();
      loderLib lod=new loderLib(zip.getInputStream(zipEntry));
      if (isini(fileName)&&!dontlod(lod)) {
-      inimap.put(fileName, lod);
+      inimap.put(fileName,lod);
      } else {
-      inihide.put(fileName, lod);
+      inihide.put(fileName,lod);
      }
    }
    Iterator ite=inimap.entrySet().iterator();
@@ -96,8 +96,8 @@ public class rwmodLib {
   if(o==null){
    o=iniHide.get(str);
   }
-  loderLib lod=(loder)o;
-  if (lod.str == null) {
+  loderLib lod=(loderLib)o;
+  if (lod.str==null) {
    lod.str = "";
    lodAllCopy(lod, str, isini(str));
   }
@@ -112,7 +112,7 @@ public class rwmodLib {
   } else return false;
  }
  public void lodAllCopy(loderLib lod, String file, boolean isini) {
-  String str=loderLib.getSuperPath(file);
+  file=loderLib.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
   HashMap put=null;
@@ -120,12 +120,13 @@ public class rwmodLib {
    HashMap map=(HashMap)o;
    o = map.get("copyFrom");
    if (o != null/* && (str = (String)o).length() > 0 && !str.equals("IGNORE")*/) {
+    String str=(String)o;
     put=new HashMap();
     String list[]=str.split(",");
     int i=0,l=list.length;
     do{
      str = list[i];
-     str = loderLib.getPath(str, file);
+     str = loderLib.getPath(str,file);
      loderLib loder=getlod(str);
      loderLib.put(put,loder.put,true);
     }while(++i < l);
