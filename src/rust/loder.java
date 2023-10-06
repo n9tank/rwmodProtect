@@ -211,6 +211,7 @@ public class loder {
      } else {
       Object o=wh(str, line, max);
       if (o != null)hashset = (HashSet)o;
+      else hashset=null;
       list = new HashMap();
       table.put(str, list);
      }
