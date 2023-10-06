@@ -33,10 +33,8 @@ public class rwmodLib {
   ui ur=ui.def;
   rwmodLib rw=new rwmodLib(file, ur);
   HashMap<String,loderLib> ini=rw.iniMap;
-  if(ini!=null){
   ini.putAll(rw.iniHide);
   wmap=ini;
-  }
  }
  rwmodLib(){}
  public rwmodLib(File file, ui ui){

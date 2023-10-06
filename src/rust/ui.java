@@ -23,7 +23,7 @@ public class ui{
   System.out.println(":finsh");
   }else{
   System.out.println(":error");
-  er.printStackTrace();
+  //er.printStackTrace();
   err=null;
   }
  }

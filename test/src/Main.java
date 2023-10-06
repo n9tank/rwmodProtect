@@ -12,7 +12,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import rust.loderLib;
+//import rust.loderLib;
 
 
 public class Main {
@@ -26,10 +26,11 @@ public class Main {
   char to=Character.MAX_VALUE;
   int index=to - 32;
   ArrayList crr=new ArrayList();
- // StringBuilder dump=new StringBuilder();
+  StringBuilder dump=new StringBuilder();
  /* Bitmap map=Bitmap.createBitmap(20,20,Bitmap.Config.ALPHA_8);
   Canvas vs=new Canvas(map);*/
   Paint pain=new Paint();
+  pain.setTextSize(50);
   charc.paint=pain;
   charc.recs=new Rect();
   /*pain.setAntiAlias(true);
@@ -42,30 +43,35 @@ public class Main {
    if (pain.hasGlyph(s)){
     //vs.drawText(s,0,10,pain);
     charc c=new charc(s);
-    if(c.x==0){
+    if(c.x==0.f){
     crr.add(c);
     }
     //map.eraseColor(0);
    } else {
-  // dump.append(s);
+   dump.append(s);
    //dump.append("\n");
    }
   }
   cm=new cmpU();
-  srot(crr,3);
+  int size=crr.size();
+  srot(crr,2);
+  size*=0.8;
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
-  for(charc c:crr){
+  int i=0;
+  do{
+  charc c=(charc)crr.get(i);
   buff.write(c.s);
-  }
-  //buff.write(dump.toString());
+  }while(++i<size);
+  buff.write(dump.toString());
   buff.flush();
   buff.close();
  }
  public static void main(String arg[]) throws Exception{
   //toLib("sdcard/rustedWarfare/lib.apk");
-  //charList();
+  charList();
   System.out.println("finsh");
  }
+ /*
  public static void toLib(String str) throws Exception{
   ZipFile zip=new ZipFile(str);
   ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream("sdcard/lib.zip")));
@@ -83,5 +89,5 @@ public class Main {
   }
   zip.close();
   out.close();
- }
+ }*/
 }
