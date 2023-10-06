@@ -294,22 +294,22 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
     String list[]=str.split(",");
     int i=0,n=list.length;
-    rwmodLib libs=rwmodLib.lib;
+    HashMap libs=rwmodLib.lib;
     do {
      String path=list[i].trim();
-     str = loderLib.getPath(path, file);
+     str = loderLib.getPath(path,file);
+     loderLib lod=null;
      if (str != null) {
       ZipEntry en = rootPath(str);
       str = en.getName();
-      loder lod =(loder)replace(str, getType(str) > 0);
-      path = lod.str;
-      ini.putoff(ini.put, lod.put, true);
+      lod =(loder)replace(str, getType(str) > 0);
+      path=lod.str;
      } else if (libs != null) {
       bit.set(index++);
-      map = libs.iniMap;
-      str = path.substring(5);
-      loderLib lod=(loderLib)map.get(libs.toPath(str).getName());
-      ini.putoff(ini.put, lod.put, true);
+      lod=rwmodLib.get(str);
+      }
+     if(lod!=null){
+     ini.putoff(ini.put,lod.put,true);
      }
      buff.append(path);
      buff.append(',');
