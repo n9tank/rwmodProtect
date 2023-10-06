@@ -26,6 +26,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public int fileIndex=-1;
  public int oggIndex=-2;
  public ZipOutputStream Zipout;
+ public HashMap low;
  public HashMap Filemap;
 // public HashMap Oggmap;
  public ByteBuffer Warp;
@@ -38,6 +39,27 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static String fileD;
  public static HashMap<String,HashMap> Res;
  public static HashSet music;
+ public loder getSpuerAll(String str, StringBuilder buff) {
+  int i=str.length();
+  buff.setLength(0);
+  buff.append(str);
+  do{
+   i = str.lastIndexOf("/", --i);
+   buff.setLength(i + 1);
+   buff.append("all-units.template");
+   str = buff.toString();
+   loder lod;
+   ZipEntry en=toPath(str);
+   if (en != null) {
+    lod = (loder)iniHide.get(str = en.getName());
+    buff.setLength(0);
+    if (lod.str == null)write(lod, str, false, new StringBuilder());
+    return lod;
+   }
+  }while(i > 0);
+  buff.setLength(0);
+  return null;
+ }
  public static HashMap set(Object o, int i) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
@@ -317,6 +339,24 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (--i >= 0)buff.setLength(i);
    if (o != null || v)core.put("copyFrom", buff.toString());
   }
+ }
+ public ZipEntry toPath(String str) {
+  str = str.replaceFirst("^/+", "");
+  HashMap<String,ZipEntry> lowm=low;
+  ZipFile zip=Zip;
+  ZipEntry en=Zip.getEntry(str);
+  String lows=str.toLowerCase();
+  if (en == null) {
+   ZipEntry r=lowm.get(lows);
+   if (r != null)return r;
+  } else return en;
+  if (!str.endsWith("/")) {
+   str = str.concat("/");
+   if ((en = zip.getEntry(str)) == null) {
+    return lowm.get(lows.concat("/"));
+   }
+  }
+  return en;
  }
  public void write(loderLib ini, String name) {
   ZipOutputStream zip=Zipout;

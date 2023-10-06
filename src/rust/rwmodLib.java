@@ -14,7 +14,6 @@ public class rwmodLib {
  public HashMap iniMap;
  public HashMap iniHide;
  public ui Ui;
- public HashMap low;
  public static HashMap wmap;
  public static loderLib get(String str){
   str=str.replaceFirst("^/+","");
@@ -32,58 +31,35 @@ public class rwmodLib {
  public static void init(File file) {
   if (!file.exists())return;
   ui ur=ui.def;
-  try {
-   rwmodLib rw=new rwmodLib(file, ur);
-   HashMap<String,loderLib> ini=rw.iniMap;
-   HashMap<String,loderLib> hide=rw.iniHide;
-   HashMap loe=rw.low;
-   Iterator ite=loe.entrySet().iterator();
-   //luke 不会发神经写名称冲突的ini
-   while (ite.hasNext()) {
-    Map.Entry en=(Map.Entry)ite.next();
-    String name=((ZipEntry)en.getValue()).getName();
-    loderLib loder=ini.get(name);
-    if(loder==null){
-    loder=hide.get(name);
-    }
-    loder.ini=null;
-    en.setValue(loder);
-   }
-   wmap=loe;
-   rw.Zip.close();
-  } catch (Exception e) {
-   ur.fali(e);
+  rwmodLib rw=new rwmodLib(file, ur);
+  HashMap<String,loderLib> ini=rw.iniMap;
+  if(ini!=null){
+  ini.putAll(rw.iniHide);
+  wmap=ini;
   }
  }
  rwmodLib(){}
- public rwmodLib(File file, ui ui) throws IOException {
+ public rwmodLib(File file, ui ui){
   Ui = ui;
   HashMap inihide=new HashMap();
   iniHide = inihide;
   HashMap inimap=new HashMap();
   iniMap = inimap;
-  HashMap lows=new HashMap();
-  low = lows;
   Buff = new StringBuilder();
+  try{
   ZipFile zip=new ZipFile(file);
   Zip = zip;
   Enumeration<? extends ZipEntry> ent=zip.entries();
   try {
    while (ent.hasMoreElements()) {
     ZipEntry zipEntry=ent.nextElement();
-    if (!zipEntry.isDirectory()) {
-     String fileName=zipEntry.getName();
+     String fileName=zipEntry.getName().toLowerCase();
      loderLib lod=new loderLib(zip.getInputStream(zipEntry));
      if (isini(fileName)&&!dontlod(lod)) {
       inimap.put(fileName, lod);
      } else {
       inihide.put(fileName, lod);
      }
-     String lowr=fileName.toLowerCase();
-     if (!lows.containsKey(lowr)) {
-      lows.put(lowr, zipEntry);
-     }
-    }
    }
    Iterator ite=inimap.entrySet().iterator();
    while (ite.hasNext()) {
@@ -96,6 +72,10 @@ public class rwmodLib {
     }
    }
   } catch (Exception e) {
+   ui.fali(e);
+  }
+  zip.close();
+  }catch(Exception e){
    ui.fali(e);
   }
  }
@@ -112,39 +92,13 @@ public class rwmodLib {
   }
   return false;
  }
- public ZipEntry toPath(String str) {
-  str = str.replaceFirst("^/+", "");
-  HashMap<String,ZipEntry> lowm=low;
-  ZipFile zip=Zip;
-  ZipEntry en=Zip.getEntry(str);
-  String lows=str.toLowerCase();
-  if (en == null) {
-   ZipEntry r=lowm.get(lows);
-   if (r != null)return r;
-  } else return en;
-  if (!str.endsWith("/")) {
-   str = str.concat("/");
-   if ((en = zip.getEntry(str)) == null) {
-    return lowm.get(lows.concat("/"));
-   }
+ public loderLib getlod(String str) {
+  str=str.toLowerCase();
+  Object o=iniMap.get(str);
+  if(o==null){
+   o=iniHide.get(str);
   }
-  return en;
- }
- public loderLib replace(String str, boolean isini) {
-  loderLib lod;
-  ZipEntry en =toPath(str);
-  Object o;
-  HashMap<String, loderLib> map=isini ?iniMap: iniHide;
-  if ((o = map.get(str)) == null) {
-   try {
-    ZipFile zip=Zip;
-    lod = new loderLib(zip.getInputStream(en));
-    map.put(str, lod);
-   } catch (Exception e) {
-    Ui.fali(e);
-    lod = null;
-   }
-  } else lod = (loderLib)o;
+  loderLib lod=(loder)o;
   if (lod.str == null) {
    lod.str = "";
    lodAllCopy(lod, str, isini(str));
@@ -161,10 +115,6 @@ public class rwmodLib {
  }
  public void lodAllCopy(loderLib lod, String file, boolean isini) {
   String str=loderLib.getSuperPath(file);
-  if (isini) {
-   loderLib put=getSpuerAll(file, Buff);
-   if (put != null)loderLib.put(lod.put, put.put, false);
-  }
   Object o=lod.ini.get("core");
   if (o != null) {
    HashMap map=(HashMap)o;
@@ -175,35 +125,12 @@ public class rwmodLib {
     do{
      str = list[i];
      str = loderLib.getPath(str, file);
-     loderLib ini=replace(str, isini(str));
-     loderLib.put(lod.put, ini.put, true);
+     loderLib ini=getlod(str);
+     loderLib.put(lod.put,ini.put,true);
     }while(++i < l);
    }
+   if(isini)map.put("strictLevel","1");
   }
   loderLib.put(lod.put, lod.ini, false);
- }
- public void write(loderLib lod, String str, boolean isini, StringBuilder buff) {
-  lod.str = "";
- }
- public loderLib getSpuerAll(String str, StringBuilder buff) {
-  int i=str.length();
-  buff.setLength(0);
-  buff.append(str);
-  do{
-   i = str.lastIndexOf("/", --i);
-   buff.setLength(i + 1);
-   buff.append("all-units.template");
-   str = buff.toString();
-   loderLib lod;
-   ZipEntry en=toPath(str);
-   if (en != null) {
-    lod = (loderLib)iniHide.get(str = en.getName());
-    buff.setLength(0);
-    if (lod.str == null)write(lod, str, false, new StringBuilder());
-    return lod;
-   }
-  }while(i > 0);
-  buff.setLength(0);
-  return null;
  }
 }
