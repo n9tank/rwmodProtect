@@ -74,7 +74,7 @@ public class rwmodLib {
     if (!zipEntry.isDirectory()) {
      String fileName=zipEntry.getName();
      loderLib lod=new loderLib(zip.getInputStream(zipEntry));
-     if (isini(fileName) && dontlod(lod)) {
+     if (isini(fileName)&&!dontlod(lod)) {
       inimap.put(fileName, lod);
      } else {
       inihide.put(fileName, lod);
