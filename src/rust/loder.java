@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.BitSet;
 
 public class loder {
- final static HashSet em=new HashSet();
  public HashMap ini;
  public HashMap put;
  public String str;
@@ -199,7 +198,7 @@ public class loder {
   HashMap table=new LinkedHashMap();
   table.put("",global);
   ini = table;
-  HashSet hashset=em;
+  HashSet hashset=null;
   try {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
@@ -211,9 +210,7 @@ public class loder {
       list = null;
      } else {
       Object o=wh(str, line, max);
-      if (o != null) {
-       hashset = (HashSet)o;
-      } else hashset = em;
+      if (o != null)hashset = (HashSet)o;
       list = new HashMap();
       table.put(str, list);
      }
@@ -226,7 +223,7 @@ public class loder {
        if (value.equals("IGNORE"))continue;
        global.put(key, value);
       } else {
-       if (hashset.contains(key)) {
+       if (hashset!=null&&hashset.contains(key)) {
         String with;
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
          set = set.substring(3);
