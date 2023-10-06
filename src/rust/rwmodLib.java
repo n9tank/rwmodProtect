@@ -15,7 +15,7 @@ public class rwmodLib {
  public HashMap iniHide;
  public ui Ui;
  public static HashMap wmap;
- public static loderLib get(String str){
+ public static loder get(String str){
   str=str.replaceFirst("^/+","");
   HashMap map=wmap;
   Object o=map.get(str);
@@ -26,13 +26,13 @@ public class rwmodLib {
   if(o==null&&!str.endsWith("/")){
    o=map.get(str.concat("/"));
   }
-  return (loderLib)o;
+  return (loder)o;
  }
  public static void init(File file) {
   if (!file.exists())return;
   ui ur=ui.def;
   rwmodLib rw=new rwmodLib(file, ur);
-  HashMap<String,loderLib> ini=rw.iniMap;
+  HashMap<String,loder> ini=rw.iniMap;
   ini.putAll(rw.iniHide);
   wmap=ini;
  }
@@ -52,7 +52,7 @@ public class rwmodLib {
    while (ent.hasMoreElements()) {
     ZipEntry zipEntry=ent.nextElement();
      String fileName=zipEntry.getName().toLowerCase();
-     loderLib lod=new loderLib(zip.getInputStream(zipEntry));
+     loder lod=new loder(zip.getInputStream(zipEntry));
      if (isini(fileName)&&!dontlod(lod)) {
       inimap.put(fileName,lod);
      } else {
@@ -63,7 +63,7 @@ public class rwmodLib {
    while (ite.hasNext()) {
     Map.Entry en=(Map.Entry)ite.next();
     String key=(String)en.getKey();
-    loderLib lod=(loderLib)en.getValue();
+    loder lod=(loder)en.getValue();
     if (lod.str == null) {
      lod.str = "";
      lodAllCopy(lod, key, true);
@@ -77,7 +77,7 @@ public class rwmodLib {
    ui.fali(e);
   }
  }
- public static boolean dontlod(loderLib lod) {
+ public static boolean dontlod(loder lod) {
   Object o=lod.ini.get("core");
   if (o != null) {
    HashMap map=(HashMap)o;
@@ -90,13 +90,13 @@ public class rwmodLib {
   }
   return false;
  }
- public loderLib getlod(String str) {
+ public loder getlod(String str) {
   str=str.toLowerCase();
   Object o=iniMap.get(str);
   if(o==null){
    o=iniHide.get(str);
   }
-  loderLib lod=(loderLib)o;
+  loder lod=(loder)o;
   if (lod.str==null) {
    lod.str = "";
    lodAllCopy(lod, str, isini(str));
@@ -111,8 +111,8 @@ public class rwmodLib {
    return true;
   } else return false;
  }
- public void lodAllCopy(loderLib lod, String file, boolean isini) {
-  file=loderLib.getSuperPath(file);
+ public void lodAllCopy(loder lod, String file, boolean isini) {
+  file=loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
   HashMap put=null;
@@ -126,15 +126,15 @@ public class rwmodLib {
     int i=0,l=list.length;
     do{
      str = list[i];
-     str = loderLib.getPath(str,file);
-     loderLib loder=getlod(str);
-     loderLib.put(put,loder.put,true);
+     str = loder.getPath(str,file);
+     loder loder=getlod(str);
+     loder.put(put,loder.put,true);
     }while(++i < l);
    }
    if(isini)map.put("strictLevel","1");
   }
   if(put!=null){
-  loderLib.put(put,ini,false);
+  loder.put(put,ini,false);
   }else put=ini;
   lod.put=put;
   lod.ini=null;

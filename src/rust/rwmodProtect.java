@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -117,12 +118,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static void init(File def) {
   HashMap<String,HashMap> map;
   try {
-   map = new loderLib(new FileReader(def)).ini;
+   map = new loder(new FileReader(def)).ini;
    HashMap<String,String> set=map.get("set");
    String str=set.get("line");
    String list[]=str.split(",");
-   loderLib.max = Integer.valueOf(list[0]);
-   loderLib.vlmax = Integer.valueOf(list[1]);
+   loder.max = Integer.valueOf(list[0]);
+   loder.vlmax = Integer.valueOf(list[1]);
    max = Integer.valueOf(list[2]);
    String file= set.get("file");
    fileD = file;
@@ -132,12 +133,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    Collections.addAll(musics, list);
    list = set.get("value").split(",");
    HashSet value=new HashSet();
-   loderLib.vlset = value;
+   loder.vlset = value;
    Collections.addAll(value, list);
-   loderLib.line = set(map.get("line"), 0);
+   loder.line = set(map.get("line"), 0);
    HashMap image=set(map.get("image"), 1);
    HashMap music=set(map.get("music"), 3);
-   loderLib.put(image, music, false);
+   loder.put(image, music, false);
    Res = image;
   } catch (Exception e) {
    ui.def.fali(e);
@@ -199,7 +200,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    Ui.fali(e);
   }
  }
- public loderLib replace(String str, boolean isini) {
+ public loder replace(String str, boolean isini) {
   loder lod=null;
   ZipEntry en=rootPath(str);
   str = en.getName();
@@ -224,13 +225,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if(lod.str==null)write(lod,str,isini,new StringBuilder());
   return lod;
  }
- public void write(loderLib ini,String path,boolean isini,StringBuilder buff) {
-  loder lod=(loder)ini;
+ public void write(loder ini,String path,boolean isini,StringBuilder buff) {
+  loder lod=ini;
   String r=FileName(isini ?1: 0);
   lod.str=r;
-  path=loderLib.getSuperPath(path);
-  replaceCopy(lod,path,isini, buff);
-  replaceAllRes(lod,path,buff,isini);
+  replaceAll(lod,path,isini, buff);
   write(lod,r);
  }
  public void replaceR(String str, String path, StringBuilder buff, int isimg, boolean post) {
@@ -253,7 +252,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     if (!is) {
      if (music.contains(str.split(":", 2)[0]))break tag;
     }
-   } else file = loderLib.getImagePath(str, path, buff);
+   } else file = loder.getImagePath(str, path, buff);
    if (file != null) {
     ZipEntry en = rootPath(file);
     if (en != null) {
@@ -293,15 +292,23 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   buff.append(',');
  }
- public void replaceCopy(loder ini, String file, boolean isini, StringBuilder buff) {
-  BitSet bit=ini.bit;
+ 
+ public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
+  file=loder.getSuperPath(file);
+  BitSet bit=null;
+  HashMap cou=new HashMap();
+  HashMap put=new HashMap();
+  ini.put=put;
+  byte end=0;
   tag:
   if (isini) {
-   loder lod=(loder)getSpuerAll(file, buff);
+   loder lod=getSpuerAll(file, buff);
    if (lod != null) {
+    bit=new BitSet(0);
     buff.append(lod.str);
     buff.append(',');
-    ini.putoff(ini.put, lod.put, true);
+    ini.putoff(put,lod.put,cou,true,end);
+    ++end;
    }
   }
   boolean v=buff.length() > 0;
@@ -312,33 +319,89 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    o = core.get("copyFrom");
    String str;
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
+    if(bit==null)bit=new BitSet(0);
     String list[]=str.split(",");
     int i=0,n=list.length;
     HashMap libs=rwmodLib.wmap;
     do {
      String path=list[i].trim();
-     str = loderLib.getPath(path,file);
-     loderLib lod=null;
+     str = loder.getPath(path,file);
+     loder lod=null;
      if (str != null) {
       ZipEntry en = rootPath(str);
       str = en.getName();
-      lod =(loder)replace(str, getType(str) > 0);
+      lod =replace(str, getType(str) > 0);
       path=lod.str;
      } else if (libs != null) {
-      bit.set(ini.end);
+      bit.set(end);
       lod=rwmodLib.get(str);
      }
      if(lod!=null){
-     ini.putoff(ini.put,lod.put,true);
+     ini.putoff(put,lod.put,cou,true,end);
      }
      buff.append(path);
      buff.append(',');
+     ++end;
     }while(++i < n);
    }
    int i=buff.length();
    if (--i >= 0)buff.setLength(i);
    if (o != null || v)core.put("copyFrom", buff.toString());
   }
+  String str;
+  HashMap<String, HashMap> res=Res;
+  HashMap as;
+  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou, end), bit, end);
+  Iterator ite2=as.entrySet().iterator();
+  while (ite2.hasNext()) {
+   Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
+   str=en.getKey();
+   Object j;
+   j = loder.wh(str, res, max);
+   if (j == null)continue;
+   HashMap list=en.getValue();
+   HashMap hash=(HashMap)j;
+   Iterator ite3=hash.entrySet().iterator();
+   while (ite3.hasNext()) {
+    Map.Entry en2=(Map.Entry)ite3.next();
+    String s=(String)en2.getKey();
+    j = list.get(s);
+    if (j != null) {
+     str = (String)j;
+     str = ini.get(str, as, list);
+     if (str == null || str.equalsIgnoreCase("none") || str.equals("IGNORE"))continue;
+     if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
+     int i = en2.getValue();
+     buff.setLength(0);
+     switch (i) {
+      case 2:
+       String list2[]=str.split(",");
+       int l=0,size=list2.length;
+       do {
+        str = list2[l].trim();
+        replaceR(str, file,buff,i,isini);
+       }while(++l < size);
+       break;
+      case 4:
+       list2 = str.split(",");
+       l = 0;
+       size = list2.length;
+       do {
+        str = list2[l].trim();
+        replaceR(str,file,buff,i,isini);
+       }while(++l < size);
+       break;
+      default:
+       replaceR(str,file, buff, i,isini);
+       break;
+     }
+     i = buff.length();
+     if (--i >= 0)buff.setLength(i);
+     list.put(s, buff.toString());
+    }
+   }
+  }
+  ini.put(as,need);
  }
  public ZipEntry toPath(String str) {
   str = str.replaceFirst("^/+", "");
@@ -358,7 +421,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return en;
  }
- public void write(loderLib ini, String name) {
+ public void write(loder ini, String name) {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
   try {
@@ -395,64 +458,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    return -3;
   }
   return -2;
- }
- public void replaceAllRes(loder ini, String filename, StringBuilder buff,boolean get) {
-  String str;
-  HashMap<String, HashMap> res=Res;
-  ini.eqz();
-  HashMap as=ini.as;
-  Iterator ite2=as.entrySet().iterator();
-  while (ite2.hasNext()) {
-   Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
-   String o=en.getKey();
-   str = o;
-   int i;
-   Object j;
-   j = loderLib.wh(str, res, max);
-   if (j == null)continue;
-   HashMap list=en.getValue();
-   HashMap hash=(HashMap)j;
-   Iterator ite3=hash.entrySet().iterator();
-   while (ite3.hasNext()) {
-    Map.Entry en2=(Map.Entry)ite3.next();
-    String s=(String)en2.getKey();
-    j = list.get(s);
-    if (j != null) {
-     str = (String)j;
-     str = ini.get(str, as, list);
-     if (str == null || str.equalsIgnoreCase("none") || str.equals("IGNORE"))continue;
-     if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
-     i = en2.getValue();
-     buff.setLength(0);
-     switch (i) {
-      case 2:
-       String list2[]=str.split(",");
-       int l=0,size=list2.length;
-       do {
-        str = list2[l].trim();
-        replaceR(str, filename,buff, i,get);
-       }while(++l < size);
-       break;
-      case 4:
-       list2 = str.split(",");
-       l = 0;
-       size = list2.length;
-       do {
-        str = list2[l].trim();
-        replaceR(str,filename,buff,i,get);
-       }while(++l < size);
-       break;
-      default:
-       replaceR(str,filename, buff, i,get);
-       break;
-     }
-     i = buff.length();
-     if (--i >= 0)buff.setLength(i);
-     list.put(s, buff.toString());
-    }
-   }
-  }
-  ini.put();
  }
  public ZipEntry rootPath(String str){
   str=str.replaceFirst("^/+","");
@@ -510,7 +515,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    while (ZipEntrys.hasMoreElements()) {
     ZipEntry ZipEntry=ZipEntrys.nextElement();
     name = ZipEntry.getName();
-    name = loderLib.getRoot(name);
+    name = loder.getRoot(name);
     if ("".equals(name)) {
      rootPath = "";
      break;
@@ -548,7 +553,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     ZipEntry inf=toPath(rootPath.concat("mod-info.txt"));
     if (inf != null) {
      //String path=inf.getName();
-      loderLib ini=new loderLib(zip.getInputStream(inf));
+      loder ini=new loder(zip.getInputStream(inf));
       HashMap info=ini.ini;
       Object o=info.get("music");
       if (o != null) {
@@ -581,7 +586,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      byte type= getType(file);
      if (type < 0) {
       if (type == -1) {
-       name = loderLib.getName(file);
+       name = loder.getName(file);
        int i=file.length();
        if (!file.endsWith("/")) {
         name = name.concat("/");
@@ -593,7 +598,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        buff.append("_map.png");
        en=toPath(buff.toString());
        if (en!=null) {
-        name=loderLib.getName(en.getName());
+        name=loder.getName(en.getName());
         copy(name.concat("/"), en);
        }
       } else{
