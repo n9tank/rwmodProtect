@@ -193,7 +193,7 @@ public class loderLib {
  }
  public loderLib(InputStreamReader input)throws Exception {
   HashMap global=new HashMap();
-  put = new HashMap();
+  //put = new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;
   HashMap list=null;

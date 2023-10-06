@@ -113,22 +113,29 @@ public class rwmodLib {
  }
  public void lodAllCopy(loderLib lod, String file, boolean isini) {
   String str=loderLib.getSuperPath(file);
-  Object o=lod.ini.get("core");
+  HashMap ini=lod.ini;
+  Object o=ini.get("core");
+  HashMap put=null;
   if (o != null) {
    HashMap map=(HashMap)o;
    o = map.get("copyFrom");
-   if (o != null && (str = (String)o).length() > 0 && str.equals("IGNORE")) {
+   if (o != null/* && (str = (String)o).length() > 0 && !str.equals("IGNORE")*/) {
+    put=new HashMap();
     String list[]=str.split(",");
     int i=0,l=list.length;
     do{
      str = list[i];
      str = loderLib.getPath(str, file);
-     loderLib ini=getlod(str);
-     loderLib.put(lod.put,ini.put,true);
+     loderLib loder=getlod(str);
+     loderLib.put(put,loder.put,true);
     }while(++i < l);
    }
    if(isini)map.put("strictLevel","1");
   }
-  loderLib.put(lod.put, lod.ini, false);
+  if(put!=null){
+  loderLib.put(put,ini,false);
+  }else put=ini;
+  lod.put=put;
+  lod.ini=null;
  }
 }

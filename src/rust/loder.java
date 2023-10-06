@@ -16,6 +16,7 @@ public class loder extends loderLib {
  public byte end;
  public loder(InputStream in) throws Exception {
   super(in);
+  put=new HashMap();
   cou = new HashMap();
   bit = new BitSet(0);
  }
