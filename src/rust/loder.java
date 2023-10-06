@@ -72,9 +72,6 @@ public class loder extends loderLib {
    Map.Entry en=(Map.Entry)need.get(l);
    String str=(String)en.getKey();
    HashMap map=(HashMap)hash.get(str);
-   if (map == null) {
-    System.out.println(str);
-   }
    Object o=put.get(str);
    HashMap putall;
    if (o == null) {
@@ -97,13 +94,13 @@ public class loder extends loderLib {
   HashMap pu=put;
   HashMap re=ini;
   HashMap coe=new HashMap();
-  put(coe, pu, true);
+  put(coe,pu,true);
   as(coe);
+  putoff(pu,re,false);
   HashMap hash=new HashMap();
-  as = hash;
-  put(hash, pu, true);
+  as=hash;
+  put(hash,pu,true);
   int ed=end;
-  putoff(hash, re, false);
   as(hash);
   HashMap cous=cou;
   ArrayList<Map.Entry> need=new ArrayList();
