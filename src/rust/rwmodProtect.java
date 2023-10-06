@@ -519,7 +519,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        if (o != null) {
         String musicpath = (String)o;
         musicpath=musicpath.replaceFirst("^[/\\]","");
-        if(musicpath.length()>0&&!musicpath.endsWith("/"))musicpath=musicpath.concat("/");
+        if(musicpath.length()>0)musicpath=musicpath.concat("/");
         musicPath=musicpath;
         map.put("sourceFolder","");
        }}
