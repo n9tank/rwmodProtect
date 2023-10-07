@@ -98,13 +98,10 @@ public class loder {
    if (o != null) {
     HashMap list=(HashMap)o;
     HashMap find=(HashMap)en.getValue();
-    o = list.get("@copyFrom_skipThisSection");
-    if (o == null || !((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
-     Iterator ite2=find.keySet().iterator();
-     while (ite2.hasNext()) {
-      str = (String)ite2.next();
-      if (!list.containsKey(str))return true;
-     }
+    Iterator ite2=find.keySet().iterator();
+    while (ite2.hasNext()) {
+     str = (String)ite2.next();
+     if (!list.containsKey(str))return true;
     }
    } else return true;
   }
