@@ -87,8 +87,8 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public static boolean checkAll(HashMap alls,HashMap map) {
-  if(alls==null)return false;
+ public static boolean checkAll(HashMap alls, HashMap map) {
+  if (alls == null)return false;
   Iterator ite=alls.entrySet().iterator();
   String str;
   while (ite.hasNext()) {
@@ -99,21 +99,18 @@ public class loder {
     HashMap list=(HashMap)o;
     HashMap find=(HashMap)en.getValue();
     o = list.get("@copyFrom_skipThisSection");
-    if (o != null && ((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
-     o = find.get("@copyFrom_skipThisSection");
-     if (o == null || !str.equalsIgnoreCase((String)o)) {
-      Iterator ite2=find.keySet().iterator();
-      while (ite2.hasNext()) {
-       str = (String)ite2.next();
-       if (!list.containsKey(str))return true;
-      }
+    if (o != null && (!(str = (String)o).equals("1") && !str.equalsIgnoreCase("true"))) {
+     Iterator ite2=find.keySet().iterator();
+     while (ite2.hasNext()) {
+      str = (String)ite2.next();
+      if (!list.containsKey(str))return true;
      }
     }
-   }else return true;
+   } else return true;
   }
   return false;
  }
- public static void putSkip(HashMap hash,HashMap re,HashMap cou){
+ public static void putSkip(HashMap hash, HashMap re, HashMap cou) {
   Iterator ite=hash.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -136,7 +133,7 @@ public class loder {
    }
    if (list == null)continue;
    map.putAll(list);
-   if(cou!=null)off(key, list, cou, true);
+   if (cou != null)off(key, list, cou, true);
   }
  }
  public static void put(HashMap map, HashMap map2) {
@@ -344,9 +341,9 @@ public class loder {
   HashMap re=ini;
   HashMap pu=put;
   HashMap hash=new HashMap();
-  put(pu,re);
+  put(pu, re);
   put(hash, pu);
-  putSkip(hash,re,cou);
+  putSkip(hash, re, cou);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
