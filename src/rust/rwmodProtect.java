@@ -137,7 +137,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.line = set(map.get("line"), 0);
    HashMap image=set(map.get("image"), 1);
    HashMap music=set(map.get("music"), 3);
-   loder.put(image, music);
+   loder.put(image, music,null,false);
    Res = image;
   } catch (Exception e) {
    ui.def.fali(e);
@@ -309,7 +309,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     st = buff.length();
     alls = all.put;
     check = new HashMap();
-    ini.putoff(put, all.put, cou, false);
+    ini.put(put, all.put, cou, false);
    }
   }
   HashMap map=ini.ini;
@@ -336,8 +336,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod = rwmodLib.get(str);
      }
      if (lod != null) {
-      ini.putoff(put, lod.put, cou, s);
-      if (check != null)loder.put(check, lod.put);
+      ini.put(put, lod.put, cou, s);
+      if (check != null)loder.put(check,lod.put,null,false);
      }
      buff.append(path);
      buff.append(',');
@@ -346,7 +346,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    int i=buff.length() - 1;
    if (i > 0) {
     if (alls != null) {
-     loder.putSkip(put, ini.ini, null);
+     loder.put(put, ini.ini,null,false);
      if (loder.checkAll(alls, check))st = 0;
     }
     core.put("copyFrom", buff.subSequence(st, i));

@@ -99,7 +99,7 @@ public class loder {
     HashMap list=(HashMap)o;
     HashMap find=(HashMap)en.getValue();
     o = list.get("@copyFrom_skipThisSection");
-    if (o == null||!((str = (String)o).equals("1")||str.equalsIgnoreCase("true"))) {
+    if (o == null || !((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
      Iterator ite2=find.keySet().iterator();
      while (ite2.hasNext()) {
       str = (String)ite2.next();
@@ -110,44 +110,39 @@ public class loder {
   }
   return false;
  }
- public static void putSkip(HashMap hash, HashMap re, HashMap cou) {
-  Iterator ite=hash.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   Object o=re.get(key);
-   HashMap list=null;
-   HashMap map=(HashMap)en.getValue();
-   if (o != null) {
-    list = (HashMap)o;
-    o = list.get("@copyFrom_skipThisSection");
-   }
-   if (o == null) {
-    o = map.get("@copyFrom_skipThisSection");
-   }
-   String str;
-   if (o != null && ((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
-    if (list == null)ite.remove();
-    else en.setValue(list);
-    continue;
-   }
-   if (list == null)continue;
-   map.putAll(list);
-   if (cou != null)off(key, list, cou, true);
-  }
- }
- public static void put(HashMap map, HashMap map2) {
+ public static void put(HashMap map, HashMap map2, HashMap cou, boolean is) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    Object o=map.get(key);
    HashMap hash=(HashMap)en.getValue();
-   if (o == null) {
+   String str;
+   Object skip=hash.get("@copyFrom_skipThisSection");
+   if (o == null || (skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
     map.put(key, hash.clone());
    } else {
     HashMap set=(HashMap)o;
     set.putAll(hash);
+   }
+   if (cou != null) {
+    o = wh(key, rwmodProtect.Res, rwmodProtect.max);
+    if (o != null) {
+     HashMap find=(HashMap)o;
+     HashMap list2=(HashMap)cou.get(key);
+     if (list2 == null) {
+      list2 = new HashMap();
+      cou.put(key, list2);
+     }
+     Iterator ite2=hash.keySet().iterator();
+     while (ite2.hasNext()) {
+      key = (String)ite2.next();
+      o = find.get(key);
+      if (o != null) {
+       list2.put(key, is);
+      }
+     }
+    }
    }
   }
  }
@@ -294,46 +289,10 @@ public class loder {
    buff.close();
   }
  }
- public void putoff(HashMap map, HashMap map2, HashMap cous, boolean is) {
-  Iterator ite=map2.entrySet().iterator();
-  HashMap<String, HashMap> res=rwmodProtect.Res;
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   Object o=map.get(key);
-   HashMap map3=(HashMap)en.getValue();
-   if (o == null) {
-    map.put(key, map3.clone());
-   } else {
-    HashMap set=(HashMap)o;
-    set.putAll(map3);
-   }
-   if (map3 != null)off(key, map3, cous, is);
-  }
- }
- public static void off(String key, HashMap list, HashMap cou, boolean is) {
-  Object o = wh(key, rwmodProtect.Res, rwmodProtect.max);
-  if (o != null) {
-   HashMap find=(HashMap)o;
-   HashMap list2=(HashMap)cou.get(key);
-   if (list2 == null) {
-    list2 = new HashMap();
-    cou.put(key, list2);
-   }
-   Iterator ite2=list.keySet().iterator();
-   while (ite2.hasNext()) {
-    key = (String)ite2.next();
-    o = find.get(key);
-    if (o != null) {
-     list2.put(key, is);
-    }
-   }
-  }
- }
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe, pu);
+  put(coe, pu, null, false);
   as(coe);
   return coe;
  }
@@ -341,9 +300,9 @@ public class loder {
   HashMap re=ini;
   HashMap pu=put;
   HashMap hash=new HashMap();
-  put(pu, re);
-  put(hash, pu);
-  putSkip(hash, re, cou);
+  put(pu, re, null, false);
+  put(hash, pu, null, false);
+  put(hash, re, cou, true);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
