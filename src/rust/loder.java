@@ -94,12 +94,12 @@ public class loder {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    Object o=map.get(key);
-   Object hash=en.getValue();
+   HashMap hash=(HashMap)en.getValue();
    if (o == null) {
-    map.put(key,((HashMap)hash).clone());
+    map.put(key,hash.clone());
    } else {
     HashMap set=(HashMap)o;
-    set.putAll((HashMap)hash);
+    set.putAll(hash);
    }
   }
  }
@@ -260,22 +260,24 @@ public class loder {
     HashMap set=(HashMap)o;
     set.putAll(map3);
    }
-   if (map3 != null) {
-    o = wh(key, res, rwmodProtect.max);
+   if (map3 != null)off(key,map3,cous,is);
+  }
+ }
+ public static void off(String key,HashMap list,HashMap cou,boolean is){
+  Object o = wh(key, rwmodProtect.Res, rwmodProtect.max);
+  if (o != null) {
+   HashMap find=(HashMap)o;
+   HashMap list2=(HashMap)cou.get(key);
+   if (list2 == null) {
+    list2 = new HashMap();
+    cou.put(key, list2);
+   }
+   Iterator ite2=list.keySet().iterator();
+   while (ite2.hasNext()) {
+    key = (String)ite2.next();
+    o = find.get(key);
     if (o != null) {
-     HashMap find=(HashMap)o;
-     HashMap list=(HashMap)cous.get(key);
-     if (list == null) {
-      list = new HashMap();
-      cous.put(key, list);
-     }
-     Iterator ite2=map3.keySet().iterator();
-     while (ite2.hasNext()) {
-      key = (String) ite2.next();
-      if (find.get(key) != null) {
-       list.put(key, is);
-      }
-     }
+     list2.put(key,is);
     }
    }
   }
@@ -294,7 +296,6 @@ public class loder {
   put(pu,re);
   put(hash,pu);
   Iterator ite=hash.entrySet().iterator();
-  HashMap res=rwmodProtect.Res;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
@@ -316,23 +317,7 @@ public class loder {
    }
    if (list == null)continue;
    map.putAll(list);
-   o = wh(key, res, rwmodProtect.max);
-   if (o != null) {
-    HashMap find=(HashMap)o;
-    HashMap list2=(HashMap)cou.get(key);
-    if (list2 == null) {
-     list2 = new HashMap();
-     cou.put(key, list2);
-    }
-    Iterator ite2=list.keySet().iterator();
-    while (ite2.hasNext()) {
-     key = (String)ite2.next();
-     o = find.get(key);
-     if (o != null) {
-      list2.put(key,true);
-     }
-    }
-   }
+   off(key,list,cou,true);
   }
   as(hash);
   return hash;
