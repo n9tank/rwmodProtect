@@ -344,6 +344,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    int i=buff.length()-1;
    if(i>0){
+   loder.putSkip(put,ini.ini,null);
    if(loder.checkAll(alls,check))st=0;
    core.put("copyFrom",buff.subSequence(st,i));
    }

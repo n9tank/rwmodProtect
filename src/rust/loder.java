@@ -113,6 +113,32 @@ public class loder {
   }
   return false;
  }
+ public static void putSkip(HashMap hash,HashMap re,HashMap cou){
+  Iterator ite=hash.entrySet().iterator();
+  while (ite.hasNext()) {
+   Map.Entry en=(Map.Entry)ite.next();
+   String key=(String)en.getKey();
+   Object o=re.get(key);
+   HashMap list=null;
+   HashMap map=(HashMap)en.getValue();
+   if (o != null) {
+    list = (HashMap)o;
+    o = list.get("@copyFrom_skipThisSection");
+   }
+   if (o == null) {
+    o = map.get("@copyFrom_skipThisSection");
+   }
+   String str;
+   if (o != null && ((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
+    if (list == null)ite.remove();
+    else en.setValue(list);
+    continue;
+   }
+   if (list == null)continue;
+   map.putAll(list);
+   if(cou!=null)off(key, list, cou, true);
+  }
+ }
  public static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
@@ -320,30 +346,7 @@ public class loder {
   HashMap hash=new HashMap();
   put(pu,re);
   put(hash, pu);
-  Iterator ite=hash.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   Object o=re.get(key);
-   HashMap list=null;
-   HashMap map=(HashMap)en.getValue();
-   if (o != null) {
-    list = (HashMap)o;
-    o = list.get("@copyFrom_skipThisSection");
-   }
-   if (o == null) {
-    o = map.get("@copyFrom_skipThisSection");
-   }
-   String str;
-   if (o != null && ((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
-    if (list == null)ite.remove();
-    else en.setValue(list);
-    continue;
-   }
-   if (list == null)continue;
-   map.putAll(list);
-   off(key, list, cou, true);
-  }
+  putSkip(hash,re,cou);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
