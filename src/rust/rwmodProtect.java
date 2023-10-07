@@ -138,7 +138,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.line = set(map.get("line"), 0);
    HashMap image=set(map.get("image"), 1);
    HashMap music=set(map.get("music"), 3);
-   loder.put(image, music, false);
+   loder.put(image, music);
    Res = image;
   } catch (Exception e) {
    ui.def.fali(e);
@@ -175,7 +175,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  buff.append('/');
+  //buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
@@ -295,21 +295,19 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   file=loder.getSuperPath(file);
-  BitSet bit=null;
+  boolean bit=false;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
   ini.put=put;
-  byte end=0;
   buff.setLength(0);
   tag:
   if (isini){
    loder all=getSpuerAll(file, buff);
    if (all != null) {
-    bit = new BitSet(0);
+    bit = true;
     buff.append(all.str);
     buff.append(',');
-    ini.putoff(put,all.put,cou,true,end);
-    ++end;
+    ini.putoff(put,all.put,cou,false);
    }
   }
   HashMap map=ini.ini;
@@ -319,7 +317,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    o = core.get("copyFrom");
    String str;
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
-    if(bit==null)bit=new BitSet(0);
+    bit=true;
     String list[]=str.split(",");
     int i=0,n=list.length;
     HashMap libs=rwmodLib.wmap;
@@ -333,18 +331,16 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod =replace(str, getType(str) > 0);
       path=lod.str;
      } else if (libs != null) {
-      bit.set(end);
       lod=rwmodLib.get(str);
      }
      if(lod!=null){
-     ini.putoff(put,lod.put,cou,true,end);
+     ini.putoff(put,lod.put,cou,str==null);
      }
      buff.append(path);
      buff.append(',');
-     ++end;
     }while(++i < n);
    }
-   if(bit!=null){
+   if(bit){
    int i=buff.length();
    buff.setLength(--i);
    core.put("copyFrom",buff.toString());
@@ -353,7 +349,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   String str;
   HashMap<String, HashMap> res=Res;
   HashMap as;
-  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou, end), bit, end);
+  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou));
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
