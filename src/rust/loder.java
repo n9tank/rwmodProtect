@@ -16,7 +16,6 @@ public class loder {
  public HashMap ini;
  public HashMap put;
  public String str;
- public loder all;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -102,7 +101,9 @@ public class loder {
     HashMap set=(HashMap)o;
     String k;
     if (skip || (o = set.get("@copyFrom_skipThisSection")) == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
-     set.putAll((HashMap)hash);
+    set.putAll((HashMap)hash);
+    }else{
+    map.put(key,hash);
     }
    }
   }

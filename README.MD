@@ -4,6 +4,6 @@ rwmod混淆器
 纯在很多bug和兼容性问题。
 .ini配置不正确（待修正）
 
-父路径复制子路径且包含all-units.template是不兼容的，这违背了规则（所有文件至一级）
+复制不同级的ini且包含不同all-units.template是不兼容的，这违背了规则（所有文件至一级）
 如： a.ini copyFrom:a/b.ini
 a/b.ini a/all-units.template

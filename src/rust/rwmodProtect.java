@@ -296,8 +296,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   file=loder.getSuperPath(file);
   BitSet bit=null;
-  loder all=null;
-  int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
   ini.put=put;
@@ -305,13 +303,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.setLength(0);
   tag:
   if (isini){
-   all=getSpuerAll(file, buff);
+   loder all=getSpuerAll(file, buff);
    if (all != null) {
-    bit=new BitSet(0);
-    ini.all=all;
+    bit = new BitSet(0);
     buff.append(all.str);
     buff.append(',');
-    st=buff.length();
     ini.putoff(put,all.put,cou,true,end);
     ++end;
    }
@@ -335,7 +331,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       ZipEntry en = rootPath(str);
       str = en.getName();
       lod =replace(str, getType(str) > 0);
-      if(lod.all==all)all=null;
       path=lod.str;
      } else if (libs != null) {
       bit.set(end);
@@ -349,9 +344,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      ++end;
     }while(++i < n);
    }
-   if(all!=null)st=0;
+   if(bit!=null){
    int i=buff.length();
-   if (bit!=null)core.put("copyFrom",buff.substring(st,--i));
+   buff.setLength(--i);
+   core.put("copyFrom",buff.toString());
+   }
   }
   String str;
   HashMap<String, HashMap> res=Res;
