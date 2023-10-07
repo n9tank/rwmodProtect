@@ -16,6 +16,7 @@ public class loder {
  public HashMap ini;
  public HashMap put;
  public String str;
+ public loder all;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;

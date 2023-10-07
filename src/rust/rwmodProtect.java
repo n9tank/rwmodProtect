@@ -292,26 +292,24 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   buff.append(',');
  }
- 
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   file=loder.getSuperPath(file);
   BitSet bit=null;
+  loder all=null;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
   ini.put=put;
   byte end=0;
   tag:
   if (isini) {
-   loder lod=getSpuerAll(file, buff);
-   if (lod != null) {
+   all=getSpuerAll(file, buff);
+   if (all != null) {
     bit=new BitSet(0);
-    buff.append(lod.str);
-    buff.append(',');
-    ini.putoff(put,lod.put,cou,true,end);
+    ini.all=all;
+    ini.putoff(put,all.put,cou,true,end);
     ++end;
    }
   }
-  boolean v=buff.length() > 0;
   HashMap map=ini.ini;
   Object o=map.get("core");
   if (o != null) {
@@ -331,6 +329,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       ZipEntry en = rootPath(str);
       str = en.getName();
       lod =replace(str, getType(str) > 0);
+      loder all2=lod.all;
+      if(all!=null&&all2==all)all=null;
       path=lod.str;
      } else if (libs != null) {
       bit.set(end);
@@ -344,9 +344,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      ++end;
     }while(++i < n);
    }
+   if(all!=null)buff.insert(0,all.str.concat(","));
    int i=buff.length();
    if (--i >= 0)buff.setLength(i);
-   if (o != null || v)core.put("copyFrom", buff.toString());
+   if (bit!=null)core.put("copyFrom",buff.toString());
   }
   String str;
   HashMap<String, HashMap> res=Res;
