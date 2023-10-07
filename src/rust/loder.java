@@ -88,7 +88,7 @@ public class loder {
   return null;
  }
  public static boolean checkAll(HashMap alls,HashMap map) {
-  if(alls==null)return true;
+  if(alls==null)return false;
   Iterator ite=alls.entrySet().iterator();
   String str;
   while (ite.hasNext()) {
@@ -105,13 +105,13 @@ public class loder {
       Iterator ite2=find.keySet().iterator();
       while (ite2.hasNext()) {
        str = (String)ite2.next();
-       if (!list.containsKey(str))return false;
+       if (!list.containsKey(str))return true;
       }
      }
     }
-   }
+   }else return true;
   }
-  return true;
+  return false;
  }
  public static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
@@ -398,6 +398,7 @@ public class loder {
     }
    }
   }
+  as(hash);
   return need;
  }
  public static void as(HashMap map) {
