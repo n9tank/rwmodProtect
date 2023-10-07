@@ -296,7 +296,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
-  HashMap check=new HashMap();
+  HashMap check=null;
   ini.put=put;
   HashMap alls=null;
   buff.setLength(0);
@@ -308,6 +308,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     buff.append(',');
     st=buff.length();
     alls=all.put;
+    check=new HashMap();
     ini.putoff(put,all.put,cou,false);
    }
   }
@@ -336,7 +337,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      }
      if(lod!=null){
      ini.putoff(put,lod.put,cou,s);
-     loder.put(check,lod.put);
+     if(check!=null)loder.put(check,lod.put);
      }
      buff.append(path);
      buff.append(',');
@@ -344,8 +345,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
    int i=buff.length()-1;
    if(i>0){
+   if(alls!=null){
    loder.putSkip(put,ini.ini,null);
    if(loder.checkAll(alls,check))st=0;
+   }
    core.put("copyFrom",buff.subSequence(st,i));
    }
   }
