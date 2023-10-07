@@ -329,7 +329,7 @@ public class loder {
      key = (String)ite2.next();
      o = find.get(key);
      if (o != null) {
-      list2.put(key, false);
+      list2.put(key,true);
      }
     }
    }
@@ -362,7 +362,6 @@ public class loder {
  public ArrayList find(HashMap cous, HashMap coe, HashMap hash) {
   ArrayList<Map.Entry> need=new ArrayList();
   HashMap def=rwmodProtect.Res;
-  HashMap re=ini;
   Iterator ite = hash.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -373,7 +372,6 @@ public class loder {
     HashMap map=(HashMap)cous.get(ac);
     HashMap list=(HashMap)en.getValue();
     HashMap list2=(HashMap)coe.get(ac);
-    HashMap list3=(HashMap)re.get(ac);
     HashMap tr=(HashMap)o;
     Iterator ite2=list.entrySet().iterator();
     while (ite2.hasNext()) {
@@ -382,11 +380,8 @@ public class loder {
      if (tr.get(key) == null)continue;
      o = map.get(key);
      String str;
-     boolean eq=true;
-     if (o == null || o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = !loder.get((String)en.getValue(), hash, list).equals(loder.get(str, coe, list2)))) {
+     if (o == null || o == true || list2 == null || (str = (String)list2.get(key)) == null || !loder.get((String)en.getValue(), hash, list).equals(loder.get(str, coe, list2))) {
       arr.add(key);
-     } else if (list3 != null&&!eq) {
-     list3.remove(key);
      }
     }
     if (arr.size() > 0) {
