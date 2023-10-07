@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.BitSet;
 
 public class loder {
  public HashMap ini;
@@ -89,32 +88,30 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public boolean checkAll(loder lod){
-  //opt
+ public boolean checkAll(HashMap map) {
   HashMap alls=all;
-  if(alls==null||lod.all!=alls)return false;
-  HashMap map=lod.ini;
-  Iterator ite=map.entrySet().iterator();
+  if(alls==null)return true;
+  Iterator ite=all.entrySet().iterator();
   String str;
-  while(ite.hasNext()){
+  while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
-   Object o=alls.get(key);
-   if(o!=null){
-   HashMap find=(HashMap)o;
-   HashMap list=(HashMap)en.getValue();
-   o=list.get("@copyFrom_skipThisSection");
-   if(o!=null&&((str=(String)o).equals("1")||str.equalsIgnoreCase("true"))){
-   o=find.get("@copyFrom_skipThisSection");
-   if(o==null||!str.equalsIgnoreCase((String)o)){
-   Iterator ite2=find.keySet().iterator();
-   while(ite2.hasNext()){
-   str=(String)ite2.next();
-   if(!list.containsKey(str))return false;
+   Object o=map.get(key);
+   if (o != null) {
+    HashMap list=(HashMap)o;
+    HashMap find=(HashMap)en.getValue();
+    o = list.get("@copyFrom_skipThisSection");
+    if (o != null && ((str = (String)o).equals("1") || str.equalsIgnoreCase("true"))) {
+     o = find.get("@copyFrom_skipThisSection");
+     if (o == null || !str.equalsIgnoreCase((String)o)) {
+      Iterator ite2=find.keySet().iterator();
+      while (ite2.hasNext()) {
+       str = (String)ite2.next();
+       if (!list.containsKey(str))return false;
+      }
+     }
+    }
    }
-   }
-   }
-  }
   }
   return true;
  }
@@ -126,7 +123,7 @@ public class loder {
    Object o=map.get(key);
    HashMap hash=(HashMap)en.getValue();
    if (o == null) {
-    map.put(key,hash.clone());
+    map.put(key, hash.clone());
    } else {
     HashMap set=(HashMap)o;
     set.putAll(hash);
@@ -290,10 +287,10 @@ public class loder {
     HashMap set=(HashMap)o;
     set.putAll(map3);
    }
-   if (map3 != null)off(key,map3,cous,is);
+   if (map3 != null)off(key, map3, cous, is);
   }
  }
- public static void off(String key,HashMap list,HashMap cou,boolean is){
+ public static void off(String key, HashMap list, HashMap cou, boolean is) {
   Object o = wh(key, rwmodProtect.Res, rwmodProtect.max);
   if (o != null) {
    HashMap find=(HashMap)o;
@@ -307,7 +304,7 @@ public class loder {
     key = (String)ite2.next();
     o = find.get(key);
     if (o != null) {
-     list2.put(key,is);
+     list2.put(key, is);
     }
    }
   }
@@ -315,7 +312,7 @@ public class loder {
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe,pu);
+  put(coe, pu);
   as(coe);
   return coe;
  }
@@ -324,7 +321,7 @@ public class loder {
   HashMap pu=put;
   HashMap hash=new HashMap();
   put(pu,re);
-  put(hash,pu);
+  put(hash, pu);
   Iterator ite=hash.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -347,9 +344,8 @@ public class loder {
    }
    if (list == null)continue;
    map.putAll(list);
-   off(key,list,cou,true);
+   off(key, list, cou, true);
   }
-  as(hash);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
