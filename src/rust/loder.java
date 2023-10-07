@@ -15,7 +15,6 @@ public class loder {
  public HashMap ini;
  public HashMap put;
  public String str;
- public HashMap all;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -88,10 +87,9 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public boolean checkAll(HashMap map) {
-  HashMap alls=all;
+ public static boolean checkAll(HashMap alls,HashMap map) {
   if(alls==null)return true;
-  Iterator ite=all.entrySet().iterator();
+  Iterator ite=alls.entrySet().iterator();
   String str;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();

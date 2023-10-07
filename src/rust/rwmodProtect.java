@@ -294,6 +294,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   file = loder.getSuperPath(file);
   int st=0;
+  HashMap alls=null;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
   HashMap coe;
@@ -304,7 +305,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (isini) {
    loder all=getSpuerAll(file, buff);
    if (all != null) {
-    ini.all = all.put;
+    alls=all.put;
     buff.append(all.str);
     buff.append(',');
     st = buff.length();
@@ -345,7 +346,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    coe=ini.getPut();
    as=ini.getAs(cou);
    if (i>0){
-   if(!ini.checkAll(as))st=0;
+   if(!ini.checkAll(alls,as))st=0;
    core.put("copyFrom", buff.subSequence(st,i));
    }
   }else{
