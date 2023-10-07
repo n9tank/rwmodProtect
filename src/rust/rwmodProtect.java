@@ -325,7 +325,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      String path=list[i].trim();
      str = loder.getPath(path,file);
      loder lod=null;
-     if (str != null) {
+     boolean s=str==null;
+     if(!s){
       ZipEntry en = rootPath(str);
       str = en.getName();
       lod =replace(str, getType(str) > 0);
@@ -335,7 +336,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod=rwmodLib.get(str);
      }
      if(lod!=null){
-     ini.putoff(put,lod.put,cou,str==null);
+     ini.putoff(put,lod.put,cou,s);
      }
      buff.append(path);
      buff.append(',');
