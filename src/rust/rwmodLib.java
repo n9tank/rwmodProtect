@@ -66,7 +66,7 @@ public class rwmodLib {
     loder lod=(loder)en.getValue();
     if (lod.str == null) {
      lod.str = "";
-     lodAllCopy(lod, key, true);
+     lodAllCopy(lod, key);
     }
    }
   } catch (Exception e) {
@@ -99,7 +99,7 @@ public class rwmodLib {
   loder lod=(loder)o;
   if (lod.str==null) {
    lod.str = "";
-   lodAllCopy(lod, str, isini(str));
+   lodAllCopy(lod, str);
   }
   return lod;
  }
@@ -111,7 +111,7 @@ public class rwmodLib {
    return true;
   } else return false;
  }
- public void lodAllCopy(loder lod, String file, boolean isini) {
+ public void lodAllCopy(loder lod, String file) {
   file=loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
@@ -131,7 +131,6 @@ public class rwmodLib {
      loder.put(put,loder.put,true);
     }while(++i < l);
    }
-   if(isini)map.put("strictLevel","1");
   }
   if(put!=null){
   loder.put(put,ini,false);

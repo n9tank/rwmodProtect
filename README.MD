@@ -3,3 +3,7 @@ rwmod混淆器
 从rwmod进行混淆，将所有文件提取到一级伪装为文件夹，并使用难以阅读的字典（默认使用Android的字库）进行重命名。
 纯在很多bug和兼容性问题。
 .ini配置不正确（待修正）
+
+父路径点单位复制子路径且包含all-units.template是不兼容的，这违背了规则（所有文件至一级，兼容使混淆效果下降）
+如： a.ini copyFrom:a/b.ini
+a/b.ini a/all-units.template
