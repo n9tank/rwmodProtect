@@ -587,11 +587,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       if (type == -1) {
        name = loder.getName(file);
        int i=file.length();
-       if (!file.endsWith("/")) {
-        name = name.concat("/");
-       } else --i;
+       if (file.endsWith("/"))--i;
        i -= 4;
-       copy(name, en);
+       copy(name.concat("/"), en);
        buff.setLength(0);
        buff.append(file, 0, i);
        buff.append("_map.png");
