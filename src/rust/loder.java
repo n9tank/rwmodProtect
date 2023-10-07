@@ -103,7 +103,7 @@ public class loder {
     if (skip || (o = set.get("@copyFrom_skipThisSection")) == null || (!(k = (String)o).equals("1") && !k.equalsIgnoreCase("true"))) {
     set.putAll((HashMap)hash);
     }else{
-    map.put(key,hash);
+    map.put(key,((HashMap)hash).clone());
     }
    }
   }
