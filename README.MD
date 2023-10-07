@@ -5,6 +5,6 @@ rwmod混淆器
 .ini配置不正确（待修正）
 
 建议不要使用all-units.template，而是使用copyFrom:all.md，这有更好的兼容性，现阶段主要的性能耗损就在all-units.template上。
-且复制不同级的ini且包含不同all-units.template是不兼容的（all-units.template不会被复制），这违背了规则（所有文件至一级）
+且复制不同级的ini且包含不同all-units.template是不兼容的（游戏规则是all-units.template不会被复制，但是文件会被复制），这违背了规则（所有文件至一级）
 如： a.ini copyFrom:a/b.ini
 a/b.ini a/all-units.template
