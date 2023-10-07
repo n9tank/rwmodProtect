@@ -231,6 +231,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   lod.str=r;
   replaceAll(lod,path,isini, buff);
   write(lod,r);
+  lod.ini=null;
  }
  public void replaceR(String str, String path, StringBuilder buff, int isimg, boolean post) {
   String file;
