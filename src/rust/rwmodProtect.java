@@ -296,16 +296,21 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   file=loder.getSuperPath(file);
   BitSet bit=null;
   loder all=null;
+  int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
   ini.put=put;
   byte end=0;
+  buff.setLength(0);
   tag:
-  if (isini) {
+  if (isini){
    all=getSpuerAll(file, buff);
    if (all != null) {
     bit=new BitSet(0);
     ini.all=all;
+    buff.append(all.str);
+    buff.append(',');
+    st=buff.length();
     ini.putoff(put,all.put,cou,true,end);
     ++end;
    }
@@ -329,8 +334,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       ZipEntry en = rootPath(str);
       str = en.getName();
       lod =replace(str, getType(str) > 0);
-      loder all2=lod.all;
-      if(all!=null&&all2==all)all=null;
+      if(lod.all==all)all=null;
       path=lod.str;
      } else if (libs != null) {
       bit.set(end);
@@ -344,10 +348,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      ++end;
     }while(++i < n);
    }
-   if(all!=null)buff.insert(0,all.str.concat(","));
+   if(all!=null)st=0;
    int i=buff.length();
-   if (--i >= 0)buff.setLength(i);
-   if (bit!=null)core.put("copyFrom",buff.toString());
+   if (bit!=null)core.put("copyFrom",buff.substring(st,--i));
   }
   String str;
   HashMap<String, HashMap> res=Res;
