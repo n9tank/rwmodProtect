@@ -16,6 +16,7 @@ public class loder {
  public HashMap ini;
  public HashMap put;
  public String str;
+ public HashMap all;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
@@ -87,6 +88,35 @@ public class loder {
    } else break;
   }while(--m >= 0 && i > 0);
   return null;
+ }
+ public boolean checkAll(loder lod){
+  //opt
+  HashMap alls=all;
+  if(alls==null||lod.all!=alls)return false;
+  HashMap map=lod.ini;
+  Iterator ite=map.entrySet().iterator();
+  String str;
+  while(ite.hasNext()){
+   Map.Entry en=(Map.Entry)ite.next();
+   String key=(String)en.getKey();
+   Object o=alls.get(key);
+   if(o!=null){
+   HashMap find=(HashMap)o;
+   HashMap list=(HashMap)en.getValue();
+   o=list.get("@copyFrom_skipThisSection");
+   if(o!=null&&((str=(String)o).equals("1")||str.equalsIgnoreCase("true"))){
+   o=find.get("@copyFrom_skipThisSection");
+   if(o==null||!str.equalsIgnoreCase((String)o)){
+   Iterator ite2=find.keySet().iterator();
+   while(ite2.hasNext()){
+   str=(String)ite2.next();
+   if(!list.containsKey(str))return false;
+   }
+   }
+   }
+  }
+  }
+  return true;
  }
  public static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
