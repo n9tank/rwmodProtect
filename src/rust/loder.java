@@ -14,6 +14,7 @@ import java.util.Map;
 public class loder {
  public HashMap ini;
  public HashMap put;
+ public HashMap all;
  public String str;
  public static int max;
  public static int vlmax;
@@ -86,26 +87,6 @@ public class loder {
    } else break;
   }while(--m >= 0 && i > 0);
   return null;
- }
- public static boolean checkAll(HashMap alls, HashMap map) {
-  if (alls == null)return false;
-  Iterator ite=alls.entrySet().iterator();
-  String str;
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   Object o=map.get(key);
-   if (o != null) {
-    HashMap list=(HashMap)o;
-    HashMap find=(HashMap)en.getValue();
-    Iterator ite2=find.keySet().iterator();
-    while (ite2.hasNext()) {
-     str = (String)ite2.next();
-     if (!list.containsKey(str))return true;
-    }
-   } else return true;
-  }
-  return false;
  }
  public static void put(HashMap map, HashMap map2, HashMap cou, boolean is) {
   Iterator ite=map2.entrySet().iterator();
