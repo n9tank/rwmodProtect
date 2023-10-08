@@ -148,7 +148,12 @@ public class loder {
      str = (String)hash.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
     }
+    if(set==null){
+    set=(HashMap)hash.clone();
+    if(cp2==null)map.put(key,str);
+    }else{
     set.putAll(hash);
+    }
     if (si) {
      if (cpy == null) {
       cpy = new cpys();
