@@ -97,7 +97,8 @@ public class loder {
    HashMap hash=(HashMap)en.getValue();
    String str;
    Object skip=hash.get("@copyFrom_skipThisSection");
-   if (o == null || (skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
+   boolean si;
+   if (si=(o == null || skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
     hash=(HashMap)hash.clone();
     if(is>1)hash.remove("@copyFrom_skipThisSection");
     map.put(key, hash);
@@ -118,6 +119,7 @@ public class loder {
      while (ite2.hasNext()) {
       key = (String)ite2.next();
       o = find.get(key);
+      if(is==0&&!si)continue;
       if (o != null) {
        list2.put(key,(is&1)==0);
       }
@@ -331,7 +333,7 @@ public class loder {
      String str,vl,v=(String)en.getValue();
      vl=loder.get(v, hash, list);
      boolean eq=true;
-     if(o==null||o== true || list2 == null || (str = (String)list2.get(key)) == null||(eq=vl==null?!v.equals(str):!vl.equals(loder.get(str, coe, list2)))){
+     if(o==null||o==true||list2 == null||(str = (String)list2.get(key)) == null||(eq=vl==null?!v.equals(str):!vl.equals(loder.get(str, coe, list2)))){
      if(vl!=null&&tr!=null&&tr.get(key)!=null&&getImagePath(vl,"", null)!=null){
      arr.add(key);
      }
