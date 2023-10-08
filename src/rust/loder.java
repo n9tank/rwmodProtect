@@ -88,21 +88,88 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public static void put(HashMap map, HashMap map2, HashMap cou,byte is) {
+ public static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    Object o=map.get(key);
-   HashMap hash=(HashMap)en.getValue();
-   String str;
-   Object skip=hash.get("@copyFrom_skipThisSection");
-   boolean si;
-   if (si=(o == null || skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
-    map.put(key, hash.clone());
+   Object o2=en.getValue();
+   if (o2 instanceof HashMap) {
+    HashMap hash=(HashMap)o2;
+    if (o == null) {
+     map.put(key, hash.clone());
+    } else {
+     HashMap set=(HashMap)o;
+     set.putAll(hash);
+    }
+   } else{
+    cpys cpy=(cpys)o2;
+    map.put(key,cpy.is?cpy.skip:cpy.m);
+   }
+  }
+ }
+ public static void putAnd(HashMap map, HashMap map2, HashMap cou, byte is) {
+  Iterator ite=map2.entrySet().iterator();
+  while (ite.hasNext()) {
+   Map.Entry en=(Map.Entry)ite.next();
+   String key=(String)en.getKey();
+   Object o=map.get(key);
+   Object o2=en.getValue();
+   cpys cp2=null;
+   HashMap hash;
+   cpys cpy=null;
+   boolean si=false;
+   HashMap set=null;
+   if (o2 instanceof HashMap) {
+    hash = (HashMap)o2;
    } else {
-    HashMap set=(HashMap)o;
+    cp2 = (cpys)o2;
+    hash = cp2.m;
+   }
+   tag: {
+    if (o == null) {
+     if (cp2 != null) {
+      si = cp2.is;
+      map.put(key, cp2);
+     } else {
+      o = hash.clone();
+      map.put(key, hash.clone());
+      break tag;
+     }
+    } else if (o instanceof HashMap) {
+     set = (HashMap)o;
+    } else {
+     cpy = (cpys)o;
+     set = cpy.m;
+    }
+    if (cp2 == null) {
+     Object skip=hash.get("@copyFrom_skipThisSection");
+     String str=null;
+     if (skip != null) {
+      str = (String)skip;
+     } else if (set != null)str = (String)set.get("@copyFrom_skipThisSection");
+     si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
+    }
     set.putAll(hash);
+    if (si) {
+     if (cpy == null) {
+      cpy = new cpys();
+      map.put(key, cpy);
+      cpy.m = set;
+     }
+     cpy.skip = (HashMap)hash.clone();
+    } else {
+     if (cpy != null) {
+      cpy.skip.putAll(hash);
+     } else if (cp2 != null) {
+      cpy = new cpys();
+      map.put(key, cpy);
+      cpy.m = set;
+      cpy.skip=(HashMap)hash.clone();
+     }
+    }
+    if (cpy != null)cpy.is = si;
    }
    if (cou != null) {
     o = wh(key, rwmodProtect.Res, rwmodProtect.max);
@@ -117,9 +184,9 @@ public class loder {
      while (ite2.hasNext()) {
       key = (String)ite2.next();
       o = find.get(key);
-      if(is==2&&!si)continue;
+      if (is == 2 && !si)continue;
       if (o != null) {
-       list2.put(key,(is&1)==0);
+       list2.put(key, (is & 1) == 0);
       }
      }
     }
@@ -172,7 +239,7 @@ public class loder {
   if (!root && path.length() > 0) {
    str = path.concat(str);
   }
-  if(shadow&&buff!=null) {
+  if (shadow && buff != null) {
    buff.append("SHADOW:");
   }
   return str;
@@ -272,17 +339,16 @@ public class loder {
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe, pu, null,(byte)0);
-  as(coe);
+  put(coe, pu);
+  as(coe, null);
   return coe;
  }
  public HashMap getAs(HashMap cou) {
-  HashMap re=ini;
   HashMap pu=put;
   HashMap hash=new HashMap();
-  put(pu, re, null,(byte)0);
-  put(hash, pu, null,(byte)0);
-  put(hash, re, cou,(byte)2);
+  putAnd(pu, ini, cou, (byte)0);
+  put(hash, pu);
+  as(hash, cou);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
@@ -316,38 +382,37 @@ public class loder {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
    HashMap tr=(HashMap)wh(ac, def, rwmodProtect.max);
-    ArrayList arr=new ArrayList();
-    HashMap map=(HashMap)cous.get(ac);
-    HashMap list=(HashMap)en.getValue();
-    HashMap list2=(HashMap)coe.get(ac);
-    HashMap list3=(HashMap)re.get(ac);
-    Iterator ite2=list.entrySet().iterator();
-    while (ite2.hasNext()) {
-     en = (Map.Entry) ite2.next();
-     String key=(String)en.getKey();
-     Object o;
-     if(map!=null)o=map.get(key);
-     else o=key;
-     String str,vl,v=(String)en.getValue();
-     vl=loder.get(v, hash, list);
-     boolean eq=true;
-     if(o==null||o==true||list2 == null||(str = (String)list2.get(key)) == null||(eq=vl==null?!v.equals(str):!vl.equals(loder.get(str, coe, list2)))){
-     if(vl!=null&&tr!=null&&tr.get(key)!=null&&getImagePath(vl,"", null)!=null){
-     arr.add(key);
+   ArrayList arr=new ArrayList();
+   HashMap map=(HashMap)cous.get(ac);
+   HashMap list=(HashMap)en.getValue();
+   HashMap list2=(HashMap)coe.get(ac);
+   HashMap list3=(HashMap)re.get(ac);
+   Iterator ite2=list.entrySet().iterator();
+   while (ite2.hasNext()) {
+    en = (Map.Entry) ite2.next();
+    String key=(String)en.getKey();
+    Object o;
+    if (map != null)o = map.get(key);
+    else o = key;
+    String str,vl,v=(String)en.getValue();
+    vl = loder.get(v, hash, list);
+    boolean eq=true;
+    if (o == null || o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2)))) {
+     if (vl != null && tr != null && tr.get(key) != null && getImagePath(vl, "", null) != null) {
+      arr.add(key);
      }
-     }else if(list3!=null&&!eq){
+    } else if (list3 != null && !eq) {
      list3.remove(key);
-     }
+    }
     if (arr.size() > 0) {
      need.add(Map.entry(ac, arr));
     }
    }
   }
-  as(hash);
   return need;
  }
- public static void as(HashMap map) {
-  Iterator ite=map.entrySet().iterator();
+ public static void as(HashMap map, HashMap cou) {
+  Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
