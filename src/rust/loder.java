@@ -103,9 +103,9 @@ public class loder {
      HashMap set=(HashMap)o;
      set.putAll(hash);
     }
-   } else{
+   } else {
     cpys cpy=(cpys)o2;
-    map.put(key,cpy.is?cpy.skip:cpy.m);
+    map.put(key, cpy.is ?cpy.skip: cpy.m);
    }
   }
  }
@@ -144,11 +144,8 @@ public class loder {
      set = cpy.m;
     }
     if (cp2 == null) {
-     Object skip=hash.get("@copyFrom_skipThisSection");
-     String str=null;
-     if (skip != null) {
-      str = (String)skip;
-     } else if (set != null)str = (String)set.get("@copyFrom_skipThisSection");
+     String str=(String)hash.get("@copyFrom_skipThisSection");
+     if (str == null && set != null)str = (String)set.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
     }
     set.putAll(hash);
@@ -166,7 +163,7 @@ public class loder {
       cpy = new cpys();
       map.put(key, cpy);
       cpy.m = set;
-      cpy.skip=(HashMap)hash.clone();
+      cpy.skip = (HashMap)hash.clone();
      }
     }
     if (cpy != null)cpy.is = si;
