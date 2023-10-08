@@ -137,7 +137,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.line = set(map.get("line"), 0);
    HashMap image=set(map.get("image"), 1);
    HashMap music=set(map.get("music"), 3);
-   loder.put(image, music);
+   loder.put(image,music);
    Res = image;
   } catch (Exception e) {
    ui.def.fali(e);
@@ -225,11 +225,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   return lod;
  }
  public void write(loder ini, String path, boolean isini, StringBuilder buff) {
-  loder lod=ini;
   String r=FileName(isini ?1: 0);
-  lod.str = r;
-  replaceAll(lod, path, isini, buff);
-  write(lod, r);
+  ini.str = r;
+  replaceAll(ini, path, isini, buff);
+  write(ini, r);
+  ini.ini=null;
  }
  public void replaceR(String str, String path, StringBuilder buff, int isimg, boolean post) {
   String file;
