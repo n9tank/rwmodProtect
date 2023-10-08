@@ -99,9 +99,7 @@ public class loder {
    Object skip=hash.get("@copyFrom_skipThisSection");
    boolean si;
    if (si=(o == null || skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
-    hash=(HashMap)hash.clone();
-    if(is>1)hash.remove("@copyFrom_skipThisSection");
-    map.put(key, hash);
+    map.put(key, hash.clone());
    } else {
     HashMap set=(HashMap)o;
     set.putAll(hash);
@@ -119,7 +117,7 @@ public class loder {
      while (ite2.hasNext()) {
       key = (String)ite2.next();
       o = find.get(key);
-      if(is==0&&!si)continue;
+      if(is==2&&!si)continue;
       if (o != null) {
        list2.put(key,(is&1)==0);
       }
@@ -274,7 +272,7 @@ public class loder {
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe, pu, null,(byte)2);
+  put(coe, pu, null,(byte)0);
   as(coe);
   return coe;
  }
@@ -283,7 +281,7 @@ public class loder {
   HashMap pu=put;
   HashMap hash=new HashMap();
   put(pu, re, null,(byte)0);
-  put(hash, pu, null,(byte)2);
+  put(hash, pu, null,(byte)0);
   put(hash, re, cou,(byte)2);
   return hash;
  }

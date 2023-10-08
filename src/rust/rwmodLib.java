@@ -128,7 +128,7 @@ public class rwmodLib {
      str = list[i];
      str = loder.getPath(str,file);
      loder loder=getlod(str);
-     loder.put(put,loder.put,null,(byte)2);
+     loder.put(put,loder.put,null,(byte)0);
     }while(++i < l);
    }
   }
