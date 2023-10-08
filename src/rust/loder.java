@@ -105,7 +105,7 @@ public class loder {
     }
    } else {
     cpys cpy=(cpys)o2;
-    map.put(key, cpy.is ?cpy.skip: cpy.m);
+    map.put(key,(cpy.is ?cpy.skip: cpy.m).clone());
    }
   }
  }
