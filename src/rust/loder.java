@@ -88,7 +88,7 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public static void put(HashMap map, HashMap map2, HashMap cou,boolean is,boolean keep) {
+ public static void put(HashMap map, HashMap map2, HashMap cou,byte is) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -99,7 +99,7 @@ public class loder {
    Object skip=hash.get("@copyFrom_skipThisSection");
    if (o == null || (skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
     hash=(HashMap)hash.clone();
-    if(!keep)hash.remove("@copyFrom_skipThisSection");
+    if(is>1)hash.remove("@copyFrom_skipThisSection");
     map.put(key, hash);
    } else {
     HashMap set=(HashMap)o;
@@ -119,7 +119,7 @@ public class loder {
       key = (String)ite2.next();
       o = find.get(key);
       if (o != null) {
-       list2.put(key, is);
+       list2.put(key,(is&1)==0);
       }
      }
     }
@@ -272,7 +272,7 @@ public class loder {
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe, pu, null, false,false);
+  put(coe, pu, null,(byte)2);
   as(coe);
   return coe;
  }
@@ -280,9 +280,9 @@ public class loder {
   HashMap re=ini;
   HashMap pu=put;
   HashMap hash=new HashMap();
-  put(pu, re, null, false,true);
-  put(hash, pu, null, false,false);
-  put(hash, re, cou, true,false);
+  put(pu, re, null,(byte)0);
+  put(hash, pu, null,(byte)2);
+  put(hash, re, cou,(byte)2);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
