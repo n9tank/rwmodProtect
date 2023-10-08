@@ -4,7 +4,7 @@ rwmod混淆器
 纯在很多bug和兼容性问题。
 .ini配置不正确（待修正）
 
-要使用all-units.template，请确保复制对象（仅ini，不包括不加载）的all-units.template与目标的相同或者空。
+要使用all-units.template，请确保复制对象（仅ini，不包括不加载）的all-units.template与目标的相同。
 如：以下场景，便会出现兼容问题。
 a.ini copyFrom:a/b.ini
 a/b.ini a/all-units.template
