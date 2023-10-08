@@ -131,7 +131,7 @@ public class loder {
     if (o == null) {
      if (cp2 != null) {
       si = cp2.is;
-      map.put(key, cp2);
+      set=(HashMap)hash.clone();
      } else {
       o = hash.clone();
       map.put(key, hash.clone());
@@ -139,20 +139,16 @@ public class loder {
      }
     } else if (o instanceof HashMap) {
      set = (HashMap)o;
+     set.putAll(hash);
     } else {
      cpy = (cpys)o;
      set = cpy.m;
+     set.putAll(hash);
     }
     String str=null;
     if (cp2 == null) {
      str = (String)hash.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
-    }
-    if(set==null){
-    set=(HashMap)hash.clone();
-    if(cp2==null)map.put(key,str);
-    }else{
-    set.putAll(hash);
     }
     if (si) {
      if (cpy == null) {
@@ -160,7 +156,7 @@ public class loder {
       map.put(key, cpy);
       cpy.m = set;
      }
-     cpy.skip = (HashMap)hash.clone();
+     cpy.skip=(HashMap)(cp2==null?hash:cp2.skip).clone();
     } else {
      if (cpy != null) {
       cpy.skip.putAll(hash);
@@ -168,7 +164,7 @@ public class loder {
       cpy = new cpys();
       map.put(key, cpy);
       cpy.m = set;
-      cpy.skip = (HashMap)hash.clone();
+      cpy.skip=(HashMap)hash.clone();
      }
     }
     if (str != null && cpy != null)cpy.is = si;
