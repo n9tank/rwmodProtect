@@ -131,7 +131,7 @@ public class loder {
     if (o == null) {
      if (cp2 != null) {
       si = cp2.is;
-      set=(HashMap)hash.clone();
+      set = (HashMap)hash.clone();
      } else {
       o = hash.clone();
       map.put(key, hash.clone());
@@ -156,7 +156,7 @@ public class loder {
       map.put(key, cpy);
       cpy.m = set;
      }
-     cpy.skip=(HashMap)(cp2==null?hash:cp2.skip).clone();
+     cpy.skip = (HashMap)(cp2 == null ?hash: cp2.skip).clone();
     } else {
      if (cpy != null) {
       cpy.skip.putAll(hash);
@@ -164,7 +164,7 @@ public class loder {
       cpy = new cpys();
       map.put(key, cpy);
       cpy.m = set;
-      cpy.skip=(HashMap)hash.clone();
+      cpy.skip = (HashMap)hash.clone();
      }
     }
     if (str != null && cpy != null)cpy.is = si;

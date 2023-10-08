@@ -37,7 +37,7 @@ public final class off {
    tag:
    if (list.length > 1) {
     HashMap loc;
-    if (key.equals("section.key"))loc = setion;
+    if(key.equals("section"))loc = setion;
     else{
     loc = (HashMap)map.get(key);
     if(loc==null)return null;

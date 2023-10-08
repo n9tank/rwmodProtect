@@ -307,7 +307,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     buff.append(',');
     st = buff.length();
     ini.all = alls = all.put;
-    ini.putAnd(put, all.put, cou,(byte)1);
+    ini.putAnd(put, all.put, cou, (byte)1);
    }
   }
   HashMap map=ini.ini;
@@ -334,7 +334,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod = rwmodLib.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, cou,s?(byte)0:(byte)1);
+      ini.putAnd(put, lod.put, cou, s ?(byte)0: (byte)1);
       if (!s && alls == lod.all)alls = null;
      }
      buff.append(path);
