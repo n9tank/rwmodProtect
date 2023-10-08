@@ -143,9 +143,9 @@ public class loder {
      cpy = (cpys)o;
      set = cpy.m;
     }
+    String str=null;
     if (cp2 == null) {
-     String str=(String)hash.get("@copyFrom_skipThisSection");
-     if (str == null && set != null)str = (String)set.get("@copyFrom_skipThisSection");
+     str = (String)hash.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
     }
     set.putAll(hash);
@@ -166,7 +166,7 @@ public class loder {
       cpy.skip = (HashMap)hash.clone();
      }
     }
-    if (cpy != null)cpy.is = si;
+    if (str != null && cpy != null)cpy.is = si;
    }
    if (cou != null) {
     o = wh(key, rwmodProtect.Res, rwmodProtect.max);
