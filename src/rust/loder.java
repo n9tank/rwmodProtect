@@ -88,7 +88,7 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public static void put(HashMap map, HashMap map2, HashMap cou, boolean is) {
+ public static void put(HashMap map, HashMap map2, HashMap cou,boolean is,boolean keep) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -98,7 +98,9 @@ public class loder {
    String str;
    Object skip=hash.get("@copyFrom_skipThisSection");
    if (o == null || (skip != null && ((str = (String)skip).equals("1") || str.equalsIgnoreCase("true")))) {
-    map.put(key, hash.clone());
+    hash=(HashMap)hash.clone();
+    if(!keep)hash.remove("@copyFrom_skipThisSection");
+    map.put(key, hash);
    } else {
     HashMap set=(HashMap)o;
     set.putAll(hash);
@@ -170,7 +172,7 @@ public class loder {
   if (!root && path.length() > 0) {
    str = path.concat(str);
   }
-  if (shadow) {
+  if(shadow&&buff!=null) {
    buff.append("SHADOW:");
   }
   return str;
@@ -270,7 +272,7 @@ public class loder {
  public HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
-  put(coe, pu, null, false);
+  put(coe, pu, null, false,false);
   as(coe);
   return coe;
  }
@@ -278,9 +280,9 @@ public class loder {
   HashMap re=ini;
   HashMap pu=put;
   HashMap hash=new HashMap();
-  put(pu, re, null, false);
-  put(hash, pu, null, false);
-  put(hash, re, cou, true);
+  put(pu, re, null, false,true);
+  put(hash, pu, null, false,false);
+  put(hash, re, cou, true,false);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
@@ -308,28 +310,34 @@ public class loder {
  public ArrayList find(HashMap cous, HashMap coe, HashMap hash) {
   ArrayList<Map.Entry> need=new ArrayList();
   HashMap def=rwmodProtect.Res;
+  HashMap re=ini;
   Iterator ite = hash.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
-   Object o=wh(ac, def, rwmodProtect.max);
-   if (o != null) {
+   HashMap tr=(HashMap)wh(ac, def, rwmodProtect.max);
     ArrayList arr=new ArrayList();
     HashMap map=(HashMap)cous.get(ac);
     HashMap list=(HashMap)en.getValue();
     HashMap list2=(HashMap)coe.get(ac);
-    HashMap tr=(HashMap)o;
+    HashMap list3=(HashMap)re.get(ac);
     Iterator ite2=list.entrySet().iterator();
     while (ite2.hasNext()) {
      en = (Map.Entry) ite2.next();
      String key=(String)en.getKey();
-     if (tr.get(key) == null)continue;
-     o = map.get(key);
-     String str;
-     if (o == null || o == true || list2 == null || (str = (String)list2.get(key)) == null || !loder.get((String)en.getValue(), hash, list).equals(loder.get(str, coe, list2))) {
-      arr.add(key);
+     Object o;
+     if(map!=null)o=map.get(key);
+     else o=key;
+     String str,vl,v=(String)en.getValue();
+     vl=loder.get(v, hash, list);
+     boolean eq=true;
+     if(o==null||o== true || list2 == null || (str = (String)list2.get(key)) == null||(eq=vl==null?!v.equals(str):!vl.equals(loder.get(str, coe, list2)))){
+     if(vl!=null&&tr!=null&&tr.get(key)!=null&&getImagePath(vl,"", null)!=null){
+     arr.add(key);
      }
-    }
+     }else if(list3!=null&&!eq){
+     list3.remove(key);
+     }
     if (arr.size() > 0) {
      need.add(Map.entry(ac, arr));
     }

@@ -128,12 +128,12 @@ public class rwmodLib {
      str = list[i];
      str = loder.getPath(str,file);
      loder loder=getlod(str);
-     loder.put(put,loder.put,null,false);
+     loder.put(put,loder.put,null,false,false);
     }while(++i < l);
    }
   }
   if(put!=null){
-  loder.put(put,ini,null,false);
+  loder.put(put,ini,null,false,false);
   }else put=ini;
   lod.put=put;
   lod.ini=null;
