@@ -4,7 +4,9 @@ rwmod混淆器
 纯在很多bug和兼容性问题。
 .ini配置不正确（待修正）
 
-建议不要使用all-units.template，而是使用copyFrom:all.md，这有更好的兼容性。
-复制不同级的ini且包含不同all-units.template是不兼容的（游戏规则是all-units.template不会被复制，但是文件会被复制），这违背了规则（所有文件至一级）
-如： a.ini copyFrom:a/b.ini
+要使用all-units.template，请确保复制对象（仅ini，不包括不加载）的all-units.template与自己相同或者空。
+如：以下场景，便会出现兼容问题。
+a.ini copyFrom:a/b.ini
 a/b.ini a/all-units.template
+诺要避免，请更改名称，并使用copyFrom:在第一个目标复制它。
+尽管可以试着重写兼容层，但是这导致明确的分级，它的混淆效果将大幅下降（这是即为不推荐的，所以有此规则）
