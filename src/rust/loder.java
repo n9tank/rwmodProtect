@@ -338,7 +338,7 @@ public class loder {
   HashMap pu=put;
   HashMap coe=new HashMap();
   put(coe, pu);
-  as(coe, null);
+  as(coe);
   return coe;
  }
  public HashMap getAs(HashMap cou) {
@@ -346,7 +346,7 @@ public class loder {
   HashMap hash=new HashMap();
   putAnd(pu, ini, cou, (byte)0);
   put(hash, pu);
-  as(hash, cou);
+  as(hash);
   return hash;
  }
  public void put(HashMap as, ArrayList need) {
@@ -410,7 +410,7 @@ public class loder {
   }
   return need;
  }
- public static void as(HashMap map, HashMap cou) {
+ public static void as(HashMap map) {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();

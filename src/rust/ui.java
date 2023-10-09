@@ -12,7 +12,7 @@ public class ui{
  public final static ExecutorService pool=Executors.newCachedThreadPool();
  public ui(String show){
   this.show=show;
-  g=System.nanoTime();
+  g=System.currentTimeMillis();
  }
  public static void exec(File path){
   rwmodProtect rw=new rwmodProtect(path,new ui(path.getPath()));
@@ -20,7 +20,7 @@ public class ui{
  }
  public void finsh(){
   System.out.println(show);
-  System.out.print((System.nanoTime()-g)*0.000001D);
+  System.out.print(System.currentTimeMillis()-g);
   System.out.println("ms");
  }
  public void fali(Exception e){
