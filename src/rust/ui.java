@@ -3,6 +3,7 @@ package rust;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.io.PrintStream;
 
 public class ui{
  public String show;
@@ -19,9 +20,10 @@ public class ui{
   pool.execute(rw);
  }
  public void finsh(){
-  System.out.println(show);
-  System.out.print(System.currentTimeMillis()-g);
-  System.out.println("ms");
+  PrintStream out=System.out;
+  out.println(show);
+  out.print(System.currentTimeMillis() - g);
+  out.println("ms");
  }
  public void fali(Exception e){
   e.printStackTrace();

@@ -1,18 +1,20 @@
 
 import java.io.File;
-import rust.rwmodLib;
+import java.util.Scanner;
 import rust.rwmodProtect;
 import rust.ui;
-import rust.off;
-import java.util.zip.ZipFile;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.HashMap;
-import java.util.zip.ZipOutputStream;
-import java.io.FileOutputStream;
-import java.util.BitSet;
 public class Main {
  public static void main(String[] args) throws Exception {
-  ui.exec(new File("sdcard/a.rwmod"));
+  rwmodProtect.init();
+  Scanner sc=new Scanner(System.in);
+  while(true){
+   File f=new File(sc.nextLine());
+   if(f.length()==0){
+    System.out.println("文件异常");
+    continue;
+   }else{
+    ui.exec(f);
+   }
+  }
  }
 }
