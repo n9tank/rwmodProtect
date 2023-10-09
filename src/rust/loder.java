@@ -395,7 +395,7 @@ public class loder {
     String str,vl,v=(String)en.getValue();
     vl = loder.get(v, hash, list);
     boolean eq=true;
-    if (o == null || o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2)))) {
+    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2)))) {
      if (vl != null && tr != null && tr.get(key) != null && getImagePath(vl, "", null) != null) {
       arr.add(key);
      }
