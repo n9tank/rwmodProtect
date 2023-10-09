@@ -7,7 +7,7 @@ public class cmpU implements Comparator<charc> {
   switch(type) {
    case 0:
     m = o1.pix;
-    n = o1.pix;
+    n = o2.pix;
     break;
    case 1:
     m = o1.x;

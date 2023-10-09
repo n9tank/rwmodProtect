@@ -1,17 +1,13 @@
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 //import rust.loderLib;
 
 
@@ -27,26 +23,25 @@ public class Main {
   int index=to - 32;
   ArrayList crr=new ArrayList();
   StringBuilder dump=new StringBuilder();
- /* Bitmap map=Bitmap.createBitmap(20,20,Bitmap.Config.ALPHA_8);
-  Canvas vs=new Canvas(map);*/
+  Bitmap map=Bitmap.createBitmap(100,100,Bitmap.Config.ALPHA_8);
+  Canvas vs=new Canvas(map);
   Paint pain=new Paint();
-  pain.setTextSize(100);
   charc.paint=pain;
   charc.recs=new Rect();
-  /*pain.setAntiAlias(true);
-  pain.setTextSize(10);
+  pain.setAntiAlias(true);
+  pain.setTextSize(40);
   pain.setColor(Color.BLACK);
   charc.bit=map;
-  charc.pixe=new int[400];*/
+  charc.pixe=new int[10000];
   while (--index >= 0){
    String s=String.valueOf(to--);
    if (pain.hasGlyph(s)){
-    //vs.drawText(s,0,10,pain);
+    vs.drawText(s,50,50,pain);
     charc c=new charc(s);
-    if(c.x==0.f){
+    if(c.x<=0.f){
     crr.add(c);
     }
-    //map.eraseColor(0);
+    map.eraseColor(0);
    } else {
    dump.append(s);
    //dump.append("\n");
@@ -54,14 +49,14 @@ public class Main {
   }
   cm=new cmpU();
   int size=crr.size();
-  srot(crr,2);
-  size*=0.8;
+ // srot(crr,2);
+  srot(crr,0);
+  size*=0.2;
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
   int i=0;
   do{
   charc c=(charc)crr.get(i);
   buff.write(c.s);
-  System.out.println(c.y);
   }while(++i<size);
   buff.write(dump.toString());
   buff.flush();
