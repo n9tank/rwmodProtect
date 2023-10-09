@@ -21,7 +21,8 @@ public class ui{
  }
  public void finsh(){
   PrintStream out=System.out;
-  out.println(show);
+  out.print(show);
+  out.print(':');
   out.print(System.currentTimeMillis() - g);
   out.println("ms");
  }
