@@ -22,8 +22,6 @@ public class cmpU implements Comparator<charc> {
     n = (Math.max(o2.x, 1) * Math.max(o2.y,1));
     break;
   }
-  if (m > n)return 1;
-  else if (m < n)return -1;
-  return 0;
+  return m-n;
  }
 }
