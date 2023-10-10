@@ -14,4 +14,4 @@ a/b.ini a/all-units.template
 不要使用/作为根路径，这会导致游戏的一些bug，且不兼容。
 
 考虑开发规范对tmx,ogg,mod-info.txt的处理是没有必要的（这导致一些冲突，在游戏中得以表现）
-因此ini使用资源后缀不能为.tmx，或在作为背景音乐下的.ogg文件，也不能为mod-info.txt，这是不兼容的。
+因此tmx的名称不能相同，ini使用资源后缀不能为.tmx，或在作为背景音乐下的.ogg文件，也不能为mod-info.txt，这是不兼容的。

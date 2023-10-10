@@ -42,7 +42,7 @@ public class Main {
     crr.add(c);
     }
     map.eraseColor(0);
-   } else {
+   } else if(to<0xd800||to>0xdfff){
    dump.append(s);
    //dump.append("\n");
    }
@@ -65,7 +65,7 @@ public class Main {
  public static void main(String arg[]) throws Exception{
   //toLib("sdcard/rustedWarfare/lib.apk");
   charList();
-  System.out.println("finsh");
+  System.out.print("finsh");
  }
  /*
  public static void toLib(String str) throws Exception{
