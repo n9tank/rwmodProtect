@@ -28,7 +28,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public ZipOutputStream Zipout;
  public HashMap low;
  public HashMap Filemap;
-// public HashMap Oggmap;
  public ByteBuffer Warp;
  public WritableByteChannel Out;
  public OutputStreamWriter Ow;
@@ -204,21 +203,21 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ZipEntry en=rootPath(str);
   str = en.getName();
   HashMap map;
-  if(isini){
-  map=iniMap;
-  }else{
-  map=iniHide;
+  if (isini) {
+   map = iniMap;
+  } else {
+   map = iniHide;
   }
   Object o=map.get(str);
-   if (!isini&&o==null) {
-     ZipFile zip=Zip;
-     try {
-      lod = new loder(zip.getInputStream(en));
-      map.put(str, lod);
-     } catch (Exception e) {
-      Ui.fali(e);
-     }
-   }else lod = (loder)o;
+  if (!isini && o == null) {
+   ZipFile zip=Zip;
+   try {
+    lod = new loder(zip.getInputStream(en));
+    map.put(str, lod);
+   } catch (Exception e) {
+    Ui.fali(e);
+   }
+  } else lod = (loder)o;
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
@@ -515,20 +514,41 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
      String fileName=zipEntry.getName(); 
-     name = loder.getRoot(fileName);
+     name=loder.getRoot(fileName);
+     fileName=fileName.toLowerCase();
+     if (!lows.containsKey(fileName))lows.put(fileName,zipEntry);
      if (!"".equals(root)) {
-      if (name.length() == 0) {
-       rootPath = root = "";
-      } else if (root == null) {
+      if (root == null) {
        rootPath = root = name;
       } else if (!root.equals(name)) {
        rootPath = root = "";
       }
      }
-     if (zipEntry.getSize() != 0) { 
-      lows.put(fileName.toLowerCase(),zipEntry);
+    }
+    ZipEntry inf=toPath(rootPath.concat("mod-info.txt"));
+    if (inf != null){
+     loder ini=new loder(zip.getInputStream(inf));
+     HashMap info=ini.ini;
+     Object o=info.get("music");
+     if (o != null) {
+      HashMap map=(HashMap)o;
+      o = map.get("sourceFolder");
+      if (o != null) {
+       String musicpath = (String)o;
+       musicpath = musicpath.replaceFirst("^[/\\]", "");
+       if (musicpath.length() > 0)musicpath = musicpath.concat("/");
+       musicPath = musicpath;
+       map.put("sourceFolder", "");
+      }}
+     write(ini, "mod-info.txt/");
+    }
+    zipEntrys=zip.entries();
+    while (zipEntrys.hasMoreElements()) {
+     ZipEntry zipEntry=zipEntrys.nextElement();
+     if (zipEntry.getSize() != 0l) { 
+      String fileName=zipEntry.getName();
       byte type=getType(fileName);
-      if (type >= 0) {
+      if (type>=0) {
        try {
         loder lod=new loder(zip.getInputStream(zipEntry));
         if (rwmodLib.dontlod(lod))type = 0;
@@ -563,25 +583,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       }
      }
     }
-    ZipEntry inf=toPath(rootPath.concat("mod-info.txt"));
-    if (inf != null) {
-     loder ini=new loder(zip.getInputStream(inf));
-     HashMap info=ini.ini;
-     Object o=info.get("music");
-     if (o != null) {
-      HashMap map=(HashMap)o;
-      o = map.get("sourceFolder");
-      if (o != null) {
-       String musicpath = (String)o;
-       musicpath = musicpath.replaceFirst("^[/\\]", "");
-       if (musicpath.length() > 0)musicpath = musicpath.concat("/");
-       musicPath = musicpath;
-       map.put("sourceFolder", "");
-      }}
-     write(ini, "mod-info.txt/");
-    }
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
-    wh:
     while (ite.hasNext()) {
      Map.Entry<String,loder> ini=ite.next();
      String filename=ini.getKey();
