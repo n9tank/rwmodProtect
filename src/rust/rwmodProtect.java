@@ -519,13 +519,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      if (!lows.containsKey(fileName))lows.put(fileName,zipEntry);
      if (!"".equals(root)) {
       if (root == null) {
-       rootPath = root = name;
+       root = name;
       } else if (!root.equals(name)) {
-       rootPath = root = "";
+       root = "";
       }
      }
     }
-    ZipEntry inf=toPath(rootPath.concat("mod-info.txt"));
+    rootPath=root;
+    ZipEntry inf=toPath(root.concat("mod-info.txt"));
     if (inf != null){
      loder ini=new loder(zip.getInputStream(inf));
      HashMap info=ini.ini;
