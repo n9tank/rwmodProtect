@@ -35,6 +35,10 @@ public class Main {
   charc.pixe=new int[10000];
   while (--index >= 0){
    String s=String.valueOf(to--);
+   if(to>=0xd800&&to<=0xdfff){
+    to=0xd7ff;
+    index=to-32;
+   }
    if (pain.hasGlyph(s)){
     vs.drawText(s,50,50,pain);
     charc c=new charc(s);
@@ -42,7 +46,7 @@ public class Main {
     crr.add(c);
     }
     map.eraseColor(0);
-   } else if(to<0xd800||to>0xdfff){
+   } else{
    dump.append(s);
    //dump.append("\n");
    }
