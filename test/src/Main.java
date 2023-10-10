@@ -22,7 +22,7 @@ public class Main {
   char to=Character.MAX_VALUE;
   int index=to - 32;
   ArrayList crr=new ArrayList();
-  StringBuilder dump=new StringBuilder();
+  //StringBuilder dump=new StringBuilder();
   Bitmap map=Bitmap.createBitmap(100, 100, Bitmap.Config.ALPHA_8);
   Canvas vs=new Canvas(map);
   Paint pain=new Paint();
@@ -52,25 +52,25 @@ public class Main {
        ++pi;
       }
      }
-     charc c=new charc(s,x,rec.height(),pi);
+     charc c=new charc(s,w,h,pi);
      crr.add(c);
      map.eraseColor(0);
     }
    } else {
-    dump.append(s);
+   // dump.append(s);
    }
   }
   cm = new cmpU();
   int size=crr.size();
-  srot(crr, 0);
-  size*=0.2;
+  srot(crr,0);
+ // size*=0.2;
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
   int i=0;
   do{
    charc c=(charc)crr.get(i);
    buff.write(c.s);
   }while(++i < size);
-  buff.write(dump.toString());
+ // buff.write(dump.toString());
   buff.flush();
   buff.close();
  }

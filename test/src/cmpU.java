@@ -3,7 +3,7 @@ import java.util.Comparator;
 public class cmpU implements Comparator<charc> {
  int type;
  public int compare(charc o1, charc o2) {
-  float m,n;
+  int m,n;
   switch(type) {
    case 0:
     m = o1.pix;
@@ -18,8 +18,8 @@ public class cmpU implements Comparator<charc> {
     n = o2.y;
     break;
    default:
-    m = (Math.max(o1.x, 1) * Math.max(o1.y, 1));
-    n = (Math.max(o2.x, 1) * Math.max(o2.x, o2.y));
+    m = (Math.max(o1.x, 1) * Math.max(o1.y,1));
+    n = (Math.max(o2.x, 1) * Math.max(o2.y,1));
     break;
   }
   if (m > n)return 1;

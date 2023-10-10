@@ -5,10 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 public class charc{
 public int pix;
-public float x;
-public float y;
+public int x;
+public int y;
 public String s;
-public charc(String c,float xm,int ym,int pi){
+public charc(String c,int xm,int ym,int pi){
 s=c;
 x=xm;
 y=ym;
