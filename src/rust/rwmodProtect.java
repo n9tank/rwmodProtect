@@ -224,6 +224,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public void write(loder ini, String path, boolean isini, StringBuilder buff) {
   String r=FileName(isini ?1: 0);
   ini.str = r;
+  path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
   write(ini, r);
   ini.ini = null;
@@ -289,7 +290,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append(',');
  }
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
-  file = loder.getSuperPath(file);
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
@@ -541,7 +541,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        musicPath = musicpath;
        map.put("sourceFolder", "");
       }}
-     write(ini,"mod-info.txt/",true,buff);
+      replaceAll(ini,name,true,buff);
+      write(ini,"mod-info.txt/");
     }
     zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
