@@ -6,7 +6,7 @@ import rust.ui;
 public class Main {
  public static void main(String[] args) throws Exception {
   rwmodProtect.init();
-  Scanner sc=new Scanner(System.in);
+   Scanner sc=new Scanner(System.in);
   while(true){
    File f=new File(sc.nextLine());
    if(f.length()==0){
