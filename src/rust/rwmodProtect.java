@@ -540,8 +540,19 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        if (musicpath.length() > 0)musicpath = musicpath.concat("/");
        musicPath = musicpath;
        map.put("sourceFolder", "");
-      }}
-      replaceAll(ini,name,true,buff);
+      }
+      }
+      o=info.get("mod");
+      if(o!=null){
+       HashMap map=(HashMap)o;
+       String str=(String)map.get("thumbnail");
+       if(str!=null){
+        replaceR(str,name,buff,1,true);
+        int i=buff.length()-1;
+        if(i>0)buff.setLength(i);
+        map.put("thumbnail",buff.toString());
+       }
+      }
       write(ini,"mod-info.txt/");
     }
     zipEntrys = zip.entries();
@@ -551,7 +562,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       if (type >= 0) {
-       try {
         loder lod=new loder(zip.getInputStream(zipEntry));
         if (rwmodLib.dontlod(lod))type = 0;
         if (type > 0) {
@@ -559,9 +569,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         } else {
          inihide.put(name, lod);
         }
-       } catch (Exception e) {
-        ui.fali(e);
-       }
       } else {
        if (type == -1) {
         String loc = loder.getName(name);
@@ -579,7 +586,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         }
        } else {
         if (type == -3) {
-         copy(FileName(type), zipEntry);
+        copy(FileName(type), zipEntry);
         }
        }
       }
