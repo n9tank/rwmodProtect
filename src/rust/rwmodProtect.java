@@ -508,26 +508,26 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    Ow = wt;
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
-   String root=null;
+   name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
-     String fileName=zipEntry.getName(); 
-     name=loder.getRoot(fileName);
-     fileName=fileName.toLowerCase();
-     if (!lows.containsKey(fileName))lows.put(fileName,zipEntry);
-     if (!"".equals(root)) {
-      if (root == null) {
-       root = name;
-      } else if (!root.equals(name)) {
-       root = "";
-      }
+     String fileName=zipEntry.getName();
+     String root=loder.getRoot(fileName);
+     fileName = fileName.toLowerCase();
+     if (!lows.containsKey(fileName))lows.put(fileName, zipEntry);
+     if (name == null) {
+      name = root;
+     } else if (name.length() == 0) {
+      continue;
+     } else if (!name.equals(root)) {
+      name = "";
      }
     }
-    rootPath=root;
-    ZipEntry inf=toPath(root.concat("mod-info.txt"));
-    if (inf != null){
+    rootPath = name;
+    ZipEntry inf=toPath(name.concat("mod-info.txt"));
+    if (inf != null) {
      loder ini=new loder(zip.getInputStream(inf));
      HashMap info=ini.ini;
      Object o=info.get("music");
@@ -543,33 +543,33 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       }}
      write(ini, "mod-info.txt/");
     }
-    zipEntrys=zip.entries();
+    zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
      ZipEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0l) { 
-      String fileName=zipEntry.getName();
-      byte type=getType(fileName);
-      if (type>=0) {
+      name = zipEntry.getName();
+      byte type=getType(name);
+      if (type >= 0) {
        try {
         loder lod=new loder(zip.getInputStream(zipEntry));
         if (rwmodLib.dontlod(lod))type = 0;
         if (type > 0) {
-         inimap.put(fileName, lod);
+         inimap.put(name, lod);
         } else {
-         inihide.put(fileName, lod);
+         inihide.put(name, lod);
         }
        } catch (Exception e) {
         ui.fali(e);
        }
       } else {
        if (type == -1) {
-        name = loder.getName(fileName);
-        int i=fileName.length();
-        if (fileName.endsWith("/"))--i;
+        name = loder.getName(name);
+        int i=name.length();
+        if (name.endsWith("/"))--i;
         i -= 4;
         copy(name.concat("/"), zipEntry);
         buff.setLength(0);
-        buff.append(fileName, 0, i);
+        buff.append(name, 0, i);
         buff.append("_map.png");
         zipEntry = toPath(buff.toString());
         if (zipEntry != null) {
