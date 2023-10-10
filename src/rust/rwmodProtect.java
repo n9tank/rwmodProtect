@@ -541,7 +541,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        musicPath = musicpath;
        map.put("sourceFolder", "");
       }}
-     write(ini, "mod-info.txt/");
+     write(ini,"mod-info.txt/",true,buff);
     }
     zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
@@ -563,11 +563,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        }
       } else {
        if (type == -1) {
-        name = loder.getName(name);
+        String loc = loder.getName(name);
         int i=name.length();
         if (name.endsWith("/"))--i;
         i -= 4;
-        copy(name.concat("/"), zipEntry);
+        copy(loc.concat("/"), zipEntry);
         buff.setLength(0);
         buff.append(name, 0, i);
         buff.append("_map.png");
