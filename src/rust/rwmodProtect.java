@@ -203,12 +203,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   loder lod=null;
   ZipEntry en=rootPath(str);
   str = en.getName();
-  Object o;
-  tag: {
-   if (!isini || (o = iniMap.get(str)) == null) {
-    HashMap map=iniHide;
-    o = map.get(str);
-    if (o == null) {
+  HashMap map;
+  if(isini){
+  map=iniMap;
+  }else{
+  map=iniHide;
+  }
+  Object o=map.get(str);
+   if (!isini&&o==null) {
      ZipFile zip=Zip;
      try {
       lod = new loder(zip.getInputStream(en));
@@ -216,11 +218,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      } catch (Exception e) {
       Ui.fali(e);
      }
-     break tag;
-    }
-   }
-   lod = (loder)o;
-  }
+   }else lod = (loder)o;
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
@@ -509,7 +507,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    zipout.setLevel(9);
    OutputStreamWriter wt=new OutputStreamWriter(zipout);
    Ow = wt;
-   Enumeration<? extends ZipEntry> ZipEntrys=zip.entries();
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
    String root=null;
@@ -529,6 +526,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       }
      }
      if (zipEntry.getSize() != 0) { 
+      lows.put(fileName.toLowerCase(),zipEntry);
       byte type=getType(fileName);
       if (type >= 0) {
        try {
