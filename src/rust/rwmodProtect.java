@@ -542,17 +542,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        map.put("sourceFolder", "");
       }
       }
-      o=info.get("mod");
-      if(o!=null){
-       HashMap map=(HashMap)o;
-       String str=(String)map.get("thumbnail");
-       if(str!=null){
-        replaceR(str,name,buff,1,true);
-        int i=buff.length()-1;
-        if(i>0)buff.setLength(i);
-        map.put("thumbnail",buff.toString());
-       }
-      }
       write(ini,"mod-info.txt/");
     }
     zipEntrys = zip.entries();
