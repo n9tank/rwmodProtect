@@ -34,11 +34,11 @@ public class Main {
   charc.bit=map;
   charc.pixe=new int[10000];
   while (--index >= 0){
-   String s=String.valueOf(to--);
    if(to>=0xd800&&to<=0xdfff){
     to=0xd7ff;
     index=to-32;
    }
+   String s=String.valueOf(to--);
    if (pain.hasGlyph(s)){
     vs.drawText(s,50,50,pain);
     charc c=new charc(s);
