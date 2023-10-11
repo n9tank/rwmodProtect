@@ -16,14 +16,12 @@ public class loder {
  public HashMap put;
  public HashMap all;
  public String str;
- public StringBuilder mbuff;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
  public static HashMap<String,HashSet> line=new HashMap();
  public loder(InputStream input,StringBuilder buff)throws Exception {
-  this(new InputStreamReader(input));
-  mbuff = buff;
+  this(new InputStreamReader(input),buff);
  }
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
@@ -244,9 +242,8 @@ public class loder {
   }
   return str;
  }
- public String get(String str, HashMap map, HashMap loc) {
+ public static String get(String str, HashMap map, HashMap loc,StringBuilder buff) {
   int i=0,j=0;
-  StringBuilder buff=mbuff;
   buff.setLength(0);
   do{
    i = str.indexOf("${", i);
@@ -276,7 +273,7 @@ public class loder {
   }
   return str;
  }
- public loder(InputStreamReader input)throws Exception {
+ public loder(InputStreamReader input,StringBuilder bf)throws Exception {
   HashMap global=new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;
@@ -285,7 +282,6 @@ public class loder {
   table.put("", global);
   ini = table;
   HashSet hashset=null;
-  StringBuilder bf=mbuff;
   try {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
@@ -373,7 +369,7 @@ public class loder {
    }
   }
  }
- public ArrayList find(HashMap cous, HashMap coe, HashMap hash) {
+ public ArrayList find(HashMap cous, HashMap coe, HashMap hash,StringBuilder buff) {
   ArrayList<Map.Entry> need=new ArrayList();
   HashMap def=rwmodProtect.Res;
   HashMap re=ini;
@@ -395,9 +391,9 @@ public class loder {
     if (map != null)o = map.get(key);
     else o = key;
     String str,vl,v=(String)en.getValue();
-    vl = get(v, hash, list);
+    vl = get(v, hash, list,buff);
     boolean eq=true;
-    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2)))) {
+    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2,buff)))) {
      if (vl != null && tr != null && tr.get(key) != null && getImagePath(vl, "", null) != null) {
       arr.add(key);
      }

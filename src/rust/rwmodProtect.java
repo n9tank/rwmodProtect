@@ -116,7 +116,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static void init(File def) {
   HashMap<String,HashMap> map;
   try {
-   map = new loder(new FileReader(new File(def, ".ini"))).ini;
+   map = new loder(new FileReader(new File(def, ".ini")),null).ini;
    HashMap<String,String> set=map.get("set");
    String str=set.get("line");
    String list[]=str.split(",");
@@ -174,7 +174,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
- // buff.append('/');
+  buff.append('/');
   return buff.toString();
  }
  public void copy(String name, ZipEntry en) {
@@ -348,7 +348,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   String str;
   HashMap<String, HashMap> res=Res;
   HashMap as;
-  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou));
+  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou),buff);
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
@@ -365,7 +365,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     j = list.get(s);
     if (j != null) {
      str = (String)j;
-     str = ini.get(str, as, list);
+     str = ini.get(str,as,list,buff);
      if (str == null || str.equalsIgnoreCase("none") || str.equals("IGNORE"))continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      int i = en2.getValue();
