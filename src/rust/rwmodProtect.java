@@ -477,7 +477,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
-  Buff = new StringBuilder();
+  StringBuilder mbuff= new StringBuilder();
+  Buff=mbuff;
   StringBuilder buff=new StringBuilder();
   File ou=In;
   try {
@@ -516,7 +517,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     rootPath = name;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
-     loder ini=new loder(zip.getInputStream(inf),buff);
+     loder ini=new loder(zip.getInputStream(inf),mbuff);
      HashMap info=ini.ini;
      Object o=info.get("music");
      if (o != null) {
@@ -539,7 +540,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       if (type >= 0) {
-       loder lod=new loder(zip.getInputStream(zipEntry),buff);
+       loder lod=new loder(zip.getInputStream(zipEntry),mbuff);
        if (rwmodLib.dontlod(lod))type = 0;
        if (type > 0) {
         inimap.put(name, lod);
