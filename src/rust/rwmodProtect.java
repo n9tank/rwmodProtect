@@ -437,7 +437,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
   }
   String path=musicPath;
-  if (path != null && file.startsWith(musicPath) && filel.startsWith(".ogg", ed)) {
+  if (path != null && file.startsWith(path) && filel.startsWith(".ogg", ed)) {
    return -3;
   }
   return -2;
