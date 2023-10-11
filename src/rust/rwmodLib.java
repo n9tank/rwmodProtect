@@ -9,7 +9,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class rwmodLib {
- public StringBuilder Buff;
  public ZipFile Zip;
  public HashMap iniMap;
  public HashMap iniHide;
@@ -43,7 +42,7 @@ public class rwmodLib {
   iniHide = inihide;
   HashMap inimap=new HashMap();
   iniMap = inimap;
-  Buff = new StringBuilder();
+  StringBuilder buf=new StringBuilder();
   try{
   ZipFile zip=new ZipFile(file);
   Zip = zip;
@@ -52,7 +51,7 @@ public class rwmodLib {
    while (ent.hasMoreElements()) {
     ZipEntry zipEntry=ent.nextElement();
      String fileName=zipEntry.getName().toLowerCase();
-     loder lod=new loder(zip.getInputStream(zipEntry));
+     loder lod=new loder(zip.getInputStream(zipEntry),buf);
      if (isini(fileName)&&!dontlod(lod)) {
       inimap.put(fileName,lod);
      } else {

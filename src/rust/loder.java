@@ -16,12 +16,14 @@ public class loder {
  public HashMap put;
  public HashMap all;
  public String str;
+ public StringBuilder mbuff;
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
  public static HashMap<String,HashSet> line=new HashMap();
- public loder(InputStream input) throws Exception {
+ public loder(InputStream input,StringBuilder buff)throws Exception {
   this(new InputStreamReader(input));
+  mbuff = buff;
  }
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
@@ -105,7 +107,7 @@ public class loder {
     }
    } else {
     cpys cpy=(cpys)o2;
-    map.put(key,(cpy.is ?cpy.skip: cpy.m).clone());
+    map.put(key, (cpy.is ?cpy.skip: cpy.m).clone());
    }
   }
  }
@@ -242,9 +244,10 @@ public class loder {
   }
   return str;
  }
- public static String get(String str, HashMap map, HashMap loc) {
+ public String get(String str, HashMap map, HashMap loc) {
   int i=0,j=0;
-  StringBuilder buff=new StringBuilder();
+  StringBuilder buff=mbuff;
+  buff.setLength(0);
   do{
    i = str.indexOf("${", i);
    if (i >= 0) {
@@ -254,10 +257,8 @@ public class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      key = off.off(map, loc, key);
-      if (key == null)return key;
+      if (!off.off(map, loc, key, buff))return null;
      }
-     buff.append(key);
      j = i = ++n;
     } else break;
    } else break;
@@ -284,7 +285,7 @@ public class loder {
   table.put("", global);
   ini = table;
   HashSet hashset=null;
-  StringBuilder bf=new StringBuilder();
+  StringBuilder bf=mbuff;
   try {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
@@ -314,6 +315,7 @@ public class loder {
         String with;
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
          set = set.substring(3);
+         bf.setLength(0);
          do{
           set = set.trim();
           if (set.endsWith(with)) {
@@ -393,9 +395,9 @@ public class loder {
     if (map != null)o = map.get(key);
     else o = key;
     String str,vl,v=(String)en.getValue();
-    vl = loder.get(v, hash, list);
+    vl = get(v, hash, list);
     boolean eq=true;
-    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2)))) {
+    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2)))) {
      if (vl != null && tr != null && tr.get(key) != null && getImagePath(vl, "", null) != null) {
       arr.add(key);
      }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.os.Build;
 
 public final class off {
  public static final HashSet set;
@@ -18,12 +19,11 @@ public final class off {
  }
  public static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  public static final Pattern find2=Pattern.compile("[-+/*^%()]");
- public static final String off(HashMap map, HashMap setion, String str) {
+ public static final boolean off(HashMap map, HashMap setion, String str,StringBuilder buff) {
   boolean isNumber=find2.matcher(str).find();
-  StringBuilder buff = new StringBuilder();
   HashSet sset=set;
   Matcher matcher =find.matcher(str);
-  int j=0,n=0;
+  int j=0,n=0,st=buff.length();
   while (matcher.find()) {
    j = matcher.start();
    buff.append(str, n, j);
@@ -40,7 +40,7 @@ public final class off {
     if(key.equals("section"))loc = setion;
     else{
     loc = (HashMap)map.get(key);
-    if(loc==null)return null;
+    if(loc==null)return false;
     }
     group = (String)loc.get(list[1]);
    } else {
@@ -51,13 +51,17 @@ public final class off {
     group= (String)o;
    }
    }
-   if(group==null)return null;
+   if(group==null)return false;
    buff.append(group);
   }
   j = str.length();
   if (j - n > 0)buff.append(str, n, j);
-  str = buff.toString();
-  return isNumber ?cmp(str): str;
+  str = buff.substring(st,buff.length());
+  if(isNumber){
+  buff.setLength(st);
+  buff.append(cmp(str));
+  }
+  return true;
  }
  private static String cmp(String str) {
   cmp cVar = new cmp(str);
