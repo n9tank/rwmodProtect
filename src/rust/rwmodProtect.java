@@ -38,8 +38,9 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static String fileD;
  public static HashMap<String,HashMap> Res;
  public static HashSet music;
- public loder getSpuerAll(String str, StringBuilder buff) {
+ public loder getSpuerAll(String str) {
   int i=str.length();
+  StringBuilder buff=Buff;
   buff.setLength(0);
   buff.append(str);
   do{
@@ -298,7 +299,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.setLength(0);
   tag:
   if (isini) {
-   loder all=getSpuerAll(file, buff);
+   loder all=getSpuerAll(file);
    if (all != null) {
     buff.append(all.str);
     buff.append(',');
@@ -369,28 +370,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      int i = en2.getValue();
      buff.setLength(0);
-     switch (i) {
-      case 2:
-       String list2[]=str.split(",");
-       int l=0,size=list2.length;
-       do {
-        str = list2[l].trim();
-        replaceR(str, file, buff, i, isini);
-       }while(++l < size);
-       break;
-      case 4:
-       list2 = str.split(",");
-       l = 0;
-       size = list2.length;
-       do {
-        str = list2[l].trim();
-        replaceR(str, file, buff, i, isini);
-       }while(++l < size);
-       break;
-      default:
+     if (i == 2 || i == 4) {
+      String list2[]=str.split(",");
+      int l=0,size=list2.length;
+      do {
+       str = list2[l].trim();
        replaceR(str, file, buff, i, isini);
-       break;
-     }
+      }while(++l < size);
+     } else replaceR(str, file, buff, i, isini);
      i = buff.length();
      if (--i >= 0)buff.setLength(i);
      list.put(s, buff.toString());
@@ -541,8 +528,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        musicPath = musicpath;
        map.put("sourceFolder", "");
       }
-      }
-      write(ini,"mod-info.txt/");
+     }
+     write(ini, "mod-info.txt/");
     }
     zipEntrys = zip.entries();
     while (zipEntrys.hasMoreElements()) {
@@ -551,13 +538,13 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       if (type >= 0) {
-        loder lod=new loder(zip.getInputStream(zipEntry));
-        if (rwmodLib.dontlod(lod))type = 0;
-        if (type > 0) {
-         inimap.put(name, lod);
-        } else {
-         inihide.put(name, lod);
-        }
+       loder lod=new loder(zip.getInputStream(zipEntry));
+       if (rwmodLib.dontlod(lod))type = 0;
+       if (type > 0) {
+        inimap.put(name, lod);
+       } else {
+        inihide.put(name, lod);
+       }
       } else {
        if (type == -1) {
         String loc = loder.getName(name);
@@ -575,7 +562,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
         }
        } else {
         if (type == -3) {
-        copy(FileName(type), zipEntry);
+         copy(FileName(type), zipEntry);
         }
        }
       }

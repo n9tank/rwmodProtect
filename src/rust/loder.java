@@ -284,6 +284,7 @@ public class loder {
   table.put("", global);
   ini = table;
   HashSet hashset=null;
+  StringBuilder bf=new StringBuilder();
   try {
    while ((str = buff.readLine()) != null) {
     str = str.trim();
@@ -313,7 +314,6 @@ public class loder {
         String with;
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
          set = set.substring(3);
-         StringBuilder bf=new StringBuilder();
          do{
           set = set.trim();
           if (set.endsWith(with)) {
