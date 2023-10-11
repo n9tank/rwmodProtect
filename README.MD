@@ -5,7 +5,7 @@ rwmod混淆器
 .ini配置不正确（待修正）
 
 要使用all-units.template，请确保复制对象（仅ini，不包括不加载）的all-units.template与目标的相同。
-如：以下场景，便会出现兼容问题。
+如：以下场景，这可能抛错。
 a.ini copyFrom:a/b.ini
 a/b.ini a/all-units.template
 诺要避免，请更改名称，并使用copyFrom:在第一个目标复制它。
@@ -15,4 +15,4 @@ a/b.ini a/all-units.template
 
 考虑到开发规范，一些特殊处理没有必要性，所以。
 tmx的名称不能相同，这将抛错。
-ini使用的资源不能为mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg，这会导致两倍资源使用。
+ini使用的资源不能为mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg，这会导致两倍资源占用。
