@@ -213,7 +213,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (!isini && o == null) {
    ZipFile zip=Zip;
    try {
-    lod = new loder(zip.getInputStream(en),Buff);
+    lod = new loder(zip.getInputStream(en), Buff);
     map.put(str, lod);
    } catch (Exception e) {
     Ui.fali(e);
@@ -290,7 +290,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   buff.append(',');
  }
- public void replaceAll(loder ini, String file, boolean isini,StringBuilder buff) {
+ public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
@@ -350,7 +350,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   HashMap as;
   ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou));
   Iterator ite2=as.entrySet().iterator();
-  StringBuilder mbuff=Buff;
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
    str = en.getKey();
@@ -371,7 +370,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      int i = en2.getValue();
      buff.setLength(0);
-     if ((i&1)==0) {
+     if ((i & 1) == 0) {
       String list2[]=str.split(",");
       int l=0,size=list2.length;
       do {
@@ -477,8 +476,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
-  StringBuilder mbuff= new StringBuilder();
-  Buff=mbuff;
+  Buff = new StringBuilder();
   StringBuilder buff=new StringBuilder();
   File ou=In;
   try {
@@ -517,7 +515,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     rootPath = name;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
-     loder ini=new loder(zip.getInputStream(inf),mbuff);
+     loder ini=new loder(zip.getInputStream(inf), buff);
      HashMap info=ini.ini;
      Object o=info.get("music");
      if (o != null) {
@@ -540,7 +538,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       if (type >= 0) {
-       loder lod=new loder(zip.getInputStream(zipEntry),mbuff);
+       loder lod=new loder(zip.getInputStream(zipEntry), buff);
        if (rwmodLib.dontlod(lod))type = 0;
        if (type > 0) {
         inimap.put(name, lod);
