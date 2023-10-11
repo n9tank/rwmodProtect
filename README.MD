@@ -15,4 +15,8 @@ a/b.ini a/all-units.template
 
 考虑到开发规范，一些特殊处理没有必要性，所以。
 tmx的名称不能相同，这将抛错。
-ini使用的资源不能为mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg，这会导致两倍资源占用。
+ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg，这会导致两倍资源占用。
+
+项目已完成初期，因此停止开发。
+对于多线程，gui，异步等扩张业务不考虑。
+代码给你，你来写。（能跑要啥自行车啊？）
