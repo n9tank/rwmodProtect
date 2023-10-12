@@ -346,13 +346,14 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       String list2[]=str.split(",");
       int l=0,size=list2.length;
       boolean img=i == 2;
-      String sp,to;
+      String sp;
+      char to;
       if (img) {
        sp = "\\*";
-       to = "*";
+       to = '*';
       } else {
        sp = "(?<!^ROOT):";
-       to = ":";
+       to = ':';
       }
       do {
        str = list2[l].trim();
