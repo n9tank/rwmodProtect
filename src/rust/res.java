@@ -1,6 +1,5 @@
 package rust;
-
-public class res{
-public String str;
-public boolean close;
+class res{
+String str;
+boolean close;
 }

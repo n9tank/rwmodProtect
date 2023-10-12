@@ -1,35 +1,37 @@
 package rust;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.io.PrintStream;
 
-public class ui{
- public String show;
- //public Exception err;
- public long g;
- public final static ExecutorService pool=Executors.newCachedThreadPool();
- public ui(String show){
-  this.show=show;
-  g=System.currentTimeMillis();
+public class ui {
+ //控制台的ui显示，请重写该类，让它用于控件
+String show;
+long g;
+final static ExecutorService pool=Executors.newCachedThreadPool();
+ public ui(String show) {
+  this.show = show;
+  g = System.currentTimeMillis();
  }
- public static void exec(File path){
-  rwmodProtect rw=new rwmodProtect(path,new ui(path.getPath()));
+ public static void exec(File path) {
+  String name=path.getName();
+  int l=name.length();
+  if (name.startsWith(".", l -= 6)) {
+   name = name.substring(0, l);
+  }
+  File ou = new File(path.getParent(), name.concat("_r.rwmod"));
+  rwmodProtect rw=new rwmodProtect(path, ou, new ui(path.getPath()));
   pool.execute(rw);
  }
- public void finsh(){
+ public void finsh() {
   PrintStream out=System.out;
   out.print(show);
   out.print(':');
   out.print(System.currentTimeMillis() - g);
   out.println("ms");
  }
- public void fali(Exception e){
+ public void fali(Exception e) {
   e.printStackTrace();
-  /*Exception ers=err;
-  if(ers==null){
-   err=e;
-  }else ers.addSuppressed(e);*/
  }
 }

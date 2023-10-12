@@ -12,21 +12,20 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-public class loder {
- public HashMap ini;
- public HashMap put;
- public HashMap all;
- public String str;
- public static int max;
- public static int vlmax;
- public static HashSet vlset;
- public static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- public static HashMap<String,HashSet> line=new HashMap();
- public loder(InputStream input, StringBuilder buff)throws Exception {
+class loder {
+HashMap ini;
+HashMap put;
+HashMap all;
+String str;
+static int max;
+static int vlmax;
+static HashSet vlset;
+static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
+static HashMap<String,HashSet> line=new HashMap();
+loder(InputStream input, StringBuilder buff)throws Exception {
   this(new InputStreamReader(input), buff);
  }
- public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
+static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en = ite.next();
@@ -36,7 +35,7 @@ public class loder {
    if (hasNext || ite.hasNext())out.write('\n');
   }
  }
- public static void write(Iterator<Map.Entry<String,HashMap>> ite, OutputStreamWriter out) throws Exception {
+static void write(Iterator<Map.Entry<String,HashMap>> ite, OutputStreamWriter out) throws Exception {
   Map.Entry<String,HashMap> en=ite.next();
   HashMap map=en.getValue();
   if (map.size() > 0) {
@@ -46,7 +45,7 @@ public class loder {
    writeKeys(map, ite.hasNext(), out);
   }
  }
- public void write(OutputStreamWriter out) throws Exception {
+void write(OutputStreamWriter out) throws Exception {
   HashMap map=ini;
   HashMap gloab=(HashMap)ini.get("");
   ini.remove("");
@@ -64,7 +63,7 @@ public class loder {
    out.flush();
   }
  }
- public static String wh(String str, HashSet set, int m) {
+static String wh(String str, HashSet set, int m) {
   int i=0;
   String vl=str;
   do{
@@ -78,7 +77,7 @@ public class loder {
   }while(--m >= 0);
   return null;
  }
- public static Object wh(String str, HashMap map, int m) {
+static Object wh(String str, HashMap map, int m) {
   int i=0;
   String vl=str;
   do{
@@ -91,7 +90,7 @@ public class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- public static void put(HashMap map, HashMap map2) {
+static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -112,7 +111,7 @@ public class loder {
    }
   }
  }
- public static void putAnd(HashMap map, HashMap map2, HashMap cou, byte is) {
+static void putAnd(HashMap map, HashMap map2, HashMap cou, byte is) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -194,14 +193,14 @@ public class loder {
    }
   }
  }
- public static String getRoot(String str) {
+static String getRoot(String str) {
   int i=str.indexOf("/");
   if (i >= 0) {
    return str.substring(0, ++i);
   }
   return "";
  }
- public static String getName(String file) {
+static String getName(String file) {
   int i=file.length();
   if (file.endsWith("/")) {
    file = file.substring(0, --i);
@@ -210,7 +209,7 @@ public class loder {
   if (i > 0)file = file.substring(++i);
   return file;
  }
- public static String getSuperPath(String str) {
+static String getSuperPath(String str) {
   int i=str.length();
   if (str.endsWith("/"))--i;
   i = str.lastIndexOf("/", --i);
@@ -219,7 +218,7 @@ public class loder {
   }
   return "";
  }
- public static String get(String str, HashMap map, HashMap loc, StringBuilder buff) {
+static String get(String str, HashMap map, HashMap loc, StringBuilder buff) {
   int i=0,j=0;
   buff.setLength(0);
   do{
@@ -240,7 +239,7 @@ public class loder {
   buff.append(str, j, str.length());
   return buff.toString();
  }
- public loder(InputStreamReader input, StringBuilder bf)throws Exception {
+loder(InputStreamReader input, StringBuilder bf)throws Exception {
   HashMap global=new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;
@@ -300,14 +299,14 @@ public class loder {
    buff.close();
   }
  }
- public HashMap getPut() {
+HashMap getPut() {
   HashMap pu=put;
   HashMap coe=new HashMap();
   put(coe, pu);
   as(coe);
   return coe;
  }
- public HashMap getAs(HashMap cou) {
+HashMap getAs(HashMap cou) {
   HashMap pu=put;
   HashMap hash=new HashMap();
   putAnd(pu, ini, cou, (byte)0);
@@ -315,7 +314,7 @@ public class loder {
   as(hash);
   return hash;
  }
- public void put(HashMap as, ArrayList need) {
+void put(HashMap as, ArrayList need) {
   HashMap hash=as;
   HashMap put=ini;
   int l=need.size();
@@ -336,7 +335,7 @@ public class loder {
    }
   }
  }
- public ArrayList find(HashMap cous, HashMap coe, HashMap hash, StringBuilder buff) {
+ArrayList find(HashMap cous, HashMap coe, HashMap hash, StringBuilder buff) {
   ArrayList need=new ArrayList();
   HashMap def=rwmodProtect.Res;
   HashMap re=ini;
@@ -377,7 +376,7 @@ public class loder {
   }
   return need;
  }
- public static void as(HashMap map) {
+static void as(HashMap map) {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();

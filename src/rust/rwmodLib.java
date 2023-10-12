@@ -7,13 +7,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-public class rwmodLib {
- public ZipFile Zip;
- public HashMap iniMap;
- public HashMap iniHide;
- public static HashMap wmap;
- public static loder get(String str){
+class rwmodLib {
+ZipFile Zip;
+HashMap iniMap;
+HashMap iniHide;
+static HashMap wmap;
+static loder get(String str){
   str=str.replaceFirst("^/+","");
   HashMap map=wmap;
   Object o=map.get(str);
@@ -26,15 +25,15 @@ public class rwmodLib {
   }
   return (loder)o;
  }
- public static void init(File file,ui def) {
+public static void init(File file,ui def) {
   if (!file.exists())return;
   rwmodLib rw=new rwmodLib(file,def);
   HashMap<String,loder> ini=rw.iniMap;
   ini.putAll(rw.iniHide);
   wmap=ini;
  }
- rwmodLib(){}
- public rwmodLib(File file, ui ui){
+rwmodLib(){}
+rwmodLib(File file, ui ui){
   HashMap inihide=new HashMap();
   iniHide = inihide;
   HashMap inimap=new HashMap();
@@ -73,7 +72,7 @@ public class rwmodLib {
    ui.fali(e);
   }
  }
- public static boolean dontlod(loder lod) {
+static boolean dontlod(loder lod) {
   Object o=lod.ini.get("core");
   if (o != null) {
    HashMap map=(HashMap)o;
@@ -86,7 +85,7 @@ public class rwmodLib {
   }
   return false;
  }
- public loder getlod(String str) {
+loder getlod(String str) {
   str=str.toLowerCase();
   Object o=iniMap.get(str);
   if(o==null){
@@ -99,7 +98,7 @@ public class rwmodLib {
   }
   return lod;
  }
- public boolean isini(String file) {
+boolean isini(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
@@ -107,7 +106,7 @@ public class rwmodLib {
    return true;
   } else return false;
  }
- public void lodAllCopy(loder lod, String file) {
+void lodAllCopy(loder lod, String file) {
   file=loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");

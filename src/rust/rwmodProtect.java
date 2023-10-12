@@ -19,27 +19,27 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
 public class rwmodProtect extends rwmodLib implements Runnable {
- public File In;
- public ui Ui;
- public int iniIndex=-2;
- public int fileIndex=-1;
- public int oggIndex=-2;
- public ZipOutputStream Zipout;
- public HashMap low;
- public HashMap Filemap;
- public ByteBuffer Warp;
- public WritableByteChannel Out;
- public OutputStreamWriter Ow;
- public StringBuilder Buff;
- public String musicPath;
- public String rootPath;
- public static int max;
- public static String fileD;
- public static HashMap<String,HashMap> Res;
- public static HashSet music;
- public String getPath(String str, String path) {
+File In;
+File Ou;
+ui Ui;
+int iniIndex=-2;
+int fileIndex=-1;
+int oggIndex=-2;
+ZipOutputStream Zipout;
+HashMap low;
+HashMap Filemap;
+ByteBuffer Warp;
+WritableByteChannel Out;
+OutputStreamWriter Ow;
+StringBuilder Buff;
+String musicPath;
+String rootPath;
+static int max;
+static String fileD;
+static HashMap<String,HashMap> Res;
+static HashSet music;
+String getPath(String str, String path) {
   if (str.startsWith("CORE:"))return null;
   if (str.startsWith("ROOT:")) {
    str = str.substring(5);
@@ -49,7 +49,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
- public String getImagePath(String str, String path, StringBuilder buff) {
+String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
   int st=0;
   if (str.startsWith("SHADOW:", st)) {
@@ -75,7 +75,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return str;
  }
- public loder getSpuerAll(String str) {
+loder getSpuerAll(String str) {
   int i=str.length();
   StringBuilder buff=Buff;
   buff.setLength(0);
@@ -97,7 +97,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.setLength(0);
   return null;
  }
- public static HashMap set(Object o, int i) {
+static HashMap set(Object o, int i) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -143,7 +143,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return map;
  }
- public static void init(File path, ui def) {
+public static void init(File path, ui def) {
   HashMap<String,HashMap> map;
   try {
    map = new loder(new FileReader(path), null).ini;
@@ -172,11 +172,12 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    def.fali(e);
   }
  }
- public rwmodProtect(File in, ui def) {
+rwmodProtect(File in, File ou, ui def) {
   In = in;
+  Ou = ou;
   Ui = def;
  }
- public String FileName(int ini) {
+String FileName(int ini) {
   StringBuilder buff=Buff;
   buff.setLength(0);
   int i;
@@ -205,7 +206,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   buff.append('/');
   return buff.toString();
  }
- public void copy(String name, ZipEntry en) {
+void copy(String name, ZipEntry en) {
   ByteBuffer warp=Warp;
   WritableByteChannel wt=Out;
   ZipOutputStream zipw=Zipout;
@@ -227,7 +228,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    Ui.fali(e);
   }
  }
- public loder replace(String str, boolean isini) {
+loder replace(String str, boolean isini) {
   loder lod=null;
   ZipEntry en=toPath(str);
   str = en.getName();
@@ -250,7 +251,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
- public void write(loder ini, String path, boolean isini, StringBuilder buff) {
+void write(loder ini, String path, boolean isini, StringBuilder buff) {
   String r=FileName(isini ?1: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
@@ -258,7 +259,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   write(ini, r);
   ini.ini = null;
  }
- public void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
+void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
   String file;
   tag: {
    if (!isimg) {
@@ -290,7 +291,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   buff.append(str);
  }
- public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
+void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
@@ -402,7 +403,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   ini.put(as, need);
  }
- public ZipEntry toPath(String str) {
+ZipEntry toPath(String str) {
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
@@ -419,7 +420,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return en;
  }
- public void write(loder ini, String name) {
+void write(loder ini, String name) {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
   try {
@@ -430,7 +431,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    Ui.fali(e);
   }
  }
- public byte getType(String file) {
+byte getType(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
@@ -461,7 +462,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   .tmx .ogg
   这些行为对游戏有影响，我认为没有这个必要
   _map.png 没有使用场景，不考虑优化
-  public boolean used(String str){
+boolean used(String str){
   res res;
   if(iniHide.get(str)!=null){
   return true;
@@ -470,7 +471,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return false;
   }*/
- public void run() {
+public void run() {
   ui ui=Ui;
   HashMap filemap = new HashMap();
   Filemap = filemap;
@@ -485,24 +486,17 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   StringBuilder mbuff = new StringBuilder();
   Buff = mbuff;
   StringBuilder buff=new StringBuilder();
-  File ou=In;
   try {
-   ZipFile zip = new ZipFile(ou);
-   String name=ou.getName();
-   int l=name.length();
-   if (name.startsWith(".", l -= 6)) {
-    name = name.substring(0, l);
-   }
-   ou = new File(ou.getParent(), name.concat("_r.rwmod"));
+   ZipFile zip = new ZipFile(In);
    Zip = zip;
-   ZipOutputStream zipout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
+   ZipOutputStream zipout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(Ou)));
    Zipout = zipout;
    zipout.setLevel(9);
    OutputStreamWriter wt=new OutputStreamWriter(zipout);
    Ow = wt;
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
-   name = null;
+   String name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
     while (zipEntrys.hasMoreElements()) {
