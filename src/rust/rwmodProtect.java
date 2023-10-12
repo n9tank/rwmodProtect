@@ -44,29 +44,31 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    str = str.substring(5);
    path = rootPath;
   }
-  str =str.replaceFirst("^/+", "");
-  if(path.length()>0)str=path.concat(str);
+  str = str.replaceFirst("^/+", "");
+  if (path.length() > 0)str = path.concat(str);
   return str;
  }
  public String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
-  if (str.startsWith("SHADOW:")) {
+  int st=0;
+  if (str.startsWith("SHADOW:", st)) {
    shadow = true;
-   str = str.substring(7);
+   st = 7;
   }
   if (str.startsWith("CORE:") || str.startsWith("SHARED:")) {
    return null;
   }
   if (str.startsWith("ROOT:")) {
-   str = str.substring(5);
+   st += 5;
    path = rootPath;
   }
   if (str.startsWith("SHADOW:")) {
    shadow = true;
-   str = str.substring(7);
+   st += 7;
   }
-  str =str.replaceFirst("^/+", "");
-  if(path.length()>0)str=path.concat(str);
+  if (st != 0)str = str.substring(st);
+  str = str.replaceFirst("^/+", "");
+  if (path.length() > 0)str = path.concat(str);
   if (shadow && buff != null) {
    buff.append("SHADOW:");
   }
