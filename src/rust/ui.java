@@ -21,7 +21,7 @@ final static ExecutorService pool=Executors.newCachedThreadPool();
    name = name.substring(0, l);
   }
   File ou = new File(path.getParent(), name.concat("_r.rwmod"));
-  rwmodProtect rw=new rwmodProtect(path, ou, new ui(path.getPath()));
+  rwmodProtect rw=new rwmodProtect(path, ou, new ui(ou.getPath()));
   pool.execute(rw);
  }
  public void finsh() {

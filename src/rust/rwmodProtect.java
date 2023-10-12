@@ -20,26 +20,26 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 public class rwmodProtect extends rwmodLib implements Runnable {
-File In;
-File Ou;
-ui Ui;
-int iniIndex=-2;
-int fileIndex=-1;
-int oggIndex=-2;
-ZipOutputStream Zipout;
-HashMap low;
-HashMap Filemap;
-ByteBuffer Warp;
-WritableByteChannel Out;
-OutputStreamWriter Ow;
-StringBuilder Buff;
-String musicPath;
-String rootPath;
-static int max;
-static String fileD;
-static HashMap<String,HashMap> Res;
-static HashSet music;
-String getPath(String str, String path) {
+ File In;
+ File Ou;
+ ui Ui;
+ int iniIndex=-2;
+ int fileIndex=-1;
+ int oggIndex=-2;
+ ZipOutputStream Zipout;
+ HashMap low;
+ HashMap Filemap;
+ ByteBuffer Warp;
+ WritableByteChannel Out;
+ OutputStreamWriter Ow;
+ StringBuilder Buff;
+ String musicPath;
+ String rootPath;
+ static int max;
+ static String fileD;
+ static HashMap<String,HashMap> Res;
+ static HashSet music;
+ String getPath(String str, String path) {
   if (str.startsWith("CORE:"))return null;
   if (str.startsWith("ROOT:")) {
    str = str.substring(5);
@@ -49,7 +49,7 @@ String getPath(String str, String path) {
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
-String getImagePath(String str, String path, StringBuilder buff) {
+ String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
   int st=0;
   if (str.startsWith("SHADOW:", st)) {
@@ -75,7 +75,7 @@ String getImagePath(String str, String path, StringBuilder buff) {
   }
   return str;
  }
-loder getSpuerAll(String str) {
+ loder getSpuerAll(String str) {
   int i=str.length();
   StringBuilder buff=Buff;
   buff.setLength(0);
@@ -97,7 +97,7 @@ loder getSpuerAll(String str) {
   buff.setLength(0);
   return null;
  }
-static HashMap set(Object o, int i) {
+ static HashMap set(Object o, int i) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -143,7 +143,7 @@ static HashMap set(Object o, int i) {
   }
   return map;
  }
-public static void init(File path, ui def) {
+ public static void init(File path, ui def) {
   HashMap<String,HashMap> map;
   try {
    map = new loder(new FileReader(path), null).ini;
@@ -172,12 +172,12 @@ public static void init(File path, ui def) {
    def.fali(e);
   }
  }
-rwmodProtect(File in, File ou, ui def) {
+ rwmodProtect(File in, File ou, ui def) {
   In = in;
   Ou = ou;
   Ui = def;
  }
-String FileName(int ini) {
+ String FileName(int ini) {
   StringBuilder buff=Buff;
   buff.setLength(0);
   int i;
@@ -206,7 +206,7 @@ String FileName(int ini) {
   buff.append('/');
   return buff.toString();
  }
-void copy(String name, ZipEntry en) {
+ void copy(String name, ZipEntry en) {
   ByteBuffer warp=Warp;
   WritableByteChannel wt=Out;
   ZipOutputStream zipw=Zipout;
@@ -228,7 +228,7 @@ void copy(String name, ZipEntry en) {
    Ui.fali(e);
   }
  }
-loder replace(String str, boolean isini) {
+ loder replace(String str, boolean isini) {
   loder lod=null;
   ZipEntry en=toPath(str);
   str = en.getName();
@@ -251,7 +251,7 @@ loder replace(String str, boolean isini) {
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
-void write(loder ini, String path, boolean isini, StringBuilder buff) {
+ void write(loder ini, String path, boolean isini, StringBuilder buff) {
   String r=FileName(isini ?1: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
@@ -259,7 +259,7 @@ void write(loder ini, String path, boolean isini, StringBuilder buff) {
   write(ini, r);
   ini.ini = null;
  }
-void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
   String file;
   tag: {
    if (!isimg) {
@@ -291,7 +291,7 @@ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolea
   }
   buff.append(str);
  }
-void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
+ void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
@@ -403,7 +403,7 @@ void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   }
   ini.put(as, need);
  }
-ZipEntry toPath(String str) {
+ ZipEntry toPath(String str) {
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
@@ -420,7 +420,7 @@ ZipEntry toPath(String str) {
   }
   return en;
  }
-void write(loder ini, String name) {
+ void write(loder ini, String name) {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
   try {
@@ -431,7 +431,7 @@ void write(loder ini, String name) {
    Ui.fali(e);
   }
  }
-byte getType(String file) {
+ byte getType(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
@@ -462,7 +462,7 @@ byte getType(String file) {
   .tmx .ogg
   这些行为对游戏有影响，我认为没有这个必要
   _map.png 没有使用场景，不考虑优化
-boolean used(String str){
+  boolean used(String str){
   res res;
   if(iniHide.get(str)!=null){
   return true;
@@ -471,7 +471,7 @@ boolean used(String str){
   }
   return false;
   }*/
-public void run() {
+ public void run() {
   ui ui=Ui;
   HashMap filemap = new HashMap();
   Filemap = filemap;

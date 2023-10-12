@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 final class off {
-static final HashSet set;
+ static final HashSet set;
  static{
   HashSet sset=new HashSet();
   set = sset;
@@ -15,10 +15,10 @@ static final HashSet set;
   sset.add("sin");
   sset.add("sqrt");
  }
-static final Pattern isNum=Pattern.compile("-?[0-9.]+");
-static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
-static final Pattern find2=Pattern.compile("[-+/*^%()]");
-static final boolean off(HashMap map, HashMap setion, String str, StringBuilder buff) {
+ static final Pattern isNum=Pattern.compile("-?[0-9.]+");
+ static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
+ static final Pattern find2=Pattern.compile("[-+/*^%()]");
+ static final boolean off(HashMap map, HashMap setion, String str, StringBuilder buff) {
   boolean isNumber=find2.matcher(str).find();
   HashSet sset=set;
   Matcher matcher=find.matcher(str);
