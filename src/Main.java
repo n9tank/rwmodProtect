@@ -5,14 +5,14 @@ import rust.rwmodLib;
 import rust.rwmodProtect;
 import rust.ui;
 public class Main {
- public static void main(String[] args) throws Exception {
+public static void main(String[] args) throws Exception {
   ui def=new ui("def");
   String path=System.getProperty("user.dir");
   if (path.length() == 1) {
    path = "sdcard/rustedWarfare/rwmod";
   }
-  rwmodProtect.init(new File(path, ".ini"), def);
-  rwmodLib.init(new File(path, "lib.zip"), def);
+  rwmodProtect.init(new File(path,".ini"), def);
+  rwmodLib.init(new File(path,"lib.zip"), def);
   def.finsh();
   Scanner sc=new Scanner(System.in);
   while (true) {

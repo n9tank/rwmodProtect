@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-class rwmodLib {
+public class rwmodLib {
 ZipFile Zip;
 HashMap iniMap;
 HashMap iniHide;
@@ -26,11 +26,12 @@ static loder get(String str){
   return (loder)o;
  }
 public static void init(File file,ui def) {
-  if (!file.exists())return;
+  if (file.exists()){
   rwmodLib rw=new rwmodLib(file,def);
   HashMap<String,loder> ini=rw.iniMap;
   ini.putAll(rw.iniHide);
   wmap=ini;
+  }
  }
 rwmodLib(){}
 rwmodLib(File file, ui ui){

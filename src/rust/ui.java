@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ui {
- //控制台的ui显示，请重写该类，让它用于控件
+ //控制台的ui显示，请重写该类，让它用于GUI
 String show;
 long g;
 final static ExecutorService pool=Executors.newCachedThreadPool();
