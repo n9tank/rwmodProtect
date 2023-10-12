@@ -1,1 +1,1 @@
-java -jar %~dp0cmd.jar
+java -jar classes.jar Main
