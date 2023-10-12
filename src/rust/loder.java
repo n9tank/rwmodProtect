@@ -320,8 +320,8 @@ public class loder {
   HashMap put=ini;
   int l=need.size();
   while (--l >= 0) {
-   Map.Entry en=(Map.Entry)need.get(l);
-   String str=(String)en.getKey();
+   need en=(need)need.get(l);
+   String str=en.key;
    HashMap map=(HashMap)hash.get(str);
    Object o=put.get(str);
    HashMap putall;
@@ -329,7 +329,7 @@ public class loder {
     putall = new HashMap();
     put.put(str, putall);
    } else putall = (HashMap)o;
-   ArrayList list=(ArrayList)en.getValue();
+   ArrayList list=en.list;
    int i=list.size();
    while (--i >= 0) {
     str = (String)list.get(i);
@@ -338,7 +338,7 @@ public class loder {
   }
  }
  public ArrayList find(HashMap cous, HashMap coe, HashMap hash, StringBuilder buff) {
-  ArrayList<Map.Entry> need=new ArrayList();
+  ArrayList need=new ArrayList();
   HashMap def=rwmodProtect.Res;
   HashMap re=ini;
   Iterator ite = hash.entrySet().iterator();
@@ -371,7 +371,10 @@ public class loder {
      list3.remove(key);
     }
     if (arr.size() > 0) {
-     need.add(new AbstractMap.SimpleImmutableEntry(ac,arr));
+     need ne=new need();
+     ne.key=ac;
+     ne.list=arr;
+     need.add(ne);
     }
    }
   }
