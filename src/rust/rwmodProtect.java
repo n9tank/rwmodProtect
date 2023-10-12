@@ -48,7 +48,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   str = path.concat(str);
   return str;
  }
- public String getImagePath(String str, String path,StringBuilder buff) {
+ public String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
   if (str.startsWith("SHADOW:")) {
    shadow = true;
@@ -259,7 +259,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   String r=FileName(isini ?1: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
-  replaceAll(ini, path, isini,buff);
+  replaceAll(ini, path, isini, buff);
   write(ini, r);
   ini.ini = null;
  }
@@ -269,7 +269,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (!isimg) {
     if (music.contains(str))break tag;
     file = getPath(str, path);
-   } else file = getImagePath(str,path,buff);
+   } else file = getImagePath(str, path, buff);
    if (file != null) {
     ZipEntry en = toPath(file);
     if (en != null) {
@@ -347,7 +347,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    int i=buff.length() - 1;
    if (i > 0) {
     if (alls != null)st = 0;
-    core.put("copyFrom",buff.subSequence(st, i));
+    core.put("copyFrom", buff.subSequence(st, i));
    }
   }
   String str;
@@ -408,7 +408,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ini.put(as, need);
  }
  public ZipEntry toPath(String str) {
-  str = str.replaceFirst("^/+", "");
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
