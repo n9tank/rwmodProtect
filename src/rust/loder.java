@@ -278,6 +278,7 @@ public class loder {
   BufferedReader buff=new BufferedReader(input);
   String str;
   HashMap list=null;
+  HashMap lines=line;
   HashMap table=new LinkedHashMap();
   table.put("", global);
   ini = table;
@@ -292,7 +293,7 @@ public class loder {
      if (str.startsWith("comment_")) {
       list = null;
      } else {
-      Object o=wh(str, line, max);
+      Object o=wh(str,lines,max);
       if (o != null)hashset = (HashSet)o;
       else hashset = null;
       list = new HashMap();

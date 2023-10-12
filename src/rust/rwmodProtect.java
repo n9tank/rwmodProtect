@@ -116,7 +116,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static void init(File def) {
   HashMap<String,HashMap> map;
   try {
-   map = new loder(new FileReader(new File(def, ".ini")),null).ini;
+   map = new loder(new FileReader(new File(def, ".ini")), null).ini;
    HashMap<String,String> set=map.get("set");
    String str=set.get("line");
    String list[]=str.split(",");
@@ -230,43 +230,24 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   write(ini, r);
   ini.ini = null;
  }
- public void replaceR(String str, String path, StringBuilder buff, int isimg, boolean post) {
+ public void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
   String file;
-  String list[]=null;
   tag: {
-   if (isimg == 2) {
-    list = str.split("\\*");
-    str = list[0];
-   }
-   if (isimg > 2) {
-    boolean is=str.startsWith("ROOT:");
-    if (is) {
-     file = str.substring(5);
-    } else if (path != null) {
-     file = path.concat(str);
-    } else file = str;
-    list = file.split(":", 2);
-    file = list[0];
-    if (!is) {
-     if (music.contains(str.split(":", 2)[0]))break tag;
-    }
+   if (!isimg) {
+    if (music.contains(str))break tag;
+    file = loder.getPath(str, path);
    } else file = loder.getImagePath(str, path, buff);
    if (file != null) {
     ZipEntry en = rootPath(file);
     if (en != null) {
      file = en.getName();
-     byte type=getType(file);
      HashMap map;
-     // if (type == -2) {
      map = Filemap;
-     /*} else {
-      map = Oggmap;
-      }*/
      Object o=map.get(file);
      res res;
      if (o == null) {
       res = new res();
-      res.str = str = FileName(type);
+      res.str = str = FileName(getType(file));
       map.put(file, res);
      } else {
       res = (res)o;
@@ -280,15 +261,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    }
   }
   buff.append(str);
-  if (list != null && list.length > 1) {
-   if (isimg == 2) {
-    buff.append("*");
-   } else if (isimg > 2) {
-    buff.append(":");
-   }
-   buff.append(list[1]);
-  }
-  buff.append(',');
  }
  public void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
@@ -348,7 +320,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   String str;
   HashMap<String, HashMap> res=Res;
   HashMap as;
-  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou),buff);
+  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou), buff);
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
@@ -365,21 +337,36 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     j = list.get(s);
     if (j != null) {
      str = (String)j;
-     str = ini.get(str,as,list,buff);
+     str = ini.get(str, as, list, buff);
      if (str == null || str.equalsIgnoreCase("none") || str.equals("IGNORE"))continue;
      if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
      int i = en2.getValue();
      buff.setLength(0);
-     if ((i & 1) == 0) {
+     if (i > 1) {
       String list2[]=str.split(",");
       int l=0,size=list2.length;
+      boolean img=i == 2;
+      String sp,to;
+      if (img) {
+       sp = "\\*";
+       to = "*";
+      } else {
+       sp = "(?<!^ROOT):";
+       to = ":";
+      }
       do {
        str = list2[l].trim();
-       replaceR(str, file, buff, i, isini);
+       String listr[] = str.split(sp, 2);
+       replaceR(listr[0], file, buff, img, isini);
+       if (listr.length > 1) {
+        buff.append(to);
+        buff.append(listr[1]);
+       }
+       buff.append(",");
       }while(++l < size);
-     } else replaceR(str, file, buff, i, isini);
-     i = buff.length();
-     if (--i >= 0)buff.setLength(i);
+      i = buff.length() - 1;
+      buff.setLength(i);
+     } else replaceR(str, file, buff, true, isini);
      list.put(s, buff.toString());
     }
    }
@@ -477,7 +464,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
   StringBuilder mbuff = new StringBuilder();
-  Buff=mbuff;
+  Buff = mbuff;
   StringBuilder buff=new StringBuilder();
   File ou=In;
   try {
