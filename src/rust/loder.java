@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,8 +23,8 @@ public class loder {
  public static HashSet vlset;
  public static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  public static HashMap<String,HashSet> line=new HashMap();
- public loder(InputStream input,StringBuilder buff)throws Exception {
- this(new InputStreamReader(input),buff);
+ public loder(InputStream input, StringBuilder buff)throws Exception {
+  this(new InputStreamReader(input), buff);
  }
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
@@ -218,7 +219,7 @@ public class loder {
   }
   return "";
  }
- public static String get(String str, HashMap map, HashMap loc,StringBuilder buff) {
+ public static String get(String str, HashMap map, HashMap loc, StringBuilder buff) {
   int i=0,j=0;
   buff.setLength(0);
   do{
@@ -239,7 +240,7 @@ public class loder {
   buff.append(str, j, str.length());
   return buff.toString();
  }
- public loder(InputStreamReader input,StringBuilder bf)throws Exception {
+ public loder(InputStreamReader input, StringBuilder bf)throws Exception {
   HashMap global=new HashMap();
   BufferedReader buff=new BufferedReader(input);
   String str;
@@ -259,7 +260,7 @@ public class loder {
      if (str.startsWith("comment_")) {
       list = null;
      } else {
-      Object o=wh(str,lines,max);
+      Object o=wh(str, lines, max);
       if (o != null)hashset = (HashSet)o;
       else hashset = null;
       list = new HashMap();
@@ -272,7 +273,7 @@ public class loder {
       String set=value[1].trim();
       if (key.startsWith("@global ")) {
        if (value.equals("IGNORE"))continue;
-       global.put(key,set);
+       global.put(key, set);
       } else {
        if (hashset != null && hashset.contains(key)) {
         String with;
@@ -336,7 +337,7 @@ public class loder {
    }
   }
  }
- public ArrayList find(HashMap cous, HashMap coe, HashMap hash,StringBuilder buff) {
+ public ArrayList find(HashMap cous, HashMap coe, HashMap hash, StringBuilder buff) {
   ArrayList<Map.Entry> need=new ArrayList();
   HashMap def=rwmodProtect.Res;
   HashMap re=ini;
@@ -359,10 +360,10 @@ public class loder {
     if (map != null)o = map.get(key);
     else o = key;
     String str,vl,v=(String)en.getValue();
-    vl = get(v, hash, list,buff);
+    vl = get(v, hash, list, buff);
     boolean eq=true;
-    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2,buff)))) {
-     if (vl != null && tr != null && tr.get(key) != null &&!fud.matcher(vl).find()) {
+    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2, buff)))) {
+     if (vl != null && tr != null && tr.get(key) != null && !fud.matcher(vl).find()) {
       arr.add(key);
      }
     } else if (list3 != null && !eq) {
@@ -370,7 +371,7 @@ public class loder {
      list3.remove(key);
     }
     if (arr.size() > 0) {
-     need.add(Map.entry(ac, arr));
+     need.add(new AbstractMap.SimpleImmutableEntry(ac,arr));
     }
    }
   }

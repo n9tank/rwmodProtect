@@ -5,7 +5,7 @@ final class cmp {
  int a = -1;
  int b;
  final String c;
- private double d() {
+ private final double d() {
   String fi=c;
   while (a(43)) {}
   if (a(45)) {
@@ -48,7 +48,7 @@ final class cmp {
   return a(94) ? Math.pow(b, d()) : b;
  }
 
- private boolean a(int i) {
+ private final boolean a(int i) {
   while (this.b == 32) {
    a();
   }
@@ -59,7 +59,7 @@ final class cmp {
   return true;
  }
 
- private double c() {
+ private final double c() {
   double d = d();
   while (true) {
    if (a(42)) {
