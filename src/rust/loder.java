@@ -370,8 +370,8 @@ public class loder {
      list3.remove(key);
     }
     if (arr.size() > 0) {
-     need.add(ac);
      need.add(arr);
+     need.add(ac);
     }
    }
   }
