@@ -38,6 +38,39 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public static String fileD;
  public static HashMap<String,HashMap> Res;
  public static HashSet music;
+ public String getPath(String str, String path) {
+  if (str.startsWith("CORE:"))return null;
+  if (str.startsWith("ROOT:")) {
+   str = str.substring(5);
+   path = rootPath;
+  }
+  str = str.replaceFirst("^/+", "");
+  str = path.concat(str);
+  return str;
+ }
+ public String getImagePath(String str, String path,StringBuilder buff) {
+  boolean shadow=false;
+  if (str.startsWith("SHADOW:")) {
+   shadow = true;
+   str = str.substring(7);
+  }
+  if (str.startsWith("CORE:") || str.startsWith("SHARED:")) {
+   return null;
+  }
+  if (str.startsWith("ROOT:")) {
+   str = str.substring(5);
+   path = rootPath;
+  }
+  if (str.startsWith("SHADOW:")) {
+   shadow = true;
+   str = str.substring(7);
+  }
+  str = path.concat(str.replaceFirst("^/+", ""));
+  if (shadow && buff != null) {
+   buff.append("SHADOW:");
+  }
+  return str;
+ }
  public loder getSpuerAll(String str) {
   int i=str.length();
   StringBuilder buff=Buff;
@@ -201,7 +234,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public loder replace(String str, boolean isini) {
   loder lod=null;
-  ZipEntry en=rootPath(str);
+  ZipEntry en=toPath(str);
   str = en.getName();
   HashMap map;
   if (isini) {
@@ -226,7 +259,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   String r=FileName(isini ?1: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
-  replaceAll(ini, path, isini, buff);
+  replaceAll(ini, path, isini,buff);
   write(ini, r);
   ini.ini = null;
  }
@@ -235,10 +268,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   tag: {
    if (!isimg) {
     if (music.contains(str))break tag;
-    file = loder.getPath(str, path);
-   } else file = loder.getImagePath(str, path, buff);
+    file = getPath(str, path);
+   } else file = getImagePath(str,path,buff);
    if (file != null) {
-    ZipEntry en = rootPath(file);
+    ZipEntry en = toPath(file);
     if (en != null) {
      file = en.getName();
      HashMap map;
@@ -292,11 +325,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     HashMap libs=rwmodLib.wmap;
     do {
      String path=list[i].trim();
-     str = loder.getPath(path, file);
+     str = getPath(path, file);
      loder lod=null;
      boolean s=str == null;
      if (!s) {
-      ZipEntry en = rootPath(str);
+      ZipEntry en = toPath(str);
       str = en.getName();
       lod = replace(str, getType(str) > 0);
       path = lod.str;
@@ -314,7 +347,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    int i=buff.length() - 1;
    if (i > 0) {
     if (alls != null)st = 0;
-    core.put("copyFrom", buff.subSequence(st, i));
+    core.put("copyFrom",buff.subSequence(st, i));
    }
   }
   String str;
@@ -429,15 +462,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    return -3;
   }
   return -2;
- }
- public ZipEntry rootPath(String str) {
-  str = str.replaceFirst("^/+", "");
-  //使用"/"根路径，游戏会出现奇奇妙妙的bug 暂不考虑兼容
-  ZipEntry file=toPath(str);
-  if (file == null) {
-   return toPath(rootPath.concat(str));
-  }
-  return file;
  }
  /*
   .tmx .ogg

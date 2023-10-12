@@ -118,15 +118,14 @@ public class rwmodLib {
   if (o != null) {
    HashMap map=(HashMap)o;
    o = map.get("copyFrom");
-   if (o != null/* && (str = (String)o).length() > 0 && !str.equals("IGNORE")*/) {
+   if (o != null) {
     String str=(String)o;
     put=new HashMap();
     String list[]=str.split(",");
     int i=0,l=list.length;
     do{
      str = list[i];
-     str = loder.getPath(str,file);
-     loder loder=getlod(str);
+     loder loder=getlod(file.concat(str));
      loder.putAnd(put,loder.put,null,(byte)0);
     }while(++i < l);
    }

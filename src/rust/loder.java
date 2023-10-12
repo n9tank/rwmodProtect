@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class loder {
  public HashMap ini;
@@ -19,9 +20,10 @@ public class loder {
  public static int max;
  public static int vlmax;
  public static HashSet vlset;
+ public static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  public static HashMap<String,HashSet> line=new HashMap();
  public loder(InputStream input,StringBuilder buff)throws Exception {
-  this(new InputStreamReader(input),buff);
+ this(new InputStreamReader(input),buff);
  }
  public static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
@@ -216,32 +218,6 @@ public class loder {
   }
   return "";
  }
- public static String getImagePath(String str, String path, StringBuilder buff) {
-  boolean shadow=false;
-  boolean root=false;
-  if (str.startsWith("SHADOW:")) {
-   shadow = true;
-   str = str.substring(7);
-  }
-  if (str.startsWith("CORE:") || str.startsWith("SHARED:")) {
-   return null;
-  }
-  if (str.startsWith("ROOT:")) {
-   root = true;
-   str = str.substring(5);
-  }
-  if (str.startsWith("SHADOW:")) {
-   shadow = true;
-   str = str.substring(7);
-  }
-  if (!root && path.length() > 0) {
-   str = path.concat(str);
-  }
-  if (shadow && buff != null) {
-   buff.append("SHADOW:");
-  }
-  return str;
- }
  public static String get(String str, HashMap map, HashMap loc,StringBuilder buff) {
   int i=0,j=0;
   buff.setLength(0);
@@ -262,16 +238,6 @@ public class loder {
   }while(true);
   buff.append(str, j, str.length());
   return buff.toString();
- }
- public static String getPath(String str, String path) {
-  if (str.startsWith("CORE:")) {
-   str = null;
-  } else if (str.startsWith("ROOT:")) {
-   str = str.substring(5);
-  } else if (path.length() > 0) {
-   str = path.concat(str);
-  }
-  return str;
  }
  public loder(InputStreamReader input,StringBuilder bf)throws Exception {
   HashMap global=new HashMap();
@@ -306,7 +272,7 @@ public class loder {
       String set=value[1].trim();
       if (key.startsWith("@global ")) {
        if (value.equals("IGNORE"))continue;
-       global.put(key, value);
+       global.put(key,set);
       } else {
        if (hashset != null && hashset.contains(key)) {
         String with;
@@ -375,6 +341,7 @@ public class loder {
   HashMap def=rwmodProtect.Res;
   HashMap re=ini;
   Iterator ite = hash.entrySet().iterator();
+  Pattern fud=fin;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
@@ -395,7 +362,7 @@ public class loder {
     vl = get(v, hash, list,buff);
     boolean eq=true;
     if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2,buff)))) {
-     if (vl != null && tr != null && tr.get(key) != null && getImagePath(vl, "", null) != null) {
+     if (vl != null && tr != null && tr.get(key) != null &&!fud.matcher(vl).find()) {
       arr.add(key);
      }
     } else if (list3 != null && !eq) {
