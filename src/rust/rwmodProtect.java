@@ -52,18 +52,18 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
   int st=0;
-  if (str.startsWith("SHADOW:",st)) {
+  if (str.startsWith("SHADOW:", st)) {
    shadow = true;
    st = 7;
   }
-  if (str.startsWith("CORE:",st) || str.startsWith("SHARED:",st)) {
+  if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
    return null;
   }
-  if (str.startsWith("ROOT:",st)) {
+  if (str.startsWith("ROOT:", st)) {
    st += 5;
    path = rootPath;
   }
-  if (str.startsWith("SHADOW:",st)) {
+  if (str.startsWith("SHADOW:", st)) {
    shadow = true;
    st += 7;
   }
@@ -147,8 +147,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   ui def=new ui("def");
   String path=System.getProperty("user.dir");
   if (path.length() == 1) {
-  path="sdcard/rustedWarfare/rwmod";
+   path = "sdcard/rustedWarfare/rwmod";
   }
+  init(new File(path), def);
+ }
+ public static void init(File path, ui def) {
   HashMap<String,HashMap> map;
   try {
    map = new loder(new FileReader(new File(path, ".ini")), null).ini;
@@ -176,7 +179,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   } catch (Exception e) {
    def.fali(e);
   }
-  rwmodLib.init(new File(path,"lib.zip"),def);
+  rwmodLib.init(new File(path, "lib.zip"), def);
   def.finsh();
  }
  public rwmodProtect(File in, ui def) {
