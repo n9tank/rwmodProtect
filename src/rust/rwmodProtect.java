@@ -51,18 +51,18 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  public String getImagePath(String str, String path, StringBuilder buff) {
   boolean shadow=false;
   int st=0;
-  if (str.startsWith("SHADOW:", st)) {
+  if (str.startsWith("SHADOW:")) {
    shadow = true;
    st = 7;
   }
-  if (str.startsWith("CORE:") || str.startsWith("SHARED:")) {
+  if (str.startsWith("CORE:",st) || str.startsWith("SHARED:",st)) {
    return null;
   }
-  if (str.startsWith("ROOT:")) {
+  if (str.startsWith("ROOT:",st)) {
    st += 5;
    path = rootPath;
   }
-  if (str.startsWith("SHADOW:")) {
+  if (str.startsWith("SHADOW:",st)) {
    shadow = true;
    st += 7;
   }
