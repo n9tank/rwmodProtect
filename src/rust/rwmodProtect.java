@@ -44,8 +44,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    str = str.substring(5);
    path = rootPath;
   }
-  str = str.replaceFirst("^/+", "");
-  str = path.concat(str);
+  str =str.replaceFirst("^/+", "");
+  if(path.length()>0)str=path.concat(str);
   return str;
  }
  public String getImagePath(String str, String path, StringBuilder buff) {
@@ -65,7 +65,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    shadow = true;
    str = str.substring(7);
   }
-  str = path.concat(str.replaceFirst("^/+", ""));
+  str =str.replaceFirst("^/+", "");
+  if(path.length()>0)str=path.concat(str);
   if (shadow && buff != null) {
    buff.append("SHADOW:");
   }
