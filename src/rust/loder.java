@@ -320,8 +320,7 @@ public class loder {
   HashMap put=ini;
   int l=need.size();
   while (--l >= 0) {
-   need en=(need)need.get(l);
-   String str=en.key;
+   String str=(String)need.get(l);
    HashMap map=(HashMap)hash.get(str);
    Object o=put.get(str);
    HashMap putall;
@@ -329,7 +328,7 @@ public class loder {
     putall = new HashMap();
     put.put(str, putall);
    } else putall = (HashMap)o;
-   ArrayList list=en.list;
+   ArrayList list=(ArrayList)need.get(--l);
    int i=list.size();
    while (--i >= 0) {
     str = (String)list.get(i);
@@ -371,10 +370,8 @@ public class loder {
      list3.remove(key);
     }
     if (arr.size() > 0) {
-     need ne=new need();
-     ne.key=ac;
-     ne.list=arr;
-     need.add(ne);
+     need.add(ac);
+     need.add(arr);
     }
    }
   }
