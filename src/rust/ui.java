@@ -9,7 +9,6 @@ public class ui{
  public String show;
  //public Exception err;
  public long g;
- public static ui def;
  public final static ExecutorService pool=Executors.newCachedThreadPool();
  public ui(String show){
   this.show=show;

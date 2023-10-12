@@ -22,6 +22,7 @@ import java.util.zip.ZipOutputStream;
 
 public class rwmodProtect extends rwmodLib implements Runnable {
  public File In;
+ public ui Ui;
  public int iniIndex=-2;
  public int fileIndex=-1;
  public int oggIndex=-2;
@@ -143,8 +144,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   return map;
  }
  public static void init() {
-  ui def;
-  ui.def=def=new ui("def");
+  ui def=new ui("def");
   String path=System.getProperty("user.dir");
   if (path.length() == 1) {
   path="sdcard/rustedWarfare/rwmod";
@@ -176,7 +176,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   } catch (Exception e) {
    def.fali(e);
   }
-  rwmodLib.init(new File(path,"lib.zip"));
+  rwmodLib.init(new File(path,"lib.zip"),def);
   def.finsh();
  }
  public rwmodProtect(File in, ui def) {

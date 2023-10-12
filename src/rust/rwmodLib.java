@@ -12,7 +12,6 @@ public class rwmodLib {
  public ZipFile Zip;
  public HashMap iniMap;
  public HashMap iniHide;
- public ui Ui;
  public static HashMap wmap;
  public static loder get(String str){
   str=str.replaceFirst("^/+","");
@@ -27,17 +26,15 @@ public class rwmodLib {
   }
   return (loder)o;
  }
- public static void init(File file) {
+ public static void init(File file,ui def) {
   if (!file.exists())return;
-  ui ur=ui.def;
-  rwmodLib rw=new rwmodLib(file, ur);
+  rwmodLib rw=new rwmodLib(file,def);
   HashMap<String,loder> ini=rw.iniMap;
   ini.putAll(rw.iniHide);
   wmap=ini;
  }
  rwmodLib(){}
  public rwmodLib(File file, ui ui){
-  Ui = ui;
   HashMap inihide=new HashMap();
   iniHide = inihide;
   HashMap inimap=new HashMap();
