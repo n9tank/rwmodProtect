@@ -304,7 +304,7 @@ public class loder {
      if (value.length > 1) {
       String key=value[0].trim();
       String set=value[1].trim();
-      if (key.startsWith("@gloabl ")) {
+      if (key.startsWith("@global ")) {
        if (value.equals("IGNORE"))continue;
        global.put(key, value);
       } else {
