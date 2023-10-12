@@ -9,7 +9,7 @@ public class ui{
  public String show;
  //public Exception err;
  public long g;
- public static final ui def=new ui("def");
+ public static ui def;
  public final static ExecutorService pool=Executors.newCachedThreadPool();
  public ui(String show){
   this.show=show;

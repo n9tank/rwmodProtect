@@ -143,16 +143,15 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   return map;
  }
  public static void init() {
-  String str=System.getProperty("user.dir");
-  if (str.length() == 1) {
-   str = "sdcard/rustedWarfare/rwmod";
+  ui def;
+  ui.def=def=new ui("def");
+  String path=System.getProperty("user.dir");
+  if (path.length() == 1) {
+  path="sdcard/rustedWarfare/rwmod";
   }
-  init(new File(str));
- }
- public static void init(File def) {
   HashMap<String,HashMap> map;
   try {
-   map = new loder(new FileReader(new File(def, ".ini")), null).ini;
+   map = new loder(new FileReader(new File(path, ".ini")), null).ini;
    HashMap<String,String> set=map.get("set");
    String str=set.get("line");
    String list[]=str.split(",");
@@ -175,10 +174,10 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    loder.put(image, music);
    Res = image;
   } catch (Exception e) {
-   ui.def.fali(e);
+   def.fali(e);
   }
-  rwmodLib.init(new File(def, "lib.zip"));
-  ui.def.finsh();
+  rwmodLib.init(new File(path,"lib.zip"));
+  def.finsh();
  }
  public rwmodProtect(File in, ui def) {
   In = in;
