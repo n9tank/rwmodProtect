@@ -19,9 +19,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 public class rwmodProtect extends rwmodLib implements Runnable {
  File In;
  File Ou;
+ ZipFile Zip;
  ui Ui;
  int iniIndex=-2;
  int fileIndex=-1;
@@ -242,7 +245,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (!isini && o == null) {
    ZipFile zip=Zip;
    try {
-    lod = new loder(zip.getInputStream(en), Buff);
+    lod = new loder(new InputStreamReader(zip.getInputStream(en)),Buff);
     map.put(str, lod);
    } catch (Exception e) {
     Ui.fali(e);
@@ -516,7 +519,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     rootPath = name;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
-     loder ini=new loder(zip.getInputStream(inf), mbuff);
+     loder ini=new loder(new InputStreamReader(zip.getInputStream(inf)), mbuff);
      HashMap info=ini.ini;
      Object o=info.get("music");
      if (o != null) {
@@ -539,7 +542,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       if (type >= 0) {
-       loder lod=new loder(zip.getInputStream(zipEntry), mbuff);
+       loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), mbuff);
        if (rwmodLib.dontlod(lod))type = 0;
        if (type > 0) {
         inimap.put(name, lod);

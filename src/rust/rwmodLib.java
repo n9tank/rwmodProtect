@@ -1,79 +1,81 @@
 package rust;
 import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 public class rwmodLib {
-ZipFile Zip;
-HashMap iniMap;
-HashMap iniHide;
-static HashMap wmap;
-static loder get(String str){
-  str=str.replaceFirst("^/+","");
+ HashMap iniMap;
+ HashMap iniHide;
+ static HashMap wmap;
+ static loder get(String str) {
+  str = str.replaceFirst("^/+", "");
   HashMap map=wmap;
   Object o=map.get(str);
-  str=str.toLowerCase();
+  str = str.toLowerCase();
   if (o == null) {
-   o=map.get(str);
+   o = map.get(str);
   }
-  if(o==null&&!str.endsWith("/")){
-   o=map.get(str.concat("/"));
+  if (o == null && !str.endsWith("/")) {
+   o = map.get(str.concat("/"));
   }
   return (loder)o;
  }
-public static void init(File file,ui def) {
-  if (file.exists()){
-  rwmodLib rw=new rwmodLib(file,def);
-  HashMap<String,loder> ini=rw.iniMap;
-  ini.putAll(rw.iniHide);
-  wmap=ini;
+ public static void init(File file, ui def) {
+  if (file.exists()) {
+   rwmodLib rw=new rwmodLib(file, def);
+   HashMap<String,loder> ini=rw.iniMap;
+   ini.putAll(rw.iniHide);
+   wmap = ini;
   }
  }
-rwmodLib(){}
-rwmodLib(File file, ui ui){
+ rwmodLib() {}
+ rwmodLib(File file, ui ui) {
   HashMap inihide=new HashMap();
   iniHide = inihide;
   HashMap inimap=new HashMap();
   iniMap = inimap;
   StringBuilder buf=new StringBuilder();
-  try{
-  ZipFile zip=new ZipFile(file);
-  Zip = zip;
-  Enumeration<? extends ZipEntry> ent=zip.entries();
   try {
-   while (ent.hasMoreElements()) {
-    ZipEntry zipEntry=ent.nextElement();
+   ZipInputStream zip=new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
+   BufferedReader red=new BufferedReader(new InputStreamReader(zip));
+   try {
+    ZipEntry zipEntry;
+    while ((zipEntry = zip.getNextEntry()) != null) {
      String fileName=zipEntry.getName().toLowerCase();
-     loder lod=new loder(zip.getInputStream(zipEntry),buf);
-     if (isini(fileName)&&!dontlod(lod)) {
-      inimap.put(fileName,lod);
-     } else {
-      inihide.put(fileName,lod);
-     }
-   }
-   Iterator ite=inimap.entrySet().iterator();
-   while (ite.hasNext()) {
-    Map.Entry en=(Map.Entry)ite.next();
-    String key=(String)en.getKey();
-    loder lod=(loder)en.getValue();
-    if (lod.str == null) {
-     lod.str = "";
-     lodAllCopy(lod, key);
+      loder lod=new loder(red, buf);
+      if (isini(fileName) && !dontlod(lod)) {
+       inimap.put(fileName, lod);
+      } else {
+       inihide.put(fileName, lod);
+      }
     }
+    Iterator ite=inimap.entrySet().iterator();
+    while (ite.hasNext()) {
+     Map.Entry en=(Map.Entry)ite.next();
+     String key=(String)en.getKey();
+     loder lod=(loder)en.getValue();
+     if (lod.str == null) {
+      lod.str = "";
+      lodAllCopy(lod, key);
+     }
+    }
+   } catch (Exception e) {
+    ui.fali(e);
    }
+   red.close();
   } catch (Exception e) {
    ui.fali(e);
   }
-  zip.close();
-  }catch(Exception e){
-   ui.fali(e);
-  }
  }
-static boolean dontlod(loder lod) {
+ static boolean dontlod(loder lod) {
   Object o=lod.ini.get("core");
   if (o != null) {
    HashMap map=(HashMap)o;
@@ -86,20 +88,20 @@ static boolean dontlod(loder lod) {
   }
   return false;
  }
-loder getlod(String str) {
-  str=str.toLowerCase();
+ loder getlod(String str) {
+  str = str.toLowerCase();
   Object o=iniMap.get(str);
-  if(o==null){
-   o=iniHide.get(str);
+  if (o == null) {
+   o = iniHide.get(str);
   }
   loder lod=(loder)o;
-  if (lod.str==null) {
+  if (lod.str == null) {
    lod.str = "";
    lodAllCopy(lod, str);
   }
   return lod;
  }
-boolean isini(String file) {
+ boolean isini(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
@@ -107,8 +109,8 @@ boolean isini(String file) {
    return true;
   } else return false;
  }
-void lodAllCopy(loder lod, String file) {
-  file=loder.getSuperPath(file);
+ void lodAllCopy(loder lod, String file) {
+  file = loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
   HashMap put=null;
@@ -117,20 +119,20 @@ void lodAllCopy(loder lod, String file) {
    o = map.get("copyFrom");
    if (o != null) {
     String str=(String)o;
-    put=new HashMap();
+    put = new HashMap();
     String list[]=str.split(",");
     int i=0,l=list.length;
     do{
      str = list[i];
      loder loder=getlod(file.concat(str));
-     loder.putAnd(put,loder.put,null,(byte)0);
+     loder.putAnd(put, loder.put, null, (byte)0);
     }while(++i < l);
    }
   }
-  if(put!=null){
-  loder.putAnd(put,ini,null,(byte)0);
-  }else put=ini;
-  lod.put=put;
-  lod.ini=null;
+  if (put != null) {
+   loder.putAnd(put, ini, null, (byte)0);
+  } else put = ini;
+  lod.put = put;
+  lod.ini = null;
  }
 }

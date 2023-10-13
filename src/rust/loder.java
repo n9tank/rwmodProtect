@@ -21,8 +21,16 @@ class loder {
  static HashSet vlset;
  static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  static HashMap<String,HashSet> line=new HashMap();
- loder(InputStream input, StringBuilder buff)throws Exception {
-  this(new InputStreamReader(input), buff);
+ loder(InputStreamReader input, StringBuilder buff)throws Exception {
+  BufferedReader in=new BufferedReader(input);
+  try {
+   init(in, buff);
+  } finally {
+   in.close();
+  }
+ }
+ loder(BufferedReader in, StringBuilder buff)throws Exception {
+  init(in, buff);
  }
  static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
@@ -50,7 +58,6 @@ class loder {
   ini.remove("");
   boolean size=gloab.size() > 0;
   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-  try {
    if (ite.hasNext()) {
     write(ite, out);
    } else if (size) {
@@ -58,9 +65,7 @@ class loder {
    }
    if (size)writeKeys(gloab, ite.hasNext(), out);
    while (ite.hasNext())write(ite, out);
-  } finally {
    out.flush();
-  }
  }
  static String wh(String str, HashSet set, int m) {
   int i=0;
@@ -238,9 +243,8 @@ class loder {
   buff.append(str, j, str.length());
   return buff.toString();
  }
- loder(InputStreamReader input, StringBuilder bf)throws Exception {
+ void init(BufferedReader buff, StringBuilder bf)throws Exception {
   HashMap global=new HashMap();
-  BufferedReader buff=new BufferedReader(input);
   String str;
   HashMap list=null;
   HashMap lines=line;
@@ -248,54 +252,50 @@ class loder {
   table.put("", global);
   ini = table;
   HashSet hashset=null;
-  try {
-   while ((str = buff.readLine()) != null) {
-    str = str.trim();
-    if (str.startsWith("#"))continue;
-    if (str.startsWith("[") && str.endsWith("]")) {
-     str = str.substring(1, str.length() - 1).trim();
-     if (str.contains("]"))continue;
-     if (str.startsWith("comment_")) {
-      list = null;
-     } else {
-      Object o=wh(str, lines, max);
-      if (o != null)hashset = (HashSet)o;
-      else hashset = null;
-      list = new HashMap();
-      table.put(str, list);
-     }
-    } else if (list != null) {
-     String value[]=str.split("[=:]", 2);
-     if (value.length > 1) {
-      String key=value[0].trim();
-      String set=value[1].trim();
-      if (key.startsWith("@global ")) {
-       if (value.equals("IGNORE"))continue;
-       global.put(key, set);
-      } else {
-       if (hashset != null && hashset.contains(key)) {
-        String with;
-        if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-         set = set.substring(3);
-         bf.setLength(0);
-         do{
-          set = set.trim();
-          if (set.endsWith(with)) {
-           bf.append(set, 0, set.length() - 3);
-           break;
-          }
-          bf.append(set);
-         }while((set = buff.readLine()) != null);
-         set = bf.toString();
-        }
-       }
-       list.put(key, set);
-      }
-     } else continue;
+  while ((str = buff.readLine()) != null) {
+   str = str.trim();
+   if (str.startsWith("#"))continue;
+   if (str.startsWith("[") && str.endsWith("]")) {
+    str = str.substring(1, str.length() - 1).trim();
+    if (str.contains("]"))continue;
+    if (str.startsWith("comment_")) {
+     list = null;
+    } else {
+     Object o=wh(str, lines, max);
+     if (o != null)hashset = (HashSet)o;
+     else hashset = null;
+     list = new HashMap();
+     table.put(str, list);
     }
+   } else if (list != null) {
+    String value[]=str.split("[=:]", 2);
+    if (value.length > 1) {
+     String key=value[0].trim();
+     String set=value[1].trim();
+     if (key.startsWith("@global ")) {
+      if (value.equals("IGNORE"))continue;
+      global.put(key, set);
+     } else {
+      if (hashset != null && hashset.contains(key)) {
+       String with;
+       if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
+        set = set.substring(3);
+        bf.setLength(0);
+        do{
+         set = set.trim();
+         if (set.endsWith(with)) {
+          bf.append(set, 0, set.length() - 3);
+          break;
+         }
+         bf.append(set);
+        }while((set = buff.readLine()) != null);
+        set = bf.toString();
+       }
+      }
+      list.put(key, set);
+     }
+    } else continue;
    }
-  } finally {
-   buff.close();
   }
  }
  HashMap getPut() {
