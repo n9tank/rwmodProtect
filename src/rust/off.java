@@ -15,14 +15,12 @@ final class off {
   sset.add("sin");
   sset.add("sqrt");
  }
- static final Pattern isNum=Pattern.compile("-?[0-9.]+");
  static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final boolean off(HashMap map, HashMap setion, String str, StringBuilder buff) {
   boolean isNumber=find2.matcher(str).find();
   HashSet sset=set;
   Matcher matcher=find.matcher(str);
-  Pattern num=isNum;
   int j=0,n=0,st=buff.length();
   while (matcher.find()) {
    j = matcher.start();
@@ -30,7 +28,7 @@ final class off {
    n = matcher.end();
    String group = matcher.group(0);
    int i=group.length();
-   if (!num.matcher(group).matches() && !((i == 3 || i == 4) && sset.contains(group))) {
+   if (!((i == 3 || i == 4) && sset.contains(group))) {
     String list[]=str.split("\\.", 2);
     String key=list[0];
     Object o;
