@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -48,6 +49,7 @@ public class rwmodProtect implements Runnable {
  static HashMap<String,HashMap> Res;
  static HashSet music;
  static HashMap wmap;
+ static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  public static void lib(File file) throws Exception {
   if (file.exists()) {
    HashMap inimap=new HashMap();
@@ -122,32 +124,6 @@ public class rwmodProtect implements Runnable {
   }
   str = str.replaceFirst("^/+", "");
   if (path.length() > 0)str = path.concat(str);
-  return str;
- }
- String getImagePath(String str, String path, StringBuilder buff) {
-  boolean shadow=false;
-  int st=0;
-  if (str.startsWith("SHADOW:", st)) {
-   shadow = true;
-   st = 7;
-  }
-  if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
-   return null;
-  }
-  if (str.startsWith("ROOT:", st)) {
-   st += 5;
-   path = rootPath;
-  }
-  if (str.startsWith("SHADOW:", st)) {
-   shadow = true;
-   st += 7;
-  }
-  if (st != 0)str = str.substring(st);
-  str = str.replaceFirst("^/+", "");
-  if (path.length() > 0)str = path.concat(str);
-  if (shadow && buff != null) {
-   buff.append("SHADOW:");
-  }
   return str;
  }
  loder getSpuerAll(String str) {
@@ -274,7 +250,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  buff.append('/');
+   buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -336,7 +312,32 @@ public class rwmodProtect implements Runnable {
    if (!isimg) {
     if (music.contains(str))break tag;
     file = getPath(str, path);
-   } else file = getImagePath(str, path, buff);
+   } else {
+    boolean shadow=false;
+    int st=0;
+    if (str.startsWith("SHADOW:", st)) {
+     shadow = true;
+     st = 7;
+    }
+    if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
+     file = null;
+    }
+    if (str.startsWith("ROOT:", st)) {
+     st += 5;
+     path = rootPath;
+    }
+    if (str.startsWith("SHADOW:", st)) {
+     shadow = true;
+     st += 7;
+    }
+    if (st != 0)file = str.substring(st);
+    else file = str;
+    file = file.replaceFirst("^/+", "");
+    if (path.length() > 0)file = path.concat(str);
+    if (shadow && buff != null) {
+     buff.append("SHADOW:");
+    }
+   }
    if (file != null) {
     ZipEntry en = toPath(file);
     if (en != null) {
@@ -420,8 +421,48 @@ public class rwmodProtect implements Runnable {
   }
   String str;
   HashMap<String, HashMap> res=Res;
-  HashMap as;
-  ArrayList need=ini.find(cou, ini.getPut(), as = ini.getAs(cou), buff);
+  HashMap pu=put;
+  HashMap coe=new HashMap(),as=new HashMap();
+  loder.put(coe, pu);
+  loder.as(coe);
+  loder.putAnd(pu, map, cou, (byte)2);
+  loder.put(as, pu);
+  loder.as(as);
+  ArrayList need=new ArrayList();
+  Iterator ite = as.entrySet().iterator();
+  Pattern fud=fin;
+  while (ite.hasNext()) {
+   Map.Entry en=(Map.Entry)ite.next();
+   String ac=(String)en.getKey();
+   HashMap tr=(HashMap)loder.wh(ac, res, rwmodProtect.max);
+   ArrayList arr=new ArrayList();
+   HashMap re=(HashMap)cou.get(ac);
+   HashMap list=(HashMap)en.getValue();
+   HashMap list2=(HashMap)coe.get(ac);
+   HashMap list3=(HashMap)map.get(ac);
+   Iterator ite2=list.entrySet().iterator();
+   while (ite2.hasNext()) {
+    en = (Map.Entry) ite2.next();
+    String key=(String)en.getKey();
+    if (re != null)o = re.get(key);
+    else o = key;
+    String vl,v=(String)en.getValue();
+    vl = loder.get(v, as, list, buff);
+    boolean eq=true;
+    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2, buff)))) {
+     if (vl != null && tr != null && tr.get(key) != null && !fud.matcher(vl).find()) {
+      arr.add(key);
+     }
+    } else if (list3 != null && !eq) {
+     //去重复键 opt
+     list3.remove(key);
+    }
+    if (arr.size() > 0) {
+     need.add(arr);
+     need.add(ac);
+    }
+   }
+  }
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
@@ -473,7 +514,23 @@ public class rwmodProtect implements Runnable {
     }
    }
   }
-  ini.put(as, need);
+  int l=need.size();
+  while (--l >= 0) {
+   str = (String)need.get(l);
+   HashMap re=(HashMap)as.get(str);
+   o = map.get(str);
+   HashMap putall;
+   if (o == null) {
+    putall = new HashMap();
+    map.put(str, putall);
+   } else putall = (HashMap)o;
+   ArrayList list=(ArrayList)need.get(--l);
+   int i=list.size();
+   while (--i >= 0) {
+    str = (String)list.get(i);
+    putall.put(str, re.get(str));
+   }
+  }
  }
  ZipEntry toPath(String str) {
   HashMap<String,ZipEntry> lowm=low;

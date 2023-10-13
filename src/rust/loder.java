@@ -3,7 +3,6 @@ package rust;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,7 +18,6 @@ class loder {
  static int max;
  static int vlmax;
  static HashSet vlset;
- static final Pattern fin=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  static HashMap<String,HashSet> line=new HashMap();
  loder(InputStreamReader input, StringBuilder buff)throws Exception {
   BufferedReader in=new BufferedReader(input);
@@ -58,28 +56,14 @@ class loder {
   map.remove("");
   boolean size=gloab.size() > 0;
   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-   if (ite.hasNext()) {
-    write(ite, out);
-   } else if (size) {
-    out.write("[]\n");
-   }
-   if (size)writeKeys(gloab, ite.hasNext(), out);
-   while (ite.hasNext())write(ite, out);
-   out.flush();
- }
- static String wh(String str, HashSet set, int m) {
-  int i=0;
-  String vl=str;
-  do{
-   if (set.contains(vl)) {
-    return vl;
-   }
-   i = str.indexOf("_", ++i);
-   if (i > 0) {
-    vl = str.substring(0, i + 1);
-   } else break;
-  }while(--m >= 0);
-  return null;
+  if (ite.hasNext()) {
+   write(ite, out);
+  } else if (size) {
+   out.write("[]\n");
+  }
+  if (size)writeKeys(gloab, ite.hasNext(), out);
+  while (ite.hasNext())write(ite, out);
+  out.flush();
  }
  static Object wh(String str, HashMap map, int m) {
   int i=0;
@@ -227,7 +211,55 @@ class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      if (!off(map, loc, key, buff))return null;
+      boolean isNumber=find2.matcher(key).find();
+      HashSet sset=set;
+      Matcher matcher=find.matcher(key);
+      int m=0,q=0,st=buff.length();
+      while (matcher.find()) {
+       m = matcher.start();
+       buff.append(key, q, m);
+       q = matcher.end();
+       String group = matcher.group(0);
+       if (!sset.contains(group)) {
+        String list[]=group.split("\\.", 2);
+        String keyv=list[0];
+        Object o;
+        tag:
+        if (list.length > 1) {
+         HashMap locv;
+         if (key.equals("section"))locv = loc;
+         else {
+          locv = (HashMap)map.get(keyv);
+          if (locv == null)return null;
+         }
+         group = (String)locv.get(list[1]);
+        } else {
+         o = loc.get("@define ".concat(keyv));
+         if (o == null) {
+          o = ((HashMap)map.get("")).get("@global ".concat(keyv));
+         }
+         group = (String)o;
+        }
+       }
+       if (group == null)return null;
+       buff.append(group);
+      }
+      m = key.length();
+      if (m - q > 0)buff.append(key, q, m);
+      key = buff.substring(st, buff.length());
+      if (isNumber) {
+       buff.setLength(st);
+       cmp cVar = new cmp(key);
+       cVar.a();
+       double b = cVar.b();
+       int intd=(int)b;
+       if (intd == b) {
+        key = String.valueOf(intd);
+       } else {
+        key = String.valueOf(b);
+       }
+       buff.append(key);
+      }
      }
      j = i = ++n;
     } else break;
@@ -291,92 +323,30 @@ class loder {
    }
   }
  }
- HashMap getPut() {
-  HashMap pu=put;
-  HashMap coe=new HashMap();
-  put(coe, pu);
-  as(coe);
-  return coe;
- }
- HashMap getAs(HashMap cou) {
-  HashMap pu=put;
-  HashMap hash=new HashMap();
-  putAnd(pu, ini, cou, (byte)0);
-  put(hash, pu);
-  as(hash);
-  return hash;
- }
- void put(HashMap as, ArrayList need) {
-  HashMap hash=as;
-  HashMap put=ini;
-  int l=need.size();
-  while (--l >= 0) {
-   String str=(String)need.get(l);
-   HashMap map=(HashMap)hash.get(str);
-   Object o=put.get(str);
-   HashMap putall;
-   if (o == null) {
-    putall = new HashMap();
-    put.put(str, putall);
-   } else putall = (HashMap)o;
-   ArrayList list=(ArrayList)need.get(--l);
-   int i=list.size();
-   while (--i >= 0) {
-    str = (String)list.get(i);
-    putall.put(str, map.get(str));
-   }
-  }
- }
- ArrayList find(HashMap cous, HashMap coe, HashMap hash, StringBuilder buff) {
-  ArrayList need=new ArrayList();
-  HashMap def=rwmodProtect.Res;
-  HashMap re=ini;
-  Iterator ite = hash.entrySet().iterator();
-  Pattern fud=fin;
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String ac=(String)en.getKey();
-   HashMap tr=(HashMap)wh(ac, def, rwmodProtect.max);
-   ArrayList arr=new ArrayList();
-   HashMap map=(HashMap)cous.get(ac);
-   HashMap list=(HashMap)en.getValue();
-   HashMap list2=(HashMap)coe.get(ac);
-   HashMap list3=(HashMap)re.get(ac);
-   Iterator ite2=list.entrySet().iterator();
-   while (ite2.hasNext()) {
-    en = (Map.Entry) ite2.next();
-    String key=(String)en.getKey();
-    Object o;
-    if (map != null)o = map.get(key);
-    else o = key;
-    String str,vl,v=(String)en.getValue();
-    vl = get(v, hash, list, buff);
-    boolean eq=true;
-    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(get(str, coe, list2, buff)))) {
-     if (vl != null && tr != null && tr.get(key) != null && !fud.matcher(vl).find()) {
-      arr.add(key);
-     }
-    } else if (list3 != null && !eq) {
-     //去重复键 opt
-     list3.remove(key);
-    }
-    if (arr.size() > 0) {
-     need.add(arr);
-     need.add(ac);
-    }
-   }
-  }
-  return need;
- }
  static void as(HashMap map) {
   Iterator ite = map.entrySet().iterator();
+  HashSet vset=vlset;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    HashMap hash=(HashMap)en.getValue();
-   String vl;
    HashMap mapput=new HashMap();
-   if ((vl = wh(key, vlset, vlmax)) != null) {
+   int i=0;
+   String vl=key;
+   int m=vlmax;
+   tag: {
+    tr: {
+     do{
+      if (vset.contains(vl)) {
+       break tr;
+      }
+      i = key.indexOf("_", ++i);
+      if (i > 0) {
+       vl = key.substring(0, i + 1);
+      } else break tag;
+     }while(--m >= 0);
+     break tag;
+    }
     Object o=hash.get("copyFrom");
     if (o != null) {
      key = (String)o;
@@ -396,7 +366,7 @@ class loder {
    }
   }
  }
-  static final HashSet set;
+ static final HashSet set;
  static{
   HashSet sset=new HashSet();
   set = sset;
@@ -407,58 +377,4 @@ class loder {
  }
  static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
- static final boolean off(HashMap map, HashMap setion, String str, StringBuilder buff) {
-  boolean isNumber=find2.matcher(str).find();
-  HashSet sset=set;
-  Matcher matcher=find.matcher(str);
-  int j=0,n=0,st=buff.length();
-  while (matcher.find()) {
-   j = matcher.start();
-   buff.append(str, n, j);
-   n = matcher.end();
-   String group = matcher.group(0);
-   if (!sset.contains(group)) {
-    String list[]=str.split("\\.", 2);
-    String key=list[0];
-    Object o;
-    tag:
-    if (list.length > 1) {
-     HashMap loc;
-     if (key.equals("section"))loc = setion;
-     else {
-      loc = (HashMap)map.get(key);
-      if (loc == null)return false;
-     }
-     group = (String)loc.get(list[1]);
-    } else {
-     o = setion.get("@define ".concat(key));
-     if (o == null) {
-      o = ((HashMap)map.get("")).get("@global ".concat(key));
-     }
-     group = (String)o;
-    }
-   }
-   if (group == null)return false;
-   buff.append(group);
-  }
-  j = str.length();
-  if (j - n > 0)buff.append(str, n, j);
-  str = buff.substring(st, buff.length());
-  if (isNumber) {
-   buff.setLength(st);
-   buff.append(cmp(str));
-  }
-  return true;
- }
- private static String cmp(String str) {
-  cmp cVar = new cmp(str);
-  cVar.a();
-  double b = cVar.b();
-  int intd=(int)b;
-  if (intd == b) {
-   return String.valueOf(intd);
-  } else {
-   return String.valueOf(b);
-  }
- }
 }
