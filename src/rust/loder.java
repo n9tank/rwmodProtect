@@ -197,13 +197,6 @@ class loder {
    }
   }
  }
- static String getRoot(String str) {
-  int i=str.indexOf("/");
-  if (i >= 0) {
-   return str.substring(0, ++i);
-  }
-  return "";
- }
  static String getName(String file) {
   int i=file.length();
   if (file.endsWith("/")) {
@@ -294,7 +287,7 @@ class loder {
       }
       list.put(key, set);
      }
-    } else continue;
+    }
    }
   }
  }

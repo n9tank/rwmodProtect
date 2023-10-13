@@ -1,9 +1,13 @@
 package rust;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -18,10 +22,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-public class rwmodProtect extends rwmodLib implements Runnable {
+public class rwmodProtect implements Runnable {
  File In;
  File Ou;
  ZipFile Zip;
@@ -31,6 +34,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  int oggIndex=-2;
  ZipOutputStream Zipout;
  HashMap low;
+ HashMap iniMap;
+ HashMap iniHide;
  HashMap Filemap;
  ByteBuffer Warp;
  WritableByteChannel Out;
@@ -42,6 +47,73 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  static String fileD;
  static HashMap<String,HashMap> Res;
  static HashSet music;
+ static HashMap wmap;
+ public static void lib(File file) throws Exception {
+  if (file.exists()) {
+   HashMap inimap=new HashMap();
+   wmap = inimap;
+   StringBuilder buf=new StringBuilder();
+   ZipInputStream zip=new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
+   BufferedReader red=new BufferedReader(new InputStreamReader(zip));
+   try {
+    ZipEntry zipEntry;
+    while ((zipEntry = zip.getNextEntry()) != null) {
+     String fileName=zipEntry.getName().toLowerCase();
+     loder lod=new loder(red, buf);
+     zip.closeEntry();
+     inimap.put(fileName, lod);
+    }
+    Iterator ite=inimap.entrySet().iterator();
+    while (ite.hasNext()) {
+     Map.Entry en=(Map.Entry)ite.next();
+     String key=(String)en.getKey();
+     loder lod=(loder)en.getValue();
+     if (lod.str == null) {
+      lod.str = "";
+      lodAllCopy(lod, key, inimap);
+     }
+    }
+   } finally {
+    red.close();
+   }
+  }
+ }
+ static loder getlod(String str, HashMap iniMap) {
+  str = str.toLowerCase();
+  Object o=iniMap.get(str);
+  loder lod=(loder)o;
+  if (lod.str == null) {
+   lod.str = "";
+   lodAllCopy(lod, str, iniMap);
+  }
+  return lod;
+ }
+ static void lodAllCopy(loder lod, String file, HashMap iniMap) {
+  file = loder.getSuperPath(file);
+  HashMap ini=lod.ini;
+  Object o=ini.get("core");
+  HashMap put=null;
+  if (o != null) {
+   HashMap map=(HashMap)o;
+   o = map.get("copyFrom");
+   if (o != null) {
+    String str=(String)o;
+    put = new HashMap();
+    String list[]=str.split(",");
+    int i=0,l=list.length;
+    do{
+     str = list[i];
+     loder loder=getlod(file.concat(str), iniMap);
+     loder.putAnd(put, loder.put, null, (byte)0);
+    }while(++i < l);
+   }
+  }
+  if (put != null) {
+   loder.putAnd(put, ini, null, (byte)0);
+  } else put = ini;
+  lod.put = put;
+  lod.ini = null;
+ }
  String getPath(String str, String path) {
   if (str.startsWith("CORE:"))return null;
   if (str.startsWith("ROOT:")) {
@@ -148,28 +220,28 @@ public class rwmodProtect extends rwmodLib implements Runnable {
  }
  public static void init(File path)throws Exception {
   HashMap<String,HashMap> map;
-   map = new loder(new FileReader(path), null).ini;
-   HashMap<String,String> set=map.get("set");
-   String str=set.get("line");
-   String list[]=str.split(",");
-   loder.max = Integer.valueOf(list[0]);
-   loder.vlmax = Integer.valueOf(list[1]);
-   max = Integer.valueOf(list[2]);
-   String file= set.get("file");
-   fileD = file;
-   list = set.get("music").split(",");
-   HashSet musics=new HashSet();
-   music = musics;
-   Collections.addAll(musics, list);
-   list = set.get("value").split(",");
-   HashSet value=new HashSet();
-   loder.vlset = value;
-   Collections.addAll(value, list);
-   loder.line = set(map.get("line"), 0);
-   HashMap image=set(map.get("image"), 1);
-   HashMap music=set(map.get("music"), 3);
-   loder.put(image, music);
-   Res = image;
+  map = new loder(new FileReader(path), null).ini;
+  HashMap<String,String> set=map.get("set");
+  String str=set.get("line");
+  String list[]=str.split(",");
+  loder.max = Integer.valueOf(list[0]);
+  loder.vlmax = Integer.valueOf(list[1]);
+  max = Integer.valueOf(list[2]);
+  String file= set.get("file");
+  fileD = file;
+  list = set.get("music").split(",");
+  HashSet musics=new HashSet();
+  music = musics;
+  Collections.addAll(musics, list);
+  list = set.get("value").split(",");
+  HashSet value=new HashSet();
+  loder.vlset = value;
+  Collections.addAll(value, list);
+  loder.line = set(map.get("line"), 0);
+  HashMap image=set(map.get("image"), 1);
+  HashMap music=set(map.get("music"), 3);
+  loder.put(image, music);
+  Res = image;
  }
  rwmodProtect(File in, File ou, ui def) {
   In = in;
@@ -241,7 +313,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   if (!isini && o == null) {
    ZipFile zip=Zip;
    try {
-    lod = new loder(new InputStreamReader(zip.getInputStream(en)),Buff);
+    lod = new loder(new InputStreamReader(zip.getInputStream(en)), Buff);
     map.put(str, lod);
    } catch (Exception e) {
     Ui.fali(e);
@@ -317,7 +389,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
     String list[]=str.split(",");
     int i=0,n=list.length;
-    HashMap libs=rwmodLib.wmap;
+    HashMap libs=wmap;
     do {
      String path=list[i].trim();
      str = getPath(path, file);
@@ -329,7 +401,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       lod = replace(str, getType(str) > 0);
       path = lod.str;
      } else if (libs != null) {
-      lod = rwmodLib.get(str);
+      str = path.replaceFirst("^CORE:/*", "").toLowerCase();
+      lod = (loder)libs.get(str);
      }
      if (lod != null) {
       ini.putAnd(put, lod.put, cou, s ?(byte)0: (byte)1);
@@ -501,7 +574,11 @@ public class rwmodProtect extends rwmodLib implements Runnable {
     do{
      ZipEntry zipEntry=zipEntrys.nextElement();
      String fileName=zipEntry.getName();
-     String root=loder.getRoot(fileName);
+     String root;
+     int i=fileName.indexOf("/");
+     if (i >= 0) {
+      root = fileName.substring(0, ++i);
+     } else root = "";
      fileName = fileName.toLowerCase();
      if (!lows.containsKey(fileName))lows.put(fileName, zipEntry);
      if (name == null) {
@@ -539,7 +616,16 @@ public class rwmodProtect extends rwmodLib implements Runnable {
       byte type=getType(name);
       if (type >= 0) {
        loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), mbuff);
-       if (rwmodLib.dontlod(lod))type = 0;
+       Object o=lod.ini.get("core");
+       if (o != null) {
+        HashMap map=(HashMap)o;
+        o = map.get("dont_load");
+        if (o != null) {
+         String str=(String)o;
+         map.remove("dont_load");
+         if ("1".equals(str) || "true".equalsIgnoreCase(str))type = 0;
+        }
+       }
        if (type > 0) {
         inimap.put(name, lod);
        } else {

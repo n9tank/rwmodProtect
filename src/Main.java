@@ -2,7 +2,6 @@
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Scanner;
-import rust.rwmodLib;
 import rust.rwmodProtect;
 import rust.ui;
 public class Main {
@@ -15,7 +14,7 @@ public class Main {
   try{
   rwmodProtect.init(new File(path, ".ini"));
   try{
-  rwmodLib.init(new File(path, "lib.zip"));
+  rwmodProtect.lib(new File(path, "lib.zip"));
   }catch(Exception e){
   e.printStackTrace();
   }
