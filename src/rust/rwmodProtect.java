@@ -361,11 +361,11 @@ public class rwmodProtect implements Runnable {
     String str= buff.toString();
     ZipEntry en=toPath(str);
     if (en != null) {
-     buff.setLength(0);
      all = (loder)iniHide.get(str = en.getName());
      if (all.str == null)write(all, str, false, new StringBuilder());
     }
    }while(i > 0);
+   buff.setLength(0);
    if (all != null) {
     buff.append(all.str);
     buff.append(',');
