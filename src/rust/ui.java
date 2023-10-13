@@ -31,7 +31,7 @@ final static ExecutorService pool=Executors.newCachedThreadPool();
   out.print(System.currentTimeMillis() - g);
   out.println("ms");
  }
- public void fali(Exception e) {
+ void fali(Exception e) {
   e.printStackTrace();
  }
 }
