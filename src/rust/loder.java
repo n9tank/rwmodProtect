@@ -54,8 +54,8 @@ class loder {
  }
  void write(OutputStreamWriter out) throws Exception {
   HashMap map=ini;
-  HashMap gloab=(HashMap)ini.get("");
-  ini.remove("");
+  HashMap gloab=(HashMap)map.get("");
+  map.remove("");
   boolean size=gloab.size() > 0;
   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
    if (ite.hasNext()) {
