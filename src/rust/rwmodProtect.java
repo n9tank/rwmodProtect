@@ -352,7 +352,6 @@ public class rwmodProtect implements Runnable {
   if (isini) {
    loder all=null;
    int i=file.length();
-   buff.setLength(0);
    buff.append(file);
    do{
     i = file.lastIndexOf("/", --i);
