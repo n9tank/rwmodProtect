@@ -10,10 +10,6 @@ public class ui {
 String show;
 long g;
 final static ExecutorService pool=Executors.newCachedThreadPool();
- public ui(String show) {
-  this.show = show;
-  g = System.currentTimeMillis();
- }
  public static void exec(File path) {
   String name=path.getName();
   int l=name.length();
@@ -24,7 +20,10 @@ final static ExecutorService pool=Executors.newCachedThreadPool();
   rwmodProtect rw=new rwmodProtect();
   rw.In=path;
   rw.Ou=ou;
-  rw.Ui=new ui(ou.getPath());
+  ui ui =new ui();
+  ui.show=ou.getPath();
+  ui.g=System.currentTimeMillis();
+  rw.Ui =ui;
   pool.execute(rw);
  }
  public void finsh() {
