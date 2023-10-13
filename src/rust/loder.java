@@ -1,7 +1,6 @@
 package rust;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 class loder {
  HashMap ini;
@@ -227,7 +227,7 @@ class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      if (!off.off(map, loc, key, buff))return null;
+      if (!off(map, loc, key, buff))return null;
      }
      j = i = ++n;
     } else break;
@@ -394,6 +394,71 @@ class loder {
     mapput.putAll(hash);
     en.setValue(mapput);
    }
+  }
+ }
+  static final HashSet set;
+ static{
+  HashSet sset=new HashSet();
+  set = sset;
+  sset.add("int");
+  sset.add("cos");
+  sset.add("sin");
+  sset.add("sqrt");
+ }
+ static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
+ static final Pattern find2=Pattern.compile("[-+/*^%()]");
+ static final boolean off(HashMap map, HashMap setion, String str, StringBuilder buff) {
+  boolean isNumber=find2.matcher(str).find();
+  HashSet sset=set;
+  Matcher matcher=find.matcher(str);
+  int j=0,n=0,st=buff.length();
+  while (matcher.find()) {
+   j = matcher.start();
+   buff.append(str, n, j);
+   n = matcher.end();
+   String group = matcher.group(0);
+   if (!sset.contains(group)) {
+    String list[]=str.split("\\.", 2);
+    String key=list[0];
+    Object o;
+    tag:
+    if (list.length > 1) {
+     HashMap loc;
+     if (key.equals("section"))loc = setion;
+     else {
+      loc = (HashMap)map.get(key);
+      if (loc == null)return false;
+     }
+     group = (String)loc.get(list[1]);
+    } else {
+     o = setion.get("@define ".concat(key));
+     if (o == null) {
+      o = ((HashMap)map.get("")).get("@global ".concat(key));
+     }
+     group = (String)o;
+    }
+   }
+   if (group == null)return false;
+   buff.append(group);
+  }
+  j = str.length();
+  if (j - n > 0)buff.append(str, n, j);
+  str = buff.substring(st, buff.length());
+  if (isNumber) {
+   buff.setLength(st);
+   buff.append(cmp(str));
+  }
+  return true;
+ }
+ private static String cmp(String str) {
+  cmp cVar = new cmp(str);
+  cVar.a();
+  double b = cVar.b();
+  int intd=(int)b;
+  if (intd == b) {
+   return String.valueOf(intd);
+  } else {
+   return String.valueOf(b);
   }
  }
 }
