@@ -197,11 +197,6 @@ public class rwmodProtect implements Runnable {
   loder.put(image, music);
   Res = image;
  }
- rwmodProtect(File in, File ou, ui def) {
-  In = in;
-  Ou = ou;
-  Ui = def;
- }
  String FileName(int ini) {
   StringBuilder buff=Buff;
   buff.setLength(0);
