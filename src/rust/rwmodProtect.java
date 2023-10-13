@@ -146,9 +146,8 @@ public class rwmodProtect extends rwmodLib implements Runnable {
   }
   return map;
  }
- public static void init(File path, ui def) {
+ public static void init(File path)throws Exception {
   HashMap<String,HashMap> map;
-  try {
    map = new loder(new FileReader(path), null).ini;
    HashMap<String,String> set=map.get("set");
    String str=set.get("line");
@@ -171,9 +170,6 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    HashMap music=set(map.get("music"), 3);
    loder.put(image, music);
    Res = image;
-  } catch (Exception e) {
-   def.fali(e);
-  }
  }
  rwmodProtect(File in, File ou, ui def) {
   In = in;

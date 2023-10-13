@@ -1,24 +1,27 @@
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Scanner;
 import rust.rwmodLib;
 import rust.rwmodProtect;
 import rust.ui;
 public class Main {
-public static void main(String[] args) throws Exception {
-  ui def=new ui("def");
+ public static void main(String[] args) throws Exception {
+  long g=System.currentTimeMillis();
   String path=System.getProperty("user.dir");
   if (path.length() == 1) {
    path = "sdcard/rustedWarfare/rwmod";
   }
-  rwmodProtect.init(new File(path,".ini"), def);
-  rwmodLib.init(new File(path,"lib.zip"), def);
-  def.finsh();
+  rwmodProtect.init(new File(path, ".ini"));
+  rwmodLib.init(new File(path, "lib.zip"));
+  PrintStream out=System.out;
+  out.print(System.currentTimeMillis()-g);
+  out.println("ms");
   Scanner sc=new Scanner(System.in);
   while (true) {
    File f=new File(sc.nextLine());
    if (f.length() == 0) {
-    System.out.println("文件异常");
+    out.println("文件异常");
     continue;
    } else {
     ui.exec(f);

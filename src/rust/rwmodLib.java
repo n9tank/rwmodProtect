@@ -28,22 +28,21 @@ public class rwmodLib {
   }
   return (loder)o;
  }
- public static void init(File file, ui def) {
+ public static void init(File file) throws Exception {
   if (file.exists()) {
-   rwmodLib rw=new rwmodLib(file, def);
+   rwmodLib rw=new rwmodLib(file);
    HashMap<String,loder> ini=rw.iniMap;
    ini.putAll(rw.iniHide);
    wmap = ini;
   }
  }
  rwmodLib() {}
- rwmodLib(File file, ui ui) {
+ rwmodLib(File file) throws Exception {
   HashMap inihide=new HashMap();
   iniHide = inihide;
   HashMap inimap=new HashMap();
   iniMap = inimap;
   StringBuilder buf=new StringBuilder();
-  try {
    ZipInputStream zip=new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
    BufferedReader red=new BufferedReader(new InputStreamReader(zip));
    try {
@@ -68,13 +67,9 @@ public class rwmodLib {
       lodAllCopy(lod, key);
      }
     }
-   } catch (Exception e) {
-    ui.fali(e);
-   }
+   }finally{
    red.close();
-  } catch (Exception e) {
-   ui.fali(e);
-  }
+   }
  }
  static boolean dontlod(loder lod) {
   Object o=lod.ini.get("core");
