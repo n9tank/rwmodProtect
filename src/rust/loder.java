@@ -227,7 +227,7 @@ class loder {
         tag:
         if (list.length > 1) {
          HashMap locv;
-         if (key.equals("section"))locv = loc;
+         if (keyv.equals("section"))locv = loc;
          else {
           locv = (HashMap)map.get(keyv);
           if (locv == null)return null;
