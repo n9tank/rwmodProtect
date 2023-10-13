@@ -27,8 +27,7 @@ final class off {
    buff.append(str, n, j);
    n = matcher.end();
    String group = matcher.group(0);
-   int i=group.length();
-   if (!((i == 3 || i == 4) && sset.contains(group))) {
+   if (!sset.contains(group)) {
     String list[]=str.split("\\.", 2);
     String key=list[0];
     Object o;
