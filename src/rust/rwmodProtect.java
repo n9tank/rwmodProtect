@@ -502,7 +502,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
    String name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
-    while (zipEntrys.hasMoreElements()) {
+    do{
      ZipEntry zipEntry=zipEntrys.nextElement();
      String fileName=zipEntry.getName();
      String root=loder.getRoot(fileName);
@@ -515,7 +515,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      } else if (!name.equals(root)) {
       name = "";
      }
-    }
+    }while(zipEntrys.hasMoreElements());
     rootPath = name;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
@@ -536,7 +536,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
      write(ini, "mod-info.txt/");
     }
     zipEntrys = zip.entries();
-    while (zipEntrys.hasMoreElements()) {
+    do{
      ZipEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0l) { 
       name = zipEntry.getName();
@@ -571,7 +571,7 @@ public class rwmodProtect extends rwmodLib implements Runnable {
        }
       }
      }
-    }
+    }while(zipEntrys.hasMoreElements());
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
      Map.Entry<String,loder> ini=ite.next();
