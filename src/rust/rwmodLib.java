@@ -51,6 +51,7 @@ public class rwmodLib {
     while ((zipEntry = zip.getNextEntry()) != null) {
      String fileName=zipEntry.getName().toLowerCase();
       loder lod=new loder(red, buf);
+      zip.closeEntry();
       if (isini(fileName) && !dontlod(lod)) {
        inimap.put(fileName, lod);
       } else {
