@@ -126,28 +126,6 @@ public class rwmodProtect implements Runnable {
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
- loder getSpuerAll(String str) {
-  int i=str.length();
-  StringBuilder buff=Buff;
-  buff.setLength(0);
-  buff.append(str);
-  do{
-   i = str.lastIndexOf("/", --i);
-   buff.setLength(i + 1);
-   buff.append("all-units.template");
-   str = buff.toString();
-   loder lod;
-   ZipEntry en=toPath(str);
-   if (en != null) {
-    lod = (loder)iniHide.get(str = en.getName());
-    buff.setLength(0);
-    if (lod.str == null)write(lod, str, false, new StringBuilder());
-    return lod;
-   }
-  }while(i > 0);
-  buff.setLength(0);
-  return null;
- }
  static HashMap set(Object o, int i) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
@@ -250,7 +228,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-   buff.append('/');
+  buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -372,7 +350,22 @@ public class rwmodProtect implements Runnable {
   buff.setLength(0);
   tag:
   if (isini) {
-   loder all=getSpuerAll(file);
+   loder all=null;
+   int i=file.length();
+   buff.setLength(0);
+   buff.append(file);
+   do{
+    i = file.lastIndexOf("/", --i);
+    buff.setLength(i + 1);
+    buff.append("all-units.template");
+    String str= buff.toString();
+    ZipEntry en=toPath(str);
+    if (en != null) {
+     buff.setLength(0);
+     all = (loder)iniHide.get(str = en.getName());
+     if (all.str == null)write(all, str, false, new StringBuilder());
+    }
+   }while(i > 0);
    if (all != null) {
     buff.append(all.str);
     buff.append(',');

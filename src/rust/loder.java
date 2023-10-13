@@ -214,10 +214,9 @@ class loder {
       boolean isNumber=find2.matcher(key).find();
       HashSet sset=set;
       Matcher matcher=find.matcher(key);
-      int m=0,q=0,st=buff.length();
+      int q=0,st=buff.length();
       while (matcher.find()) {
-       m = matcher.start();
-       buff.append(key, q, m);
+       buff.append(key, q, matcher.start());
        q = matcher.end();
        String group = matcher.group(0);
        if (!sset.contains(group)) {
@@ -244,8 +243,8 @@ class loder {
        if (group == null)return null;
        buff.append(group);
       }
-      m = key.length();
-      if (m - q > 0)buff.append(key, q, m);
+      int m = key.length();
+      if (m > q)buff.append(key, q, m);
       key = buff.substring(st, buff.length());
       if (isNumber) {
        buff.setLength(st);
