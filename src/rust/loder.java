@@ -40,38 +40,6 @@ class loder {
    if (nx)out.write('\n');
   }
  }
- void write(OutputStreamWriter out) throws Exception {
-  HashMap map=ini;
-  HashMap gloab=(HashMap)map.get("");
-  map.remove("");
-  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-  boolean wt=false;
-  if (ite.hasNext()) {
-   Map.Entry<String,HashMap> en = ite.next();
-   map = en.getValue();
-   boolean size=map.size() > 0;
-   while (true) {
-    if (size) {
-     wt=true;
-     out.write('[');
-     out.write(en.getKey());
-     out.write("]\n");
-     writeKeys(map, out);
-    }
-    if (!ite.hasNext())break;
-    en = ite.next();
-    map = en.getValue();
-    size = map.size() > 0;
-    if (size)out.write('\n');
-   }
-  }
-  if (gloab.size() > 0) {
-   if (!wt)out.write("[]");
-   out.write('\n');
-   writeKeys(gloab, out);
-  }
-  out.flush();
- }
  static Object wh(String str, HashMap map, int m) {
   int i=0;
   String vl=str;

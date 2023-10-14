@@ -431,24 +431,21 @@ public class rwmodProtect implements Runnable {
    HashMap listv=list3;
    if (listv == null) {
     listv = new HashMap();
-    map.put(ac,listv);
+    map.put(ac, listv);
    }
    Iterator ite2=list.entrySet().iterator();
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey();
-    if (re != null)o = re.get(key);
-    else o = key;
     String vl,v=(String)en.getValue();
-    vl = loder.get(v, as, list, buff);
-    boolean eq=true;
-    if (o == true || list2 == null || (str = (String)list2.get(key)) == null || (eq = vl == null ?!v.equals(str): !vl.equals(loder.get(str, coe, list2, buff)))) {
-     if (vl != null && tr != null && tr.get(key) != null) {
-      if (list3==null||!list3.containsKey(key)){
+    str = null;
+    if ((vl = loder.get(v, as, list, buff)) != null && (list2 == null || (str = (String)list2.get(key)) == null || (re != null && re.get(key) == true) || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
+     if (tr != null && tr.get(key) != null) {
+      if (list3 == null || !list3.containsKey(key)) {
        listv.put(key, null);
-       }
+      }
      }
-    } else if (list3!=null&&!eq){
+    } else if (list3 != null && v.equals(str)) {
      list3.remove(key);
     }
    }
@@ -469,10 +466,10 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     str = (String)j;
-     str = ini.get(str, as, list, buff);
-     if (str == null || str.equalsIgnoreCase("none") || str.equals("IGNORE"))continue;
-     if (str.equalsIgnoreCase("auto") && s.equals("image_shadow"))continue;
+     String old = (String)j;
+     str = ini.get(old, as, list, buff);
+     if (str == null)continue;
+     if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))continue;
      int i = en2.getValue();
      buff.setLength(0);
      if (i > 1) {
@@ -532,7 +529,36 @@ public class rwmodProtect implements Runnable {
   OutputStreamWriter out=Ow;
   try {
    zip.putNextEntry(new ZipEntry(name));
-   ini.write(out);
+   HashMap map=ini.ini;
+   HashMap gloab=(HashMap)map.get("");
+   map.remove("");
+   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+   boolean wt=false;
+   if (ite.hasNext()) {
+    Map.Entry<String,HashMap> en = ite.next();
+    map = en.getValue();
+    boolean size=map.size() > 0;
+    while (true) {
+     if (size) {
+      wt = true;
+      out.write('[');
+      out.write(en.getKey());
+      out.write("]\n");
+      loder.writeKeys(map, out);
+     }
+     if (!ite.hasNext())break;
+     en = ite.next();
+     map = en.getValue();
+     size = map.size() > 0;
+     if (size)out.write('\n');
+    }
+   }
+   if (gloab.size() > 0) {
+    if (!wt)out.write("[]");
+    out.write('\n');
+    loder.writeKeys(gloab, out);
+   }
+   out.flush();
    zip.closeEntry();
   } catch (Exception e) {
    Ui.fali(e);
