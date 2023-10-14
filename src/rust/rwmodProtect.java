@@ -269,7 +269,7 @@ public class rwmodProtect implements Runnable {
   String r=FileName(isini ?1: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
-  replaceAll(ini, r, path, isini, buff);
+  replaceAll(ini, path, isini, buff);
   write(ini, r);
   ini.ini = null;
  }
@@ -331,7 +331,7 @@ public class rwmodProtect implements Runnable {
   }
   buff.append(str);
  }
- void replaceAll(loder ini, String name, String file, boolean isini, StringBuilder buff) {
+ void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
   HashMap cou=new HashMap();
   HashMap put=new HashMap();
@@ -418,7 +418,7 @@ public class rwmodProtect implements Runnable {
   loder.putAnd(put, map, cou, (byte)2);
   loder.put(as, put);
   loder.as(as);
-  cache.put(name, as);
+  cache.put(ini.str, as);
   Iterator ite = as.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
