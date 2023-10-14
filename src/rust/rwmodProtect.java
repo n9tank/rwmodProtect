@@ -466,10 +466,11 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     String old = (String)j;
-     str = ini.get(old, as, list, buff);
+     str= (String)j;
+     str = ini.get(str, as, list, buff);
      if (str == null)continue;
-     if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))continue;
+     tag:{
+     if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))break tag;
      int i = en2.getValue();
      buff.setLength(0);
      if (i > 1) {
@@ -498,9 +499,11 @@ public class rwmodProtect implements Runnable {
       i = buff.length() - 1;
       buff.setLength(i);
      } else replaceR(str, file, buff, true, isini);
+     str=buff.toString();
+     }
      if (list3 != null) {
       if (list3.containsKey(s)) {
-       list3.put(s, buff.toString());
+       list3.put(s, str);
       }
      }
     }
