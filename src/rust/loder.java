@@ -28,39 +28,48 @@ class loder {
  loder(BufferedReader in, StringBuilder buff)throws Exception {
   init(in, buff);
  }
- static void writeKeys(HashMap map, boolean hasNext, OutputStreamWriter out)throws Exception {
+ static void writeKeys(HashMap map, OutputStreamWriter out)throws Exception {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
-  while (ite.hasNext()) {
+  boolean nx=ite.hasNext();
+  while (nx) {
    Map.Entry en = ite.next();
    out.write((String)en.getKey());
    out.write(':');
    out.write((String)en.getValue());
-   if (hasNext || ite.hasNext())out.write('\n');
-  }
- }
- static void write(Iterator<Map.Entry<String,HashMap>> ite, OutputStreamWriter out) throws Exception {
-  Map.Entry<String,HashMap> en=ite.next();
-  HashMap map=en.getValue();
-  if (map.size() > 0) {
-   out.write('[');
-   out.write(en.getKey());
-   out.write("]\n");
-   writeKeys(map, ite.hasNext(), out);
+   nx = ite.hasNext();
+   if (nx)out.write('\n');
   }
  }
  void write(OutputStreamWriter out) throws Exception {
   HashMap map=ini;
   HashMap gloab=(HashMap)map.get("");
   map.remove("");
-  boolean size=gloab.size() > 0;
   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+  boolean wt=false;
   if (ite.hasNext()) {
-   write(ite, out);
-  } else if (size) {
-   out.write("[]\n");
+   Map.Entry<String,HashMap> en = ite.next();
+   map = en.getValue();
+   boolean size=map.size() > 0;
+   while (true) {
+    if (size) {
+     wt=true;
+     out.write('[');
+     out.write(en.getKey());
+     out.write("]\n");
+     writeKeys(map, out);
+    }
+    if (!ite.hasNext())break;
+    en = ite.next();
+    map = en.getValue();
+    size = map.size() > 0;
+    if (size)out.write('\n');
+   }
   }
-  if (size)writeKeys(gloab, ite.hasNext(), out);
-  while (ite.hasNext())write(ite, out);
+  if (gloab.size() > 0) {
+   if (!wt)out.write("[]");
+   out.write('\n');
+   writeKeys(gloab, out);
+  }
   out.flush();
  }
  static Object wh(String str, HashMap map, int m) {

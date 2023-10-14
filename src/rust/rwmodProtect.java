@@ -420,7 +420,6 @@ public class rwmodProtect implements Runnable {
   loder.as(as);
   cache.put(name, as);
   Iterator ite = as.entrySet().iterator();
-  System.out.println(name);
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
