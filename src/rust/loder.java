@@ -16,8 +16,6 @@ class loder {
  HashMap all;
  String str;
  static int max;
- static int vlmax;
- static HashSet vlset;
  static HashMap<String,HashSet> line=new HashMap();
  loder(InputStreamReader input, StringBuilder buff)throws Exception {
   BufferedReader in=new BufferedReader(input);
@@ -324,40 +322,30 @@ class loder {
  }
  static void as(HashMap map) {
   Iterator ite = map.entrySet().iterator();
-  HashSet vset=vlset;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
    HashMap hash=(HashMap)en.getValue();
    HashMap mapput=new HashMap();
-   int i=0;
-   String vl=key;
-   int m=vlmax;
-   tag: {
-    tr: {
-     do{
-      if (vset.contains(vl)) {
-       break tr;
-      }
-      i = key.indexOf("_", ++i);
-      if (i > 0) {
-       vl = key.substring(0, i + 1);
-      } else break tag;
-     }while(--m >= 0);
-     break tag;
-    }
+   int i=key.indexOf("_");
+   if (i > 0) {
     Object o=hash.get("copyFrom");
     if (o != null) {
-     key = (String)o;
-     HashMap set=(HashMap)map.get(vl.concat(key));
+     String vl=key.substring(0, ++i);
+     HashMap set=(HashMap)map.get(vl.concat((String)o));
      if (set != null)mapput.putAll(set);
     }
    }
    Object o=hash.get("@copyFromSection");
    if (o != null) {
     key = (String)o;
-    HashMap set=(HashMap)map.get(key);
-    if (set != null)mapput.putAll(set);
+    String list[]=key.split(",");
+    i = 0;
+    int l=list.length;
+    while (i < l) {
+     HashMap set=(HashMap)map.get(list[i++].trim());
+     if (set != null)mapput.putAll(set);
+    }
    }
    if (mapput.size() > 0) {
     mapput.putAll(hash);
