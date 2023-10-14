@@ -297,37 +297,51 @@ class loder {
    }
   }
  }
+ static HashMap asFor(HashMap map, HashMap hash, String key) {
+  HashMap mapput=new HashMap();
+  Object o=hash.remove("@copyFromSection");
+  if (o != null) {
+   key = (String)o;
+   String list[]=key.split(",");
+   int i = 0;
+   int l=list.length;
+   while (i < l) {
+    String vl=list[i++].trim();
+    HashMap set=(HashMap)map.get(vl);
+    if (set != null) {
+     mapput.putAll(asFor(map, set, vl));
+    }
+   }
+  }
+  HashMap put2=null;
+  if (!key.startsWith("te")) {
+   int i=key.indexOf("_");
+   if (i > 0) {
+    o = hash.get("copyFrom");
+    if (o != null) {
+     String vl=key.substring(0, ++i);
+     HashMap set=(HashMap)map.get(vl);
+     if (set != null) {
+      put2 = new HashMap();
+      put2.putAll(asFor(map, set, vl));
+      put2.putAll(mapput);
+     }
+    }
+   }
+  }
+  if (put2 == null)put2 = mapput;
+  if (put2.size() > 0) {
+   put2.putAll(hash);
+   map.put(key, put2);
+   hash = put2;
+  }
+  return hash;
+ }
  static void as(HashMap map) {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
-   HashMap hash=(HashMap)en.getValue();
-   HashMap mapput=new HashMap();
-   int i=key.indexOf("_");
-   if (i > 0) {
-    Object o=hash.get("copyFrom");
-    if (o != null) {
-     String vl=key.substring(0, ++i);
-     HashMap set=(HashMap)map.get(vl.concat((String)o));
-     if (set != null)mapput.putAll(set);
-    }
-   }
-   Object o=hash.get("@copyFromSection");
-   if (o != null) {
-    key = (String)o;
-    String list[]=key.split(",");
-    i = 0;
-    int l=list.length;
-    while (i < l) {
-     HashMap set=(HashMap)map.get(list[i++].trim());
-     if (set != null)mapput.putAll(set);
-    }
-   }
-   if (mapput.size() > 0) {
-    mapput.putAll(hash);
-    en.setValue(mapput);
-   }
+   asFor(map, (HashMap)en.getValue(), (String)en.getKey());
   }
  }
  static final HashSet set;
