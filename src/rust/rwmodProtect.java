@@ -427,7 +427,7 @@ public class rwmodProtect implements Runnable {
   if (o == null) {
    coe = new HashMap();
    loder.put(coe, put);
-   loder.as(coe);
+   loder.as(coe,false);
    cache.put(cput, coe);
   } else {
    coe = (HashMap)o;
@@ -435,7 +435,7 @@ public class rwmodProtect implements Runnable {
   as = new HashMap();
   loder.putAnd(put, map, cou, false);
   loder.put(as, put);
-  loder.as(as);
+  loder.as(as,true);
   cache.put(ini.str, as);
   HashSet skp=skip;
   Iterator ite = as.entrySet().iterator();
@@ -464,7 +464,15 @@ public class rwmodProtect implements Runnable {
      re = cpy.is ?cpy.skip: cpy.m;
     }
    } else re = null;
-   HashMap list2=(HashMap)coe.get(ac);
+   HashMap list2=null;
+   o=coe.get(ac);
+   if(o!=null){
+    if(o instanceof HashMap){
+     list2=(HashMap)o;
+    }else{
+     list2=((cpys)o).m;
+    }
+   }
    HashMap list3=(HashMap)map.get(ac);
    HashMap listv=list3;
    if (listv == null) {

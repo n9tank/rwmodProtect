@@ -318,7 +318,7 @@ class loder {
    }
   }
  }
- static HashMap asFor(HashMap map, Object o, String key) {
+ static HashMap asFor(HashMap map, Object o, String key,boolean is) {
   HashMap hash;
   if (o instanceof HashMap) {
    HashMap mapput=new HashMap();
@@ -335,7 +335,7 @@ class loder {
      String vl=list[i++].trim();
      Object set=map.get(vl);
      HashMap as;
-     if (set != null && (as = asFor(map, set, vl)) != null) {
+     if (set != null && (as = asFor(map, set, vl,is)) != null) {
       mapput.putAll(as);
      }
     }
@@ -347,11 +347,11 @@ class loder {
      o = hash.get("copyFrom");
      if (o == null)o = mapput.get("copyFrom");
      if (o != null && !o.equals("IGNORE")) {
-      if (mapput.size()>0)map.put(key, cpy);
+      if (mapput.size()>0)map.put(key,cpy);
       String vl=key.substring(0, ++i).concat((String)o);
       Object set=map.get(vl);
       HashMap as;
-      if (set != null && (as = asFor(map, set, vl)) != null) {
+      if (set != null && (as = asFor(map, set, vl,is)) != null) {
        put2 = new HashMap();
        put2.putAll(as);
        put2.putAll(mapput);
@@ -360,8 +360,8 @@ class loder {
     }
    }
    if (put2 == null)put2 = mapput;
-   if (put2.size() > 0) {
-    cpy.skip = (HashMap)put2.clone();
+   if (put2.size()>0) {
+    if(!is)cpy.skip = (HashMap)put2.clone();
     put2.putAll(hash);
     hash = put2;
    }
@@ -372,12 +372,12 @@ class loder {
   }
   return hash;
  }
- static void as(HashMap map) {
+ static void as(HashMap map,boolean is) {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
-   asFor(map,(HashMap)en.getValue(), key);
+   asFor(map,(HashMap)en.getValue(),key,is);
   }
  }
  static final HashSet set;
