@@ -53,6 +53,32 @@ class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
+ static void putAll(HashMap map, HashMap list, String key, boolean is) {
+  HashMap<String, HashMap> ru=rwmodProtect.Res;
+  HashMap fin=(HashMap)wh(key, ru, rwmodProtect.max);
+  if (fin != null) {
+   Iterator ite=list.entrySet().iterator();
+   while (ite.hasNext()) {
+    Map.Entry en=(Map.Entry)ite.next();
+    key = (String)en.getKey();
+    Object o=en.getValue();
+    if (is && fin.containsKey(key)) {
+     String vl;
+     if (o instanceof String) {
+      vl = (String)o;
+     } else vl = ((res)o).str;
+     if (is) {
+      res res= new res();
+      res.str = vl;
+      o = res;
+     } else o = vl;
+    }
+    map.put(key, o);
+   }
+  } else {
+   map.putAll(list);
+  }
+ }
  static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
@@ -74,7 +100,7 @@ class loder {
    }
   }
  }
- static void putAnd(HashMap map, HashMap map2, HashMap cou, byte is) {
+ static void putAnd(HashMap map, HashMap map2, boolean is, boolean end) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
@@ -104,17 +130,17 @@ class loder {
      }
     } else if (o instanceof HashMap) {
      set = (HashMap)o;
-     set.putAll(hash);
     } else {
      cpy = (cpys)o;
      set = cpy.m;
-     set.putAll(hash);
     }
     String str=null;
     if (cp2 == null) {
      str = (String)hash.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
     }
+    is |= end && si;
+    if (o != null)putAll(set, hash, key, is);
     if (si) {
      if (cpy == null) {
       cpy = new cpys();
@@ -124,7 +150,7 @@ class loder {
      cpy.skip = (HashMap)(cp2 == null ?hash: cp2.skip).clone();
     } else {
      if (cpy != null) {
-      cpy.skip.putAll(hash);
+      putAll(cpy.skip, hash, key, is);
      } else if (cp2 != null) {
       cpy = new cpys();
       map.put(key, cpy);
@@ -133,26 +159,6 @@ class loder {
      }
     }
     if (str != null && cpy != null)cpy.is = si;
-   }
-   if (cou != null) {
-    o = wh(key, rwmodProtect.Res, rwmodProtect.max);
-    if (o != null) {
-     HashMap find=(HashMap)o;
-     HashMap list2=(HashMap)cou.get(key);
-     if (list2 == null) {
-      list2 = new HashMap();
-      cou.put(key, list2);
-     }
-     Iterator ite2=hash.keySet().iterator();
-     while (ite2.hasNext()) {
-      key = (String)ite2.next();
-      o = find.get(key);
-      if (is == 2 && !si)continue;
-      if (o != null) {
-       list2.put(key, (is & 1) == 0);
-      }
-     }
-    }
    }
   }
  }
@@ -328,7 +334,7 @@ class loder {
      if (o == null)o = mapput.get("copyFrom");
      if (o != null && !o.equals("IGNORE")) {
       if (mapput.size() == 0)map.put(key, cpy);
-      String vl=key.substring(0, ++i);
+      String vl=key.substring(0, ++i).concat((String)o);
       Object set=map.get(vl);
       HashMap as;
       if (set != null && (as = asFor(map, set, vl)) != null) {
@@ -380,37 +386,37 @@ class loder {
  }
  static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
- static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- static boolean isV(String str, String s, byte i) {
+  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
+  static boolean isV(String str, String s, byte i) {
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
-   return true;
+  return true;
   String list[]=null;
   Pattern upt=pt;
   if (i >= 2) {
-   list = str.split("\\,");
+  list = str.split("\\,");
   }
   if (i == 2) {
-   list = str.split("\\,");
-   int l=list.length;
-   while (--l >= 0) {
-    str = list[l].trim();
-    int r=str.indexOf("*");
-    if (r > 0)str = str.substring(0, r);
-    if (!upt.matcher(str).find())return false;
-   }
+  list = str.split("\\,");
+  int l=list.length;
+  while (--l >= 0) {
+  str = list[l].trim();
+  int r=str.indexOf("*");
+  if (r > 0)str = str.substring(0, r);
+  if (!upt.matcher(str).find())return false;
+  }
   } else if (i == 1) {
-   return upt.matcher(str).find();
+  return upt.matcher(str).find();
   } else {
-   HashSet music=rwmodProtect.music;
-   int l=list.length;
-   while (--l >= 0) {
-    str = list[l].trim();
-    if (str.startsWith("ROOT:"))return false;
-    int r=str.indexOf(":");
-    if (r > 0)str = str.substring(0, r);
-    if (!music.contains(str))return false;
-   }
+  HashSet music=rwmodProtect.music;
+  int l=list.length;
+  while (--l >= 0) {
+  str = list[l].trim();
+  if (str.startsWith("ROOT:"))return false;
+  int r=str.indexOf(":");
+  if (r > 0)str = str.substring(0, r);
+  if (!music.contains(str))return false;
+  }
   }
   return true;
- }
+  }
 }

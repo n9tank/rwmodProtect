@@ -104,12 +104,12 @@ public class rwmodProtect implements Runnable {
     do{
      str = list[i];
      loder loder=getlod(file.concat(str), iniMap);
-     loder.putAnd(put, loder.put, null, (byte)0);
+     loder.putAnd(put, loder.put, false,false);
     }while(++i < l);
    }
   }
   if (put != null) {
-   loder.putAnd(put, ini, null, (byte)0);
+   loder.putAnd(put, ini, false,false);
   } else put = ini;
   lod.put = put;
   lod.ini = null;
@@ -216,7 +216,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  buff.append('/');
+ // buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -333,7 +333,6 @@ public class rwmodProtect implements Runnable {
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
-  HashMap cou=new HashMap();
   HashMap put=new HashMap();
   HashMap alls=null;
   ini.put = put;
@@ -360,7 +359,7 @@ public class rwmodProtect implements Runnable {
     buff.append(',');
     st = buff.length();
     ini.all = alls = all.put;
-    ini.putAnd(put, all.put, cou, (byte)1);
+    ini.putAnd(put, all.put, false,false);
    }
   }
   HashMap map=ini.ini;
@@ -389,7 +388,7 @@ public class rwmodProtect implements Runnable {
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, cou, s ?(byte)0: (byte)1);
+      ini.putAnd(put, lod.put, s,false);
       if (!s && alls == lod.all)alls = null;
      }
      buff.append(path);
@@ -416,7 +415,7 @@ public class rwmodProtect implements Runnable {
    coe = (HashMap)o;
   }
   as = new HashMap();
-  loder.putAnd(put, map, cou, (byte)2);
+  loder.putAnd(put, map, false,true);
   loder.put(as, put);
   loder.as(as);
   cache.put(ini.str, as);
@@ -425,7 +424,6 @@ public class rwmodProtect implements Runnable {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
    HashMap tr=(HashMap)loder.wh(ac, reu, rwmodProtect.max);
-   HashMap re=(HashMap)cou.get(ac);
    HashMap list=(HashMap)en.getValue();
    HashMap list2=(HashMap)coe.get(ac);
    HashMap list3=(HashMap)map.get(ac);
@@ -438,16 +436,21 @@ public class rwmodProtect implements Runnable {
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey();
-    String vl,v=(String)en.getValue(),ov=null;
+    o=en.getValue();
+    String vl,v;
+    if(o instanceof String){
+     v=(String)o;
+     o=null;
+    }else{
+     v=((res)o).str;
+    }
     str = null;
-    if ((vl = loder.get(v, as, list, buff)) != null && (list2 == null || (str = (String)list2.get(key)) == null || (re != null && re.get(key) == true) || str == null || !vl.equals(ov = loder.get(str, coe, list2, buff)))) {
+    if ((vl = loder.get(v, as, list, buff)) != null && (list2 == null || (str = (String)list2.get(key)) == null || o!=null || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
      if (tr != null && (o = tr.get(key)) != null) {
-      if (!loder.isV(vl, key, o) || (ov != null && !loder.isV(ov, key, o))) {
        if (list3 == null || !list3.containsKey(key)) {
         listv.put(key, null);
        }
       }
-     }
     } else if (list3 != null && v.equals(str)) {
      list3.remove(key);
     }
@@ -469,12 +472,12 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     String old = (String)j;
-     str = ini.get(old, as, list, buff);
+     str= (String)j;
+     str = ini.get(str, as, list, buff);
      if (str == null)continue;
      tag: {
       byte i = en2.getValue();
-      if (loder.isV(str, s, i))break tag;
+      if(loder.isV(str,s,i))break tag;
       buff.setLength(0);
       if (i > 1) {
        String list2[]=str.split(",");
@@ -501,11 +504,11 @@ public class rwmodProtect implements Runnable {
        }while(++l < size);
        buff.setLength(buff.length() - 1);
       } else replaceR(str, file, buff, true, isini);
-      old = buff.toString();
+      str= buff.toString();
      }
      if (list3 != null) {
       if (list3.containsKey(s)) {
-       list3.put(s, old);
+       list3.put(s, str);
       }
      }
     }
