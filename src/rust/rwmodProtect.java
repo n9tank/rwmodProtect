@@ -104,12 +104,12 @@ public class rwmodProtect implements Runnable {
     do{
      str = list[i];
      loder loder=getlod(file.concat(str), iniMap);
-     loder.putAnd(put, loder.put, false);
+     loder.putAnd(put, loder.put, null, false);
     }while(++i < l);
    }
   }
   if (put != null) {
-   loder.putAnd(put, ini, false);
+   loder.putAnd(put, ini, null, false);
   } else put = ini;
   lod.put = put;
   lod.ini = null;
@@ -360,7 +360,7 @@ public class rwmodProtect implements Runnable {
     buff.append(',');
     st = buff.length();
     ini.all = alls = all.put;
-    ini.putAnd(put, all.put, false);
+    ini.putAnd(put, all.put, cou, false);
    }
   }
   HashMap map=ini.ini;
@@ -389,7 +389,7 @@ public class rwmodProtect implements Runnable {
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, s);
+      ini.putAnd(put, lod.put, cou, s);
       if (!s && alls == lod.all)alls = null;
      }
      buff.append(path);
@@ -416,7 +416,7 @@ public class rwmodProtect implements Runnable {
    coe = (HashMap)o;
   }
   as = new HashMap();
-  loder.putAnd(put, map, false);
+  loder.putAnd(put, map, cou, false);
   loder.put(as, put);
   loder.as(as);
   cache.put(ini.str, as);
@@ -426,6 +426,16 @@ public class rwmodProtect implements Runnable {
    String ac=(String)en.getKey();
    HashMap tr=(HashMap)loder.wh(ac, reu, rwmodProtect.max);
    HashMap list=(HashMap)en.getValue();
+   o = cou.get(ac);
+   HashMap re;
+   if (o != null) {
+   if(o instanceof HashMap){
+   re=(HashMap)o;
+   }else{
+   cpys cpy=(cpys)o;
+   re = cpy.is ?cpy.skip: cpy.m;
+   }
+   } else re = null;
    HashMap list2=(HashMap)coe.get(ac);
    HashMap list3=(HashMap)map.get(ac);
    HashMap listv=list3;
@@ -438,25 +448,13 @@ public class rwmodProtect implements Runnable {
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey();
-    o = en.getValue();
-    String vl,v;
-    boolean is;
-    if (o instanceof String) {
-     v = (String)o;
-     is = false;
-    } else {
-     v = ((res)o).str;
-     is = true;
-    }
+    String vl,v=(String)en.getValue();
+    boolean is=re != null && re.get(key) == true;
     str = null;
     if (list2 != null) {
      o = list2.get(key);
      if (o != null) {
-      if (o instanceof String) {
-       str = (String)o;
-      } else {
-       str = ((res)o).str;
-      }
+      str = (String)o;
      }
     }
     if ((vl = loder.get(v, as, list, buff)) != null && (is || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
@@ -486,11 +484,7 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     if (j instanceof String) {
-      str = (String)j;
-     } else {
-      str = ((res)j).str;
-     }
+     str = (String)j;
      str = ini.get(str, as, list, buff);
      if (str == null)continue;
      tag: {

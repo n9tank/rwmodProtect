@@ -53,32 +53,6 @@ class loder {
   }while(--m >= 0 && i > 0);
   return null;
  }
- static void putAll(HashMap map, HashMap list, String key, boolean is) {
-  HashMap<String, HashMap> ru=rwmodProtect.Res;
-  HashMap fin=(HashMap)wh(key, ru, rwmodProtect.max);
-  if (fin != null) {
-   Iterator ite=list.entrySet().iterator();
-   while (ite.hasNext()) {
-    Map.Entry en=(Map.Entry)ite.next();
-    key = (String)en.getKey();
-    Object o=en.getValue();
-    if (is && fin.containsKey(key)) {
-     String vl;
-     if (o instanceof String) {
-      vl = (String)o;
-     } else vl = ((res)o).str;
-     if (is) {
-      res res= new res();
-      res.str = vl;
-      o = res;
-     } else o = vl;
-    }
-    map.put(key, o);
-   }
-  } else {
-   map.putAll(list);
-  }
- }
  static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
@@ -100,8 +74,9 @@ class loder {
    }
   }
  }
- static void putAnd(HashMap map, HashMap map2, boolean is) {
+ static void putAnd(HashMap map, HashMap map2, HashMap cou, boolean is) {
   Iterator ite=map2.entrySet().iterator();
+  HashMap<String, HashMap> res=rwmodProtect.Res;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
@@ -118,6 +93,7 @@ class loder {
     cp2 = (cpys)o2;
     hash = cp2.m;
    }
+   String str=null;
    tag: {
     if (o == null) {
      if (cp2 != null) {
@@ -134,12 +110,11 @@ class loder {
      cpy = (cpys)o;
      set = cpy.m;
     }
-    String str=null;
     if (cp2 == null) {
      str = (String)hash.get("@copyFrom_skipThisSection");
      si = str != null && (str.equals("1") || str.equalsIgnoreCase("true"));
     }
-    if (o != null)putAll(set, hash, key, is);
+    if (o != null)set.putAll(hash);
     if (si) {
      if (cpy == null) {
       cpy = new cpys();
@@ -149,7 +124,7 @@ class loder {
      cpy.skip = (HashMap)(cp2 == null ?hash: cp2.skip).clone();
     } else {
      if (cpy != null) {
-      putAll(cpy.skip, hash, key, is);
+      cpy.skip.putAll(hash);
      } else if (cp2 != null) {
       cpy = new cpys();
       map.put(key, cpy);
@@ -158,6 +133,53 @@ class loder {
      }
     }
     if (str != null && cpy != null)cpy.is = si;
+   }
+   if (cou != null) {
+    o = wh(key, res, rwmodProtect.max);
+    if (o != null) {
+     o = cou.get(key);
+     cpy = null;
+     HashMap put;
+     if (o == null) {
+      put = new HashMap();
+      map.put(key, put);
+     } else if (o instanceof HashMap) {
+      put = (HashMap)o;
+     } else {
+      cpy = (cpys)o;
+      put = cpy.m;
+     }
+     HashMap fid=(HashMap)o;
+     o = en.getValue();
+     if (o instanceof HashMap) {
+      set = (HashMap)o;
+     } else {
+      cpy = (cpys)o;
+      set = cpy.m;
+     }
+     Iterator ite2=hash.entrySet().iterator();
+     HashMap now=new HashMap();
+     while (ite2.hasNext()) {
+      en = (Map.Entry)ite2.next();
+      key = (String)en.getKey();
+      if (fid.containsKey(key)) {
+       now.put(key, is);
+      }
+     }
+     put.putAll(now);
+     if (si) {
+      if (cpy == null) {
+       cpy = new cpys();
+       map.put(key, cpy);
+      }
+      cpy.skip = now;
+     } else {
+      if (cpy != null) {
+       cpy.skip.putAll(now);
+      }
+     }
+     if (str != null && cpy != null)cpy.is = si;
+    }
    }
   }
  }
