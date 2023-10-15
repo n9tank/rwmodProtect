@@ -495,7 +495,7 @@ public class rwmodProtect implements Runnable {
     }
     String ov=null;
     vl = loder.get(v, ac, as, list, buff);
-    if (put2 == null || (ov = (String)put2.get(key)) == null || !v.equals(ov) || !(vl == null || vl.equals(loder.get(ov, ac, as, put2, buff)))) {
+    if (put2 == null || (ov = (String)put2.get(key)) == null || !v.equals(ov)) {
      if (vl != null && (is || str == null || !vl.equals(loder.get(str, ac, coe, list2, buff)))) {
       if (is || (tr != null && (o = tr.get(key)) != null)) {
        if (!(loder.isV(vl, key, o) && (str == null || v.equals(str))) && (list3 == null || !list3.containsKey(key))) {
