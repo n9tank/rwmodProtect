@@ -35,7 +35,7 @@ public class rwmodProtect implements Runnable {
  HashMap low;
  HashMap iniMap;
  HashMap iniHide;
-// HashMap coeMap;
+ HashMap coeMap;
  HashMap Filemap;
  ByteBuffer Warp;
  WritableByteChannel Out;
@@ -104,12 +104,12 @@ public class rwmodProtect implements Runnable {
     do{
      str = list[i];
      loder loder=getlod(file.concat(str), iniMap);
-     loder.putAnd(put, loder.put, false, false);
+     loder.putAnd(put, loder.put, false);
     }while(++i < l);
    }
   }
   if (put != null) {
-   loder.putAnd(put, ini, false, false);
+   loder.putAnd(put, ini, false);
   } else put = ini;
   lod.put = put;
   lod.ini = null;
@@ -334,6 +334,7 @@ public class rwmodProtect implements Runnable {
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
   HashMap put=new HashMap();
+  HashMap cou=new HashMap();
   HashMap alls=null;
   ini.put = put;
   buff.setLength(0);
@@ -359,7 +360,7 @@ public class rwmodProtect implements Runnable {
     buff.append(',');
     st = buff.length();
     ini.all = alls = all.put;
-    ini.putAnd(put, all.put, false, false);
+    ini.putAnd(put, all.put, false);
    }
   }
   HashMap map=ini.ini;
@@ -388,7 +389,7 @@ public class rwmodProtect implements Runnable {
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, s, false);
+      ini.putAnd(put, lod.put, s);
       if (!s && alls == lod.all)alls = null;
      }
      buff.append(path);
@@ -403,73 +404,73 @@ public class rwmodProtect implements Runnable {
   }
   String str;
   HashMap<String, HashMap> reu=Res;
-  HashMap as;/*,coe;
-  //bug太多先用ALL OVER
-   HashMap cache=coeMap;
-   o = cache.get(cput);
-   if (o == null) {
+  HashMap as,coe;
+  HashMap cache=coeMap;
+  o = cache.get(cput);
+  if (o == null) {
    coe = new HashMap();
    loder.put(coe, put);
    loder.as(coe);
    cache.put(cput, coe);
-   } else {
+  } else {
    coe = (HashMap)o;
-   }*/
+  }
   as = new HashMap();
-  loder.putAnd(put, map, false, true);
+  loder.putAnd(put, map, false);
   loder.put(as, put);
   loder.as(as);
-  // cache.put(ini.str, as);
-  /*
-   Iterator ite = as.entrySet().iterator();
-   while (ite.hasNext()) {
+  cache.put(ini.str, as);
+  Iterator ite = as.entrySet().iterator();
+  while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
    HashMap tr=(HashMap)loder.wh(ac, reu, rwmodProtect.max);
    HashMap list=(HashMap)en.getValue();
-   //HashMap list2=(HashMap)coe.get(ac);
+   HashMap list2=(HashMap)coe.get(ac);
    HashMap list3=(HashMap)map.get(ac);
    HashMap listv=list3;
    if (listv == null) {
-   listv = new HashMap();
-   map.put(ac, listv);
+    listv = new HashMap();
+    map.put(ac, listv);
    }
    Iterator ite2=list.entrySet().iterator();
+   boolean si=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && !("1".equals(o) && "true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
-   en = (Map.Entry) ite2.next();
-   String key=(String)en.getKey();
-   o = en.getValue();
-   String vl,v;
-   boolean is;
-   if (o instanceof String) {
-   v = (String)o;
-   is = false;
-   } else {
-   v = ((res)o).str;
-   is = true;
-   en.setValue(v);
+    en = (Map.Entry) ite2.next();
+    String key=(String)en.getKey();
+    o = en.getValue();
+    String vl,v;
+    boolean is;
+    if (o instanceof String) {
+     v = (String)o;
+     is = false;
+    } else {
+     v = ((res)o).str;
+     is = true;
+     en.setValue(v);
+    }
+    str = null;
+    if (list2 != null) {
+     o = list2.get(key);
+     if (o != null) {
+      if (o instanceof String) {
+       str = (String)o;
+      } else {
+       str = ((res)o).str;
+      }
+     }
+    }
+    if ((vl = loder.get(v, as, list, buff)) != null && (is || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
+     if (is || (tr != null && (o = tr.get(key)) != null)) {
+      if (list3 == null || !list3.containsKey(key)) {
+       listv.put(key, null);
+      }
+     }
+    } else if (si && v.equals(str)) {
+     list3.remove(key);
+    }
    }
-   str = null;
-   /*
-   if (list2 != null) {
-   o = list2.get(key);
-   if (o instanceof String) {
-   str = (String)o;
-   } else {
-   str = ((res)o).str;
-   }
-   }
-   if ((vl = loder.get(v, as, list, buff)) != null && (is || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
-   if (is||(tr != null && (o = tr.get(key)) != null)) {
-   if (list3 == null || !list3.containsKey(key)) {
-   listv.put(key, null);
-   }
-   }
-   } else if (list3 != null && v.equals(str)) {
-   list3.remove(key);
-   }
-   }
-   }*/
+  }
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
    Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
@@ -480,10 +481,6 @@ public class rwmodProtect implements Runnable {
    HashMap list=en.getValue();
    HashMap hash=(HashMap)j;
    HashMap list3=(HashMap)map.get(key);
-   if (list3 == null) {
-    list3 = new HashMap();
-    map.put(key, list3);
-   }
    Iterator ite3=hash.entrySet().iterator();
    while (ite3.hasNext()) {
     Map.Entry en2=(Map.Entry)ite3.next();
@@ -524,9 +521,9 @@ public class rwmodProtect implements Runnable {
       } else replaceR(str, file, buff, true, isini);
       str = buff.toString();
      }
-     //if (list3.containsKey(s)) {
-     list3.put(s, str);
-     //}
+     if (list3 != null && list3.containsKey(s)) {
+      list3.put(s, str);
+     }
     }
    }
   }
@@ -637,7 +634,7 @@ public class rwmodProtect implements Runnable {
   HashMap inihide = new HashMap();
   iniHide = inihide;
   HashMap lows= new HashMap();
- // coeMap = new HashMap();
+  coeMap = new HashMap();
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
