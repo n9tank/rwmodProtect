@@ -54,7 +54,7 @@ class loder {
   return null;
  }
  static void putAll(HashMap map, HashMap list, String key, boolean is) {
-  HashMap<String, HashMap> ru=rwmodProtect.Res;
+  /*HashMap<String, HashMap> ru=rwmodProtect.Res;
   HashMap fin=(HashMap)wh(key, ru, rwmodProtect.max);
   if (fin != null) {
    Iterator ite=list.entrySet().iterator();
@@ -75,9 +75,9 @@ class loder {
     }
     map.put(key, o);
    }
-  } else {
+  } else {*/
    map.putAll(list);
-  }
+  //}
  }
  static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
