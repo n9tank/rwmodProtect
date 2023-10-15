@@ -459,7 +459,7 @@ public class rwmodProtect implements Runnable {
     }
     if ((vl = loder.get(v, as, list, buff)) != null && (is || str == null || !vl.equals(loder.get(str, coe, list2, buff)))) {
      if (is || (tr != null && (o = tr.get(key)) != null)) {
-      if (list3 == null || !list3.containsKey(key)) {
+      if (!(loder.isV(vl,key,o)&&(str==null||v.equals(str)))&&(list3 == null || !list3.containsKey(key))) {
        listv.put(key, null);
       }
      }
@@ -484,8 +484,8 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     str = (String)j;
-     str = ini.get(str, as, list, buff);
+     String old = (String)j;
+     str = ini.get(old, as, list, buff);
      if (str == null)continue;
      tag: {
       byte i = en2.getValue();
@@ -516,10 +516,10 @@ public class rwmodProtect implements Runnable {
        }while(++l < size);
        buff.setLength(buff.length() - 1);
       } else replaceR(str, file, buff, true, isini);
-      str = buff.toString();
+      old = buff.toString();
      }
      if (list3 != null && list3.containsKey(s)) {
-      list3.put(s, str);
+      list3.put(s, old);
      }
     }
    }
