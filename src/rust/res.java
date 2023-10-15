@@ -30,7 +30,7 @@ class res {
    while (--l >= 0){
     str=list[l].trim();
     if(str.startsWith("ROOT:"))return false;
-    int r=str.indexOf(":",0);
+    int r=str.indexOf(":");
     if(r>0)str=str.substring(0,r);
     if (!music.contains(str))return false;
    }

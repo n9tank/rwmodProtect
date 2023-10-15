@@ -217,7 +217,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  //buff.append('/');
+  buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -281,11 +281,11 @@ public class rwmodProtect implements Runnable {
     file = getPath(str, path);
    } else {
     boolean shadow=false;
-    int st=0;
-    if (str.startsWith("SHADOW:", st)) {
+    int st;
+    if (str.startsWith("SHADOW:")) {
      shadow = true;
      st = 7;
-    }
+    } else st = 0;
     if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
      file = null;
     } else {
@@ -443,7 +443,7 @@ public class rwmodProtect implements Runnable {
     str = null;
     if ((vl = loder.get(v, as, list, buff)) != null && (list2 == null || (str = (String)list2.get(key)) == null || (re != null && re.get(key) == true) || str == null || !vl.equals(ov = loder.get(str, coe, list2, buff)))) {
      if (tr != null && (o = tr.get(key)) != null) {
-      if (!res.isV(vl, key, o) || (ov != null&&!res.isV(ov, key, o))) {
+      if (!res.isV(vl, key, o) || (ov != null && !res.isV(ov, key, o))) {
        if (list3 == null || !list3.containsKey(key)) {
         listv.put(key, null);
        }
@@ -475,7 +475,7 @@ public class rwmodProtect implements Runnable {
      if (str == null)continue;
      tag: {
       byte i = en2.getValue();
-      if(res.isV(str, s, i))break tag;
+      if (res.isV(str, s, i))break tag;
       buff.setLength(0);
       if (i > 1) {
        String list2[]=str.split(",");
