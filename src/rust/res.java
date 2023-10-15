@@ -17,7 +17,9 @@ class res {
    list = str.split("\\,");
    int l=list.length;
    while (--l >= 0) {
-    str=list[l].trim().split("\\*",2)[0];
+    str=list[l].trim();
+    int r=str.indexOf("*");
+    if(r>0)str=str.substring(0,r);
     if (!upt.matcher(str).find())return false;
    }
   } else if (i == 1) {
@@ -26,7 +28,10 @@ class res {
    HashSet music=rwmodProtect.music;
    int l=list.length;
    while (--l >= 0){
-    str=list[l].trim().split("(?<!^ROOT):",2)[0];
+    str=list[l].trim();
+    if(str.startsWith("ROOT:"))return false;
+    int r=str.indexOf(":",0);
+    if(r>0)str=str.substring(0,r);
     if (!music.contains(str))return false;
    }
   }
