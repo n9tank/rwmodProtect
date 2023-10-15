@@ -143,19 +143,12 @@ class loder {
      HashMap put;
      if (o == null) {
       put = new HashMap();
-      map.put(key, put);
+      cou.put(key, put);
      } else if (o instanceof HashMap) {
       put = (HashMap)o;
      } else {
       cpy = (cpys)o;
       put = cpy.m;
-     }
-     o = en.getValue();
-     if (o instanceof HashMap) {
-      set = (HashMap)o;
-     } else {
-      cpy = (cpys)o;
-      set = cpy.m;
      }
      Iterator ite2=hash.entrySet().iterator();
      HashMap now=new HashMap();
@@ -170,7 +163,7 @@ class loder {
      if (si) {
       if (cpy == null) {
        cpy = new cpys();
-       map.put(key, cpy);
+       cou.put(key, cpy);
       }
       cpy.skip = now;
      } else {
