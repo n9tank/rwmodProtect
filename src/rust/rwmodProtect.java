@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -443,7 +442,7 @@ public class rwmodProtect implements Runnable {
     str = null;
     if ((vl = loder.get(v, as, list, buff)) != null && (list2 == null || (str = (String)list2.get(key)) == null || (re != null && re.get(key) == true) || str == null || !vl.equals(ov = loder.get(str, coe, list2, buff)))) {
      if (tr != null && (o = tr.get(key)) != null) {
-      if (!res.isV(vl, key, o) || (ov != null && !res.isV(ov, key, o))) {
+      if (!loder.isV(vl, key, o) || (ov != null && !loder.isV(ov, key, o))) {
        if (list3 == null || !list3.containsKey(key)) {
         listv.put(key, null);
        }
@@ -475,7 +474,7 @@ public class rwmodProtect implements Runnable {
      if (str == null)continue;
      tag: {
       byte i = en2.getValue();
-      if (res.isV(str, s, i))break tag;
+      if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
       if (i > 1) {
        String list2[]=str.split(",");
