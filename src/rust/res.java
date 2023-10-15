@@ -17,15 +17,17 @@ class res {
    list = str.split("\\,");
    int l=list.length;
    while (--l >= 0) {
-    if (!upt.matcher(list[l].trim()).find())return false;
+    str=list[l].trim().split("\\*",2)[0];
+    if (!upt.matcher(str).find())return false;
    }
   } else if (i == 1) {
    return upt.matcher(str).find();
   } else {
    HashSet music=rwmodProtect.music;
    int l=list.length;
-   while (--l >= 0) {
-    if (!music.contains(list[l].trim()))return false;
+   while (--l >= 0){
+    str=list[l].trim().split("(?<!^ROOT):",2)[0];
+    if (!music.contains(str))return false;
    }
   }
   return true;
