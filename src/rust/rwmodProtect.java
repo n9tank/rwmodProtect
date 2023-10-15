@@ -447,7 +447,6 @@ public class rwmodProtect implements Runnable {
     } else {
      v = ((res)o).str;
      is = true;
-     en.setValue(v);
     }
     str = null;
     if (list2 != null) {
@@ -487,7 +486,11 @@ public class rwmodProtect implements Runnable {
     String s=(String)en2.getKey();
     j = list.get(s);
     if (j != null) {
-     str = (String)j;
+     if (j instanceof String) {
+      str = (String)j;
+     } else {
+      str = ((res)j).str;
+     }
      str = ini.get(str, as, list, buff);
      if (str == null)continue;
      tag: {
