@@ -637,7 +637,7 @@ public class rwmodProtect implements Runnable {
   HashMap inihide = new HashMap();
   iniHide = inihide;
   HashMap lows= new HashMap();
-  coeMap = new HashMap();
+ // coeMap = new HashMap();
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = warp;
