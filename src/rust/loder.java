@@ -194,7 +194,7 @@ class loder {
   }
   return "";
  }
- static String get(String str, HashMap map, HashMap loc, StringBuilder buff) {
+ static String get(String str, String eqz, HashMap map, HashMap loc, StringBuilder buff) {
   int i=0,j=0;
   buff.setLength(0);
   HashMap gl=(HashMap)map.get("");
@@ -222,7 +222,7 @@ class loder {
         tag:
         if (list.length > 1) {
          HashMap locv;
-         if (keyv.equals("section"))locv = loc;
+         if (keyv.equals("section") || keyv.equals(eqz))locv = loc;
          else {
           locv = (HashMap)map.get(keyv);
           if (locv == null)return null;
@@ -347,7 +347,7 @@ class loder {
      o = hash.get("copyFrom");
      if (o == null)o = mapput.get("copyFrom");
      if (o != null && !o.equals("IGNORE")) {
-      if (mapput.size() == 0)map.put(key, cpy);
+      if (mapput.size()>0)map.put(key, cpy);
       String vl=key.substring(0, ++i).concat((String)o);
       Object set=map.get(vl);
       HashMap as;
@@ -361,9 +361,8 @@ class loder {
    }
    if (put2 == null)put2 = mapput;
    if (put2.size() > 0) {
-    //cpy.skip=(HashMap)put2.clone();
+    cpy.skip = (HashMap)put2.clone();
     put2.putAll(hash);
-    map.put(key, put2);
     hash = put2;
    }
    cpy.m = hash;
@@ -377,16 +376,8 @@ class loder {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
-   asFor(map, (HashMap)en.getValue(), (String)en.getKey());
-  }
-  ite = map.entrySet().iterator();
-  //临时方案暂不支持追踪
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   Object o=en.getValue();
-   if (o instanceof cpys) {
-    en.setValue(((cpys)o).m);
-   }
+   String key=(String)en.getKey();
+   asFor(map,(HashMap)en.getValue(), key);
   }
  }
  static final HashSet set;

@@ -17,6 +17,8 @@ a/b.ini a/all-units.template
 tmx的名称不能相同，这将抛错。
 ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg，这会导致两倍资源占用。
 
+现在template_会被尝试解析资源，因此不要在其中填写无效资源，这会造成浪费。
+
 多线程等扩张业务不考虑。
 现阶段需要优化输出去重。（更多性能开销）
 懒得写了，开摆。
