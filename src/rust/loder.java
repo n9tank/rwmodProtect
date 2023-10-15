@@ -137,6 +137,7 @@ class loder {
    if (cou != null) {
     o = wh(key, res, rwmodProtect.max);
     if (o != null) {
+     HashMap fid=(HashMap)o;
      o = cou.get(key);
      cpy = null;
      HashMap put;
@@ -149,7 +150,6 @@ class loder {
       cpy = (cpys)o;
       put = cpy.m;
      }
-     HashMap fid=(HashMap)o;
      o = en.getValue();
      if (o instanceof HashMap) {
       set = (HashMap)o;
