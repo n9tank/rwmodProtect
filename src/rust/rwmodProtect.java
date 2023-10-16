@@ -501,12 +501,12 @@ public class rwmodProtect implements Runnable {
      if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && find3.containsKey(key)))) {
       same = false;
      }
-     if (!same && (last || !loder.isV(vl, key, o) || !eq) && (list3 == null || !list3.containsKey(key))) {
+     if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
       eq = false;
-      listv.put(key, null);
+      if (list3 == null || !list3.containsKey(key))listv.put(key, null);
      }
     }
-    if (list3!=null&&nosikp && (eq || same)) {
+    if (list3 != null && nosikp && (eq || same)) {
      list3.remove(key);
     }
    }
@@ -574,7 +574,7 @@ public class rwmodProtect implements Runnable {
    }
   }
  }
- ZipEntry toPath(String str) {
+ ZipEntry toPath(Stringstr) {
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
@@ -591,7 +591,7 @@ public class rwmodProtect implements Runnable {
   }
   return en;
  }
- void write(loder ini) {
+ void write(loderini) {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
   try {
@@ -631,7 +631,7 @@ public class rwmodProtect implements Runnable {
    Ui.fali(e);
   }
  }
- byte getType(String file) {
+ byte getType(Stringfile) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
