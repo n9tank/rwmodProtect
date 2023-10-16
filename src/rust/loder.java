@@ -378,7 +378,7 @@ class loder {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
-   asFor(map,(HashMap)en.getValue(),key);
+   asFor(map,en.getValue(),key);
   }
  }
  static final HashSet set;
