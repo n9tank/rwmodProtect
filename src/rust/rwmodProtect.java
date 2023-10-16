@@ -316,7 +316,7 @@ public class rwmodProtect implements Runnable {
      if (st != 0)file = str.substring(st);
      else file = str;
      file = file.replaceFirst("^[\\/]+", "");
-     if (path.length() > 0)file = path.concat(str);
+     if (path.length() > 0)file = path.concat(file);
      if (shadow && buff != null) {
       buff.append("SHADOW:");
      }
