@@ -483,7 +483,7 @@ public class rwmodProtect implements Runnable {
     map.put(ac, listv);
    }
    Iterator ite2=list.entrySet().iterator();
-   boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o)||"true".equalsIgnoreCase((String)o));
+   boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o) || "true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
@@ -498,7 +498,7 @@ public class rwmodProtect implements Runnable {
     boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
     if (vl != null && img && (islib || !vl.equals(ov))) {
      boolean last=ov != null && !loder.isV(ov, key, o) ;
-     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3!=null&&(ov=(String)find3.get(key))!=null&&!ov.equals(str)))) {
+     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
       same = false;
      }
      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
@@ -506,7 +506,7 @@ public class rwmodProtect implements Runnable {
       if (list3 == null || !list3.containsKey(key))listv.put(key, null);
      }
     }
-    if (list3 != null && !sikp&& (eq || same)&&!skp.contains(key)) {
+    if (list3 != null && !sikp && (eq || (same && !skp.contains(key)))) {
      list3.remove(key);
     }
    }
