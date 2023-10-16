@@ -574,7 +574,7 @@ public class rwmodProtect implements Runnable {
    }
   }
  }
- ZipEntry toPath(Stringstr) {
+ ZipEntry toPath(String str) {
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
   ZipEntry en=Zip.getEntry(str);
@@ -591,7 +591,7 @@ public class rwmodProtect implements Runnable {
   }
   return en;
  }
- void write(loderini) {
+ void write(loder ini) {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
   try {
@@ -631,7 +631,7 @@ public class rwmodProtect implements Runnable {
    Ui.fali(e);
   }
  }
- byte getType(Stringfile) {
+ byte getType(String file) {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
