@@ -233,7 +233,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  //buff.append('/');
+  buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
