@@ -483,7 +483,7 @@ public class rwmodProtect implements Runnable {
     map.put(ac, listv);
    }
    Iterator ite2=list.entrySet().iterator();
-   boolean nosikp=list3 == null || (o = list3.get("@copyFrom_skipThisSection")) == null || (!"1".equals(o) && !"true".equalsIgnoreCase((String)o));
+   boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o)||"true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
@@ -506,7 +506,7 @@ public class rwmodProtect implements Runnable {
       if (list3 == null || !list3.containsKey(key))listv.put(key, null);
      }
     }
-    if (list3 != null && nosikp && (eq || same)) {
+    if (list3 != null && !sikp&& (eq || same)&&!skp.contains(key)) {
      list3.remove(key);
     }
    }

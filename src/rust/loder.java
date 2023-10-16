@@ -347,7 +347,7 @@ class loder {
      o = hash.get("copyFrom");
      if (o == null)o = mapput.get("copyFrom");
      if (o != null && !o.equals("IGNORE")) {
-      if (mapput.size()>0)map.put(key,cpy);
+      if (mapput.size()==0)map.put(key,cpy);
       String vl=key.substring(0, ++i).concat((String)o);
       Object set=map.get(vl);
       HashMap as;
