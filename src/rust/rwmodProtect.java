@@ -498,7 +498,7 @@ public class rwmodProtect implements Runnable {
     boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
     if (vl != null && img && (islib || !vl.equals(ov))) {
      boolean last=ov != null && !loder.isV(ov, key, o) ;
-     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && find3.containsKey(key)))) {
+     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (!eq&&find3!=null&&find3.containsKey(key)))) {
       same = false;
      }
      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
