@@ -426,7 +426,7 @@ public class rwmodProtect implements Runnable {
   if (o == null) {
    coe = new HashMap();
    loder.put(coe, put);
-   loder.as(coe, false);
+   loder.as(coe);
    cache.put(cput, coe);
   } else {
    coe = (HashMap)o;
@@ -434,7 +434,7 @@ public class rwmodProtect implements Runnable {
   as = new HashMap();
   loder.putAnd(put, map, cou, false);
   loder.put(as, put);
-  loder.as(as, true);
+  loder.as(as);
   cache.put(ini.str, as);
   HashSet skp=skip;
   Iterator ite = as.entrySet().iterator();
@@ -451,7 +451,6 @@ public class rwmodProtect implements Runnable {
     cpys cpy=(cpys)o;
     list = cpy.m;
     put2 = cpy.skip;
-    en.setValue(list);
    }
    o = cou.get(ac);
    HashMap re;
@@ -464,12 +463,17 @@ public class rwmodProtect implements Runnable {
     }
    } else re = null;
    HashMap list2=null;
+   HashMap find2=null;
+   HashMap find3=null;
    o = coe.get(ac);
    if (o != null) {
     if (o instanceof HashMap) {
      list2 = (HashMap)o;
     } else {
-     list2 = ((cpys)o).m;
+     cpys cpy=(cpys)o;
+     list2 = cpy.m;
+     find2 = cpy.skip;
+     find3 = cpy.hash;
     }
    }
    HashMap list3=(HashMap)map.get(ac);
@@ -479,54 +483,57 @@ public class rwmodProtect implements Runnable {
     map.put(ac, listv);
    }
    Iterator ite2=list.entrySet().iterator();
-   boolean si=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && !("1".equals(o) && "true".equalsIgnoreCase((String)o));
+   boolean nosikp=list3 == null || (o = list3.get("@copyFrom_skipThisSection")) == null || (!"1".equals(o) && !"true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
-    String key=(String)en.getKey();
-    String vl,v=(String)en.getValue();
-    boolean is=re != null && re.get(key) == true;
-    str = null;
+    String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
+    boolean islib=re != null && re.get(key) == true;
     if (list2 != null) {
-     o = list2.get(key);
-     if (o != null) {
-      str = (String)o;
+     str = (String)list2.get(key);
+     if (str != null)ov = loder.get(str, ac, coe, list2, buff);
+    } else str = null;
+    boolean img=islib | (tr != null && (o = tr.get(key)) != null);
+    String vl = loder.get(v, ac, as, list, buff);
+    boolean eq=v.equals(str);
+    boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
+    if (vl != null && img && (islib || !vl.equals(ov))) {
+     boolean last=ov != null && !loder.isV(ov, key, o) ;
+     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && find3.containsKey(key)))) {
+      same = false;
+     }
+     if (!same && (last || !loder.isV(vl, key, o) || !eq) && (list3 == null || !list3.containsKey(key))) {
+      eq = false;
+      listv.put(key, null);
      }
     }
-    String ov=null;
-    vl = loder.get(v, ac, as, list, buff);
-    // if (put2 == null || (ov = (String)put2.get(key)) == null || !v.equals(ov)) {
-    if (vl != null && (is || str == null || !vl.equals(ov = loder.get(str, ac, coe, list2, buff)))) {
-     if (is || (tr != null && (o = tr.get(key)) != null)) {
-      if (((ov != null && !loder.isV(ov, key, o)) || !loder.isV(vl, key, o) || (str != null && !v.equals(str))) && (list3 == null || !list3.containsKey(key))) {
-       listv.put(key, null);
-      }
-     }
-    } else if (si && v.equals(str)) {
+    if (list3!=null&&nosikp && (eq || same)) {
      list3.remove(key);
     }
-    /*} else if (list3 != null&&!skip.contains(key)) {
-     list3.remove(key);
-     }*/
    }
   }
   Iterator ite2=as.entrySet().iterator();
   while (ite2.hasNext()) {
-   Map.Entry<String,HashMap> en=(Map.Entry)ite2.next();
-   String key = en.getKey();
-   Object j;
-   j = loder.wh(key, reu, max);
-   if (j == null)continue;
-   HashMap list=en.getValue();
-   HashMap hash=(HashMap)j;
+   Map.Entry en=(Map.Entry)ite2.next();
+   String key = (String)en.getKey();
+   o = loder.wh(key, reu, max);
+   if (o == null)continue;
+   HashMap hash=(HashMap)o;
+   o = en.getValue();
+   HashMap list;
+   if (o instanceof HashMap) {
+    list = (HashMap)o;
+   } else {
+    list = ((cpys)o).m;
+   }
    HashMap list3=(HashMap)map.get(key);
    Iterator ite3=hash.entrySet().iterator();
-   boolean post=!key.startsWith("te") && isini;
+   boolean post=isini && !key.startsWith("te");
    while (ite3.hasNext()) {
     Map.Entry en2=(Map.Entry)ite3.next();
     String s=(String)en2.getKey();
-    j = list.get(s);
-    if (j != null) {
-     String old = (String)j;
+    o = list.get(s);
+    if (o != null) {
+     String old = (String)o;
      str = ini.get(old, key, as, list, buff);
      if (str == null)continue;
      tag: {
