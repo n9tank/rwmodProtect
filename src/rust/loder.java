@@ -361,7 +361,7 @@ class loder {
    }
    if (put2 == null)put2 = mapput;
    if (put2.size()>0) {
-    if(!is)cpy.skip = (HashMap)put2.clone();
+    //if(!is)cpy.skip = (HashMap)put2.clone();
     put2.putAll(hash);
     hash = put2;
    }

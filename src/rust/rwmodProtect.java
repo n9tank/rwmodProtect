@@ -233,7 +233,7 @@ public class rwmodProtect implements Runnable {
   }
   if (ini > 0)buff.append(".ini");
   else if (ini == -3)buff.append(".ogg");
-  buff.append('/');
+  //buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -289,8 +289,8 @@ public class rwmodProtect implements Runnable {
   write(ini);
   ini.ini = null;
  }
- boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
-  String file=null;
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
+  String file;
   tag: {
    if (!isimg) {
     if (music.contains(str))break tag;
@@ -346,7 +346,6 @@ public class rwmodProtect implements Runnable {
    }
   }
   buff.append(str);
-  return file == null;
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
   int st=0;
@@ -427,7 +426,7 @@ public class rwmodProtect implements Runnable {
   if (o == null) {
    coe = new HashMap();
    loder.put(coe, put);
-   loder.as(coe,false);
+   loder.as(coe, false);
    cache.put(cput, coe);
   } else {
    coe = (HashMap)o;
@@ -435,7 +434,7 @@ public class rwmodProtect implements Runnable {
   as = new HashMap();
   loder.putAnd(put, map, cou, false);
   loder.put(as, put);
-  loder.as(as,true);
+  loder.as(as, true);
   cache.put(ini.str, as);
   HashSet skp=skip;
   Iterator ite = as.entrySet().iterator();
@@ -465,12 +464,12 @@ public class rwmodProtect implements Runnable {
     }
    } else re = null;
    HashMap list2=null;
-   o=coe.get(ac);
-   if(o!=null){
-    if(o instanceof HashMap){
-     list2=(HashMap)o;
-    }else{
-     list2=((cpys)o).m;
+   o = coe.get(ac);
+   if (o != null) {
+    if (o instanceof HashMap) {
+     list2 = (HashMap)o;
+    } else {
+     list2 = ((cpys)o).m;
     }
    }
    HashMap list3=(HashMap)map.get(ac);
@@ -495,19 +494,19 @@ public class rwmodProtect implements Runnable {
     }
     String ov=null;
     vl = loder.get(v, ac, as, list, buff);
-    if (put2 == null || (ov = (String)put2.get(key)) == null || !v.equals(ov)) {
-     if (vl != null && (is || str == null || !vl.equals(loder.get(str, ac, coe, list2, buff)))) {
-      if (is || (tr != null && (o = tr.get(key)) != null)) {
-       if (!(loder.isV(vl, key, o) && (str == null || v.equals(str))) && (list3 == null || !list3.containsKey(key))) {
-        listv.put(key, null);
-       }
+    // if (put2 == null || (ov = (String)put2.get(key)) == null || !v.equals(ov)) {
+    if (vl != null && (is || str == null || !vl.equals(ov = loder.get(str, ac, coe, list2, buff)))) {
+     if (is || (tr != null && (o = tr.get(key)) != null)) {
+      if (((ov != null && !loder.isV(ov, key, o)) || !loder.isV(vl, key, o) || (str != null && !v.equals(str))) && (list3 == null || !list3.containsKey(key))) {
+       listv.put(key, null);
       }
-     } else if (si && v.equals(str)) {
-      list3.remove(key);
      }
-    } else if (list3 != null&&!skip.contains(key)) {
+    } else if (si && v.equals(str)) {
      list3.remove(key);
     }
+    /*} else if (list3 != null&&!skip.contains(key)) {
+     list3.remove(key);
+     }*/
    }
   }
   Iterator ite2=as.entrySet().iterator();
@@ -521,6 +520,7 @@ public class rwmodProtect implements Runnable {
    HashMap hash=(HashMap)j;
    HashMap list3=(HashMap)map.get(key);
    Iterator ite3=hash.entrySet().iterator();
+   boolean post=!key.startsWith("te") && isini;
    while (ite3.hasNext()) {
     Map.Entry en2=(Map.Entry)ite3.next();
     String s=(String)en2.getKey();
@@ -549,7 +549,7 @@ public class rwmodProtect implements Runnable {
        do {
         str = list2[l].trim();
         String listr[] = str.split(sp, 2);
-        replaceR(listr[0], file, buff, img, isini);
+        replaceR(listr[0], file, buff, img, post);
         if (listr.length > 1) {
          buff.append(to);
          buff.append(listr[1]);
@@ -557,7 +557,7 @@ public class rwmodProtect implements Runnable {
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
-      } else replaceR(str, file, buff, true, isini);
+      } else replaceR(str, file, buff, true, post);
       old = buff.toString();
      }
      if (list3 != null && list3.containsKey(s)) {
