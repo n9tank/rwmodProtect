@@ -378,7 +378,7 @@ public class rwmodProtect implements Runnable {
    o = core.get("copyFrom");
    String str;
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
-    str=str.replace('\\', '/');
+    str = str.replace('\\', '/');
     String list[]=str.split(",");
     int i=0,n=list.length;
     HashMap libs=wmap;
@@ -532,7 +532,7 @@ public class rwmodProtect implements Runnable {
       byte i = en2.getValue();
       if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
-      str=str.replace('\\','/');
+      str = str.replace('\\', '/');
       if (i > 1) {
        String list2[]=str.split(",");
        int l=0,size=list2.length;
@@ -725,7 +725,7 @@ public class rwmodProtect implements Runnable {
       o = map.get("sourceFolder");
       if (o != null) {
        String musicpath = (String)o;
-       musicpath = musicpath.replace("\\", "/").replaceFirst("^/{1,2}", "");
+       musicpath = musicpath.replace("\\", "/").replaceFirst("^/+", "");
        if (musicpath.length() > 0 && !musicpath.endsWith("/"))musicpath = musicpath.concat("/");
        musicPath = musicpath;
        map.put("sourceFolder", "￸/");
