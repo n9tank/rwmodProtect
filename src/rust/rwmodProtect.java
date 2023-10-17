@@ -378,11 +378,12 @@ public class rwmodProtect implements Runnable {
    o = core.get("copyFrom");
    String str;
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
+    str=str.replace('\\', '/');
     String list[]=str.split(",");
     int i=0,n=list.length;
     HashMap libs=wmap;
     do {
-     String path=list[i].trim().replace('\\', '/');
+     String path=list[i].trim();
      str = getPath(path, file);
      loder lod=null;
      boolean s=str == null;
