@@ -210,7 +210,7 @@ public class rwmodProtect implements Runnable {
   buff.setLength(0);
   ini -= 2;
   if (ini < 0)ini = 0;
-  int i=++arr[ini]-2;
+  int i=++arr[ini] - 2;
   if (ini == 4)buff.append("￸/");
   if (i >= 0) {
    String d=fileD;
@@ -273,7 +273,7 @@ public class rwmodProtect implements Runnable {
   return lod;
  }
  void write(loder ini, String path, boolean isini, StringBuilder buff) {
-  String r=FileName((byte)(isini?3:0));
+  String r=FileName((byte)(isini ?3: 0));
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
@@ -665,7 +665,7 @@ public class rwmodProtect implements Runnable {
  public void run() {
   ui ui=Ui;
   arr = new int[5];
-  arr[0]=1;
+  arr[0] = 1;
   HashMap filemap = new HashMap();
   Filemap = filemap;
   HashMap inimap = new HashMap();
@@ -738,7 +738,7 @@ public class rwmodProtect implements Runnable {
       name = zipEntry.getName();
       byte type=getType(name);
       boolean istm=type == 2;
-      if (type == 3 || istm) {
+      if (istm || type == 3) {
        loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), mbuff);
        Object o=lod.ini.get("core");
        if (o != null) {
