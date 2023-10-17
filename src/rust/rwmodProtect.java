@@ -210,7 +210,7 @@ public class rwmodProtect implements Runnable {
   buff.setLength(0);
   ini -= 2;
   if (ini < 0)ini = 0;
-  int i=arr[ini]++;
+  int i=++arr[ini]-2;
   if (ini == 4)buff.append("￸/");
   if (i >= 0) {
    String d=fileD;
