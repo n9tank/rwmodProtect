@@ -225,7 +225,7 @@ public class rwmodProtect implements Runnable {
     break;
    case -5:
     i = ++muscIndex;
-    buff.append("/");
+    buff.append("￸/");
     break;
    default:
     i = ++fileIndex;
@@ -741,10 +741,10 @@ public class rwmodProtect implements Runnable {
       o = map.get("sourceFolder");
       if (o != null) {
        String musicpath = (String)o;
-       musicpath = musicpath.replaceFirst("^[/\\]", "");
-       if (musicpath.length() > 0)musicpath = musicpath.concat("/");
+       musicpath = musicpath.replaceFirst("^[\\/]", "");
+       if(musicpath.length() > 0)musicpath = musicpath.concat("/");
        musicPath = musicpath;
-       map.put("sourceFolder", "//");
+       map.put("sourceFolder", "￸");
       }
      }
      write(ini);
