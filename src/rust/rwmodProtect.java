@@ -243,7 +243,7 @@ public class rwmodProtect implements Runnable {
   if (ini > 0)buff.append(".ini");
   else if (ini < -3)buff.append(".ogg");
   else if (ini == -3)buff.append(".wav");
-  buff.append('/');
+  if (ini > -3)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) {
@@ -654,7 +654,7 @@ public class rwmodProtect implements Runnable {
   } else {
    int ed=i - 14;
    if (file.regionMatches(true, ed, "all-units.template", 0, 18)) {
-     if (ed==0||file.startsWith("/", --ed))return 0;
+    if (ed == 0 || file.startsWith("/", --ed))return 0;
    }
   }
   String path=musicPath;
@@ -788,8 +788,8 @@ public class rwmodProtect implements Runnable {
          copy(name.concat("/"), zipEntry);
         }
        } else if (type == -5) {
-         copy(FileName(type), zipEntry);
-        }
+        copy(FileName(type), zipEntry);
+       }
       }
      }
     }while(zipEntrys.hasMoreElements());
