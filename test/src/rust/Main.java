@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -14,6 +13,9 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -82,9 +84,43 @@ public class Main {
   buff.flush();
   buff.close();
  }
+ static void write(loder ini, String name, ZipOutputStream zip, OutputStreamWriter out) throws Exception {
+  zip.putNextEntry(new ZipEntry(name));
+  HashMap map=ini.ini;
+  HashMap gloab=(HashMap)map.get("");
+  map.remove("");
+  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+  boolean wt=false;
+  if (ite.hasNext()) {
+   Map.Entry<String,HashMap> en = ite.next();
+   map = en.getValue();
+   boolean size=map.size() > 0;
+   while (true) {
+    if (size) {
+     wt = true;
+     out.write('[');
+     out.write(en.getKey());
+     out.write("]\n");
+     loder.writeKeys(map, out);
+    }
+    if (!ite.hasNext())break;
+    en = ite.next();
+    map = en.getValue();
+    size = map.size() > 0;
+    if (size)out.write('\n');
+   }
+  }
+  if (gloab.size() > 0) {
+   if (!wt)out.write("[]");
+   out.write('\n');
+   loder.writeKeys(gloab, out);
+  }
+  out.flush();
+  zip.closeEntry();
+ }
  public static void main(String arg[]) throws Exception {
-  rwmodProtect.init(new File("/storage/emulated/0/AppProjects/j/run/.ini"),new ui("def"));
-  toLib("sdcard/rustedWarfare/lib.apk");
+  /*rwmodProtect.init(new File("/storage/emulated/0/AppProjects/j/run/.ini"));
+  toLib("sdcard/rustedWarfare/lib.apk");*/
   System.out.print("finsh");
  }
  public static void toLib(String str) throws Exception {
@@ -99,9 +135,7 @@ public class Main {
    String name;
    if (!zipe.isDirectory() && (name = zipe.getName()).endsWith(".ini")) {
     loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
-    out.putNextEntry(new ZipEntry(name.substring(13)));
-    loder.write(wt);
-    out.closeEntry();
+    write(loder,name.substring(13),out,wt);
    }
   }
   zip.close();
