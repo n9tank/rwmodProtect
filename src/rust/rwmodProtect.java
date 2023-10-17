@@ -119,7 +119,7 @@ public class rwmodProtect implements Runnable {
    str = str.substring(5);
    path = rootPath;
   }
-  str = str.replaceFirst("^[\\/]+", "");
+  str = str.replaceFirst("^/+", "");
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
@@ -306,7 +306,7 @@ public class rwmodProtect implements Runnable {
      }
      if (st != 0)file = str.substring(st);
      else file = str;
-     file = file.replaceFirst("^[\\/]+", "");
+     file = file.replaceFirst("^/+", "");
      if (path.length() > 0)file = path.concat(file);
      if (shadow && buff != null) {
       buff.append("SHADOW:");
@@ -382,7 +382,7 @@ public class rwmodProtect implements Runnable {
     int i=0,n=list.length;
     HashMap libs=wmap;
     do {
-     String path=list[i].trim();
+     String path=list[i].trim().replace('\\', '/');
      str = getPath(path, file);
      loder lod=null;
      boolean s=str == null;
@@ -392,7 +392,7 @@ public class rwmodProtect implements Runnable {
       lod = replace(str, getType(str) == 3);
       path = lod.str;
      } else if (libs != null) {
-      str = path.replaceFirst("^CORE:[\\/]*", "").toLowerCase();
+      str = path.replaceFirst("^CORE:/*", "").toLowerCase();
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
@@ -531,6 +531,7 @@ public class rwmodProtect implements Runnable {
       byte i = en2.getValue();
       if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
+      str=str.replace('\\','/');
       if (i > 1) {
        String list2[]=str.split(",");
        int l=0,size=list2.length;
@@ -723,10 +724,10 @@ public class rwmodProtect implements Runnable {
       o = map.get("sourceFolder");
       if (o != null) {
        String musicpath = (String)o;
-       musicpath = musicpath.replaceFirst("^[\\/]", "");
-       if (musicpath.length() > 0)musicpath = musicpath.concat("/");
+       musicpath = musicpath.replace("\\", "/").replaceFirst("^/{1,2}", "");
+       if (musicpath.length() > 0 && !musicpath.endsWith("/"))musicpath = musicpath.concat("/");
        musicPath = musicpath;
-       map.put("sourceFolder", "￸");
+       map.put("sourceFolder", "￸/");
       }
      }
      write(ini);
