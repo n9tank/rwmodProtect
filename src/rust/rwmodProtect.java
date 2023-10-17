@@ -642,17 +642,17 @@ public class rwmodProtect implements Runnable {
   }
  }
  byte getType(String file) {
-  int i=file.length();
-  if (file.endsWith("/"))--i;
-  i -= 4;
-  if (file.regionMatches(true, i, ".ini", 0, 4)) {
+  int i=file.length() - 4;
+  int ed=i;
+  if (file.endsWith("/"))--ed;
+  if (file.regionMatches(true, ed, ".ini", 0, 4)) {
    if (!iniHide.containsKey(file)) {
     return 1;
    } else return -2;
-  } else if (file.regionMatches(true, i, ".tmx", 0, 4)) {
+  } else if (file.regionMatches(true, ed, ".tmx", 0, 4)) {
    return -1;
   } else {
-   int ed=i - 14;
+   ed -= 14;
    if (file.regionMatches(true, ed, "all-units.template", 0, 18)) {
     if (ed == 0 || file.startsWith("/", --ed))return 0;
    }
@@ -742,7 +742,7 @@ public class rwmodProtect implements Runnable {
       if (o != null) {
        String musicpath = (String)o;
        musicpath = musicpath.replaceFirst("^[\\/]", "");
-       if(musicpath.length() > 0)musicpath = musicpath.concat("/");
+       if (musicpath.length() > 0)musicpath = musicpath.concat("/");
        musicPath = musicpath;
        map.put("sourceFolder", "￸");
       }
