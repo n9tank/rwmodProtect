@@ -31,6 +31,8 @@ public class rwmodProtect implements Runnable {
  int iniIndex=-2;
  int fileIndex=-1;
  int oggIndex=-2;
+ int wavIndex=-2;
+ int muscIndex=-2;
  ZipOutputStream Zipout;
  HashMap low;
  HashMap iniMap;
@@ -207,7 +209,7 @@ public class rwmodProtect implements Runnable {
   image.put("template_", tm);
   Res = image;
  }
- String FileName(int ini) {
+ String FileName(byte ini) {
   StringBuilder buff=Buff;
   buff.setLength(0);
   int i;
@@ -216,7 +218,14 @@ public class rwmodProtect implements Runnable {
     i = ++iniIndex;
     break;
    case -3:
+    i = ++wavIndex;
+    break;
+   case -4:
     i = ++oggIndex;
+    break;
+   case -5:
+    i = ++muscIndex;
+    buff.append("/");
     break;
    default:
     i = ++fileIndex;
@@ -232,7 +241,8 @@ public class rwmodProtect implements Runnable {
    }while(i > 0);
   }
   if (ini > 0)buff.append(".ini");
-  else if (ini == -3)buff.append(".ogg");
+  else if (ini < -3)buff.append(".ogg");
+  else if (ini == -3)buff.append(".wav");
   buff.append('/');
   return buff.toString();
  }
@@ -282,7 +292,7 @@ public class rwmodProtect implements Runnable {
   return lod;
  }
  void write(loder ini, String path, boolean isini, StringBuilder buff) {
-  String r=FileName(isini ?1: 0);
+  String r=FileName((byte)(isini ?1: 0));
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
@@ -577,7 +587,7 @@ public class rwmodProtect implements Runnable {
  ZipEntry toPath(String str) {
   HashMap<String,ZipEntry> lowm=low;
   ZipFile zip=Zip;
-  ZipEntry en=Zip.getEntry(str);
+  ZipEntry en=zip.getEntry(str);
   String lows=str.toLowerCase();
   if (en == null) {
    ZipEntry r=lowm.get(lows);
@@ -635,25 +645,26 @@ public class rwmodProtect implements Runnable {
   int i=file.length();
   if (file.endsWith("/"))--i;
   i -= 4;
-  int ed=i;
-  String filel=file.toLowerCase();
-  if (filel.startsWith(".ini", i)) {
+  if (file.regionMatches(true, i, ".ini", 0, 4)) {
    if (!iniHide.containsKey(file)) {
     return 1;
    } else return -2;
-  } else if (filel.startsWith(".tmx", i)) {
+  } else if (file.regionMatches(true, i, ".tmx", 0, 4)) {
    return -1;
   } else {
-   i -= 14;
-   String end="all-units.template";
-   if (filel.startsWith(end, i)) {
-    if (i > 0) {
-     if (file.startsWith("/", --i))return 0;
-    } else if (i == 0)return 0;
+   int ed=i - 14;
+   if (file.regionMatches(true, ed, "all-units.template", 0, 18)) {
+     if (ed==0||file.startsWith("/", --ed))return 0;
    }
   }
   String path=musicPath;
-  if (path != null && file.startsWith(path) && filel.startsWith(".ogg", ed)) {
+  if (file.regionMatches(true, i, ".ogg", 0, 4)) {
+   if (path != null && file.startsWith(path)) {
+    return -5;
+   } else {
+    return -4;
+   }
+  } else if (file.regionMatches(true, i, ".wav", 0, 4)) {
    return -3;
   }
   return -2;
@@ -733,7 +744,7 @@ public class rwmodProtect implements Runnable {
        musicpath = musicpath.replaceFirst("^[/\\]", "");
        if (musicpath.length() > 0)musicpath = musicpath.concat("/");
        musicPath = musicpath;
-       map.put("sourceFolder", "");
+       map.put("sourceFolder", "//");
       }
      }
      write(ini);
@@ -776,11 +787,9 @@ public class rwmodProtect implements Runnable {
          name = loder.getName(zipEntry.getName());
          copy(name.concat("/"), zipEntry);
         }
-       } else {
-        if (type == -3) {
+       } else if (type == -5) {
          copy(FileName(type), zipEntry);
         }
-       }
       }
      }
     }while(zipEntrys.hasMoreElements());
