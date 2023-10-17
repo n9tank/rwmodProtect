@@ -49,11 +49,13 @@ public class Main {
    String s=String.valueOf(to--);
    if (pain.hasGlyph(s)) {
     float x=pain.measureText(s);
-    if (x <= 0.f) {
+    if (x <= 0) {
      pain.getTextBounds(s, 0, 1, rec);
-     vs.drawText(s, -rec.left, -rec.top, pain);
-     int w=rec.width();
      int h=rec.height();
+     if(h>0)continue;
+     int w=rec.width();
+     /*
+     vs.drawText(s, -rec.left, -rec.top, pain);
      map.getPixels(pixes, 0, w, 0, 0, w, h);
      int ym=w * h;
      int pi=0;
@@ -61,10 +63,10 @@ public class Main {
       if (pixes[ym] != 0) {
        ++pi;
       }
-     }
-     charc c=new charc(s, w, h, pi);
+     }*/
+     charc c=new charc(s, w, h, 0);
      crr.add(c);
-     map.eraseColor(0);
+     //map.eraseColor(0);
     }
    } else {
     dump.append(s);
@@ -73,7 +75,6 @@ public class Main {
   cm = new cmpU();
   int size=crr.size();
   srot(crr, 0);
-  size *= 0.2;
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
   int i=0;
   do{
@@ -120,8 +121,9 @@ public class Main {
  }
  public static void main(String arg[]) throws Exception {
   /*rwmodProtect.init(new File("/storage/emulated/0/AppProjects/j/run/.ini"));
-  toLib("sdcard/rustedWarfare/lib.apk");*/
-  System.out.print("finsh");
+   toLib("sdcard/rustedWarfare/lib.apk");*/
+   charList();
+  System.out.println();
  }
  public static void toLib(String str) throws Exception {
   ZipFile zip=new ZipFile(str);
@@ -135,7 +137,7 @@ public class Main {
    String name;
    if (!zipe.isDirectory() && (name = zipe.getName()).endsWith(".ini")) {
     loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
-    write(loder,name.substring(13),out,wt);
+    write(loder, name.substring(13), out, wt);
    }
   }
   zip.close();
