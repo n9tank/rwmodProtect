@@ -25,7 +25,7 @@ public class Main {
    while (true) {
     String str=sc.next();
     boolean islib;
-    if (islib = str.hashCode() == 107141)str = sc.next();
+    if (islib = str.equals("lib"))str = sc.next();
     File path=new File(str);
     if (path.length() == 0) {
      out.println("文件异常");
