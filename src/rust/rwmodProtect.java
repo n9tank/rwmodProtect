@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -53,6 +54,15 @@ public class rwmodProtect implements Runnable {
   In = in;
   Ou = ou;
   Ui = ui;
+ }
+ public static Future exec(File path, ui ui) {
+  String name=path.getName();
+  int l=name.length();
+  if (name.startsWith(".", l -= 6)) {
+   name = name.substring(0, l);
+  }
+  File ou = new File(path.getParent(), name.concat("_r.rwmod"));
+  return ui.pool.submit(new rwmodProtect(path, ou, ui));
  }
  public static void lib(File file) throws IOException {
   if (file.exists()) {

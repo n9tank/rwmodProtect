@@ -28,7 +28,7 @@ public class Main {
      out.println("文件异常");
      continue;
     } else {
-     ui.exec(path, new cui(path.getPath()));
+     rwmodProtect.exec(path, new cui(path.getPath()));
     }
    }
   } catch (Throwable e) {
