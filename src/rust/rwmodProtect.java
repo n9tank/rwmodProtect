@@ -770,8 +770,10 @@ public class rwmodProtect implements Runnable {
      if (loder.str == null)write(loder, filename, true, buff);
     }
    } finally {
+    if(out!=null){
     wt.close();
     out.close();
+    }
     zip.close();
    }
   } catch (Throwable e) {
