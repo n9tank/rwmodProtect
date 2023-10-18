@@ -27,5 +27,5 @@ ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx
 lib.zip 加载依赖，用于copyFrom:CORE:
 
 命令：
-默认 rwmod混淆(*_r.rwmod)
-lib 制作依赖在当前目录(${user.dir}/.zip)
+<rwmod> 默认rwmod混淆(*_r.rwmod)
+lib <apk> 制作依赖在当前目录(${user.dir}/.zip)
