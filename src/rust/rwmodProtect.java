@@ -25,9 +25,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 public class rwmodProtect implements Runnable {
- public File In;
- public File Ou;
- public ui Ui;
+ File In;
+ File Ou;
+ ui Ui;
  ZipFile Zip;
  int arr[];
  ZipOutputStream Zipout;
@@ -48,6 +48,11 @@ public class rwmodProtect implements Runnable {
  static HashMap<String,HashMap> Res;
  static HashSet music;
  static HashMap wmap;
+ public rwmodProtect(File in,File ou,ui ui){
+  In=in;
+  Ou=ou;
+  Ui=ui;
+ }
  public static void lib(File file) throws IOException {
   if (file.exists()) {
    HashMap inimap=new HashMap();
