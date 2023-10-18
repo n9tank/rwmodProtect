@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -48,10 +49,10 @@ public class rwmodProtect implements Runnable {
  static HashMap<String,HashMap> Res;
  static HashSet music;
  static HashMap wmap;
- public rwmodProtect(File in,File ou,ui ui){
-  In=in;
-  Ou=ou;
-  Ui=ui;
+ public rwmodProtect(File in, File ou, ui ui) {
+  In = in;
+  Ou = ou;
+  Ui = ui;
  }
  public static void lib(File file) throws IOException {
   if (file.exists()) {
@@ -745,6 +746,7 @@ public class rwmodProtect implements Runnable {
     zip.close();
    }
    Ui.finsh();
+  } catch (InterruptedIOException e) {
   } catch (Throwable e) {
    Ui.fali(e);
   }
