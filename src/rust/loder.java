@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.IOException;
 class loder {
  HashMap ini;
  HashMap put;
@@ -25,10 +26,10 @@ class loder {
    in.close();
   }
  }
- loder(BufferedReader in, StringBuilder buff)throws Exception {
+ loder(BufferedReader in, StringBuilder buff)throws IOException {
   init(in, buff);
  }
- static void writeKeys(HashMap map, OutputStreamWriter out)throws Exception {
+ static void writeKeys(HashMap map, OutputStreamWriter out)throws IOException {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   boolean nx=ite.hasNext();
   while (nx) {
@@ -263,7 +264,7 @@ class loder {
   buff.append(str, j, str.length());
   return buff.toString();
  }
- void init(BufferedReader buff, StringBuilder bf)throws Exception {
+ void init(BufferedReader buff, StringBuilder bf)throws IOException {
   HashMap global=new HashMap();
   String str;
   HashMap list=null;

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
@@ -227,29 +228,24 @@ public class rwmodProtect implements Runnable {
   if (ini < 2)buff.append('/');
   return buff.toString();
  }
- void copy(String name, ZipEntry en) {
+ void copy(String name, ZipEntry en) throws IOException {
   ByteBuffer warp=Warp;
   WritableByteChannel wt=Out;
   ZipOutputStream zipw=Zipout;
+  ReadableByteChannel in=Channels.newChannel(Zip.getInputStream(en));
+  zipw.putNextEntry(new ZipEntry(name));
   try {
-   ReadableByteChannel in=Channels.newChannel(Zip.getInputStream(en));
-   zipw.putNextEntry(new ZipEntry(name));
-   try {
-    while (in.read(warp) > 0) {
-     warp.flip();
-     wt.write(warp);
-     warp.clear();
-    }
-   } catch (Exception e) {
-    Ui.fali(e);
+   while (in.read(warp) > 0) {
+    warp.flip();
+    wt.write(warp);
+    warp.clear();
    }
+  } finally {
    in.close();
    zipw.closeEntry();
-  } catch (Exception e) {
-   Ui.fali(e);
   }
  }
- loder replace(String str, boolean isini) {
+ loder replace(String str, boolean isini) throws Exception {
   loder lod=null;
   ZipEntry en=toPath(str);
   str = en.getName();
@@ -262,17 +258,13 @@ public class rwmodProtect implements Runnable {
   Object o=map.get(str);
   if (!isini && o == null) {
    ZipFile zip=Zip;
-   try {
-    lod = new loder(new InputStreamReader(zip.getInputStream(en)), Buff);
-    map.put(str, lod);
-   } catch (Exception e) {
-    Ui.fali(e);
-   }
+   lod = new loder(new InputStreamReader(zip.getInputStream(en)), Buff);
+   map.put(str, lod);
   } else lod = (loder)o;
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
- void write(loder ini, String path, boolean isini, StringBuilder buff) {
+ void write(loder ini, String path, boolean isini, StringBuilder buff) throws Exception {
   String r=FileName((byte)(isini ?3: 0));
   ini.str = r;
   path = loder.getSuperPath(path);
@@ -280,7 +272,7 @@ public class rwmodProtect implements Runnable {
   write(ini);
   ini.ini = null;
  }
- void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) {
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
   String file;
   tag: {
    if (!isimg) {
@@ -338,7 +330,7 @@ public class rwmodProtect implements Runnable {
   }
   buff.append(str);
  }
- void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) {
+ void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
   int st=0;
   HashMap put=new HashMap();
   HashMap cou=new HashMap();
@@ -584,45 +576,41 @@ public class rwmodProtect implements Runnable {
   }
   return en;
  }
- void write(loder ini) {
+ void write(loder ini) throws IOException {
   ZipOutputStream zip=Zipout;
   OutputStreamWriter out=Ow;
-  try {
-   zip.putNextEntry(new ZipEntry(ini.str));
-   HashMap map=ini.ini;
-   HashMap gloab=(HashMap)map.get("");
-   map.remove("");
-   Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-   boolean wt=false;
-   if (ite.hasNext()) {
-    Map.Entry<String,HashMap> en = ite.next();
-    map = en.getValue();
-    boolean size=map.size() > 0;
-    while (true) {
-     if (size) {
-      wt = true;
-      out.write('[');
-      out.write(en.getKey());
-      out.write("]\n");
-      loder.writeKeys(map, out);
-     }
-     if (!ite.hasNext())break;
-     en = ite.next();
-     map = en.getValue();
-     size = map.size() > 0;
-     if (size)out.write('\n');
+  zip.putNextEntry(new ZipEntry(ini.str));
+  HashMap map=ini.ini;
+  HashMap gloab=(HashMap)map.get("");
+  map.remove("");
+  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+  boolean wt=false;
+  if (ite.hasNext()) {
+   Map.Entry<String,HashMap> en = ite.next();
+   map = en.getValue();
+   boolean size=map.size() > 0;
+   while (true) {
+    if (size) {
+     wt = true;
+     out.write('[');
+     out.write(en.getKey());
+     out.write("]\n");
+     loder.writeKeys(map, out);
     }
+    if (!ite.hasNext())break;
+    en = ite.next();
+    map = en.getValue();
+    size = map.size() > 0;
+    if (size)out.write('\n');
    }
-   if (gloab.size() > 0) {
-    if (!wt)out.write("[]");
-    out.write('\n');
-    loder.writeKeys(gloab, out);
-   }
-   out.flush();
-   zip.closeEntry();
-  } catch (Exception e) {
-   Ui.fali(e);
   }
+  if (gloab.size() > 0) {
+   if (!wt)out.write("[]");
+   out.write('\n');
+   loder.writeKeys(gloab, out);
+  }
+  out.flush();
+  zip.closeEntry();
  }
  byte getType(String file) {
   int i=file.length() - 4;
