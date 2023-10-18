@@ -1,6 +1,7 @@
 package rust;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.IOException;
 class loder {
  HashMap ini;
  HashMap put;
@@ -18,7 +18,7 @@ class loder {
  String str;
  static int max;
  static HashMap<String,HashSet> line=new HashMap();
- loder(InputStreamReader input, StringBuilder buff)throws Exception {
+ loder(InputStreamReader input, StringBuilder buff)throws IOException {
   BufferedReader in=new BufferedReader(input);
   try {
    init(in, buff);
@@ -348,7 +348,7 @@ class loder {
      o = hash.get("copyFrom");
      if (o == null)o = mapput.get("copyFrom");
      if (o != null && !o.equals("IGNORE")) {
-      if (mapput.size()==0)map.put(key,cpy);
+      if (mapput.size() == 0)map.put(key, cpy);
       String vl=key.substring(0, ++i).concat((String)o);
       Object set=map.get(vl);
       HashMap as;
@@ -360,14 +360,14 @@ class loder {
      }
     }
    }
-   cpy.hash=hash;
+   cpy.hash = hash;
    if (put2 == null)put2 = mapput;
-   if (put2.size()>0) {
+   if (put2.size() > 0) {
     cpy.skip = (HashMap)put2.clone();
     put2.putAll(hash);
     hash = put2;
    }
-   cpy.m=hash;
+   cpy.m = hash;
   } else {
    cpys cp2=(cpys)o;
    hash = cp2.m;
@@ -379,7 +379,7 @@ class loder {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
-   asFor(map,en.getValue(),key);
+   asFor(map, en.getValue(), key);
   }
  }
  static final HashSet set;

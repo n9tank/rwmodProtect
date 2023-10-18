@@ -7,9 +7,9 @@ import java.util.concurrent.Executors;
 
 public class ui {
  //控制台的ui显示，请重写该类，让它用于GUI
-String show;
-long g;
-final static ExecutorService pool=Executors.newCachedThreadPool();
+ String show;
+ long g;
+ final static ExecutorService pool=Executors.newCachedThreadPool();
  public static void exec(File path) {
   String name=path.getName();
   int l=name.length();
@@ -18,12 +18,12 @@ final static ExecutorService pool=Executors.newCachedThreadPool();
   }
   File ou = new File(path.getParent(), name.concat("_r.rwmod"));
   rwmodProtect rw=new rwmodProtect();
-  rw.In=path;
-  rw.Ou=ou;
+  rw.In = path;
+  rw.Ou = ou;
   ui ui =new ui();
-  ui.show=ou.getPath();
-  ui.g=System.currentTimeMillis();
-  rw.Ui =ui;
+  ui.show = ou.getPath();
+  ui.g = System.currentTimeMillis();
+  rw.Ui = ui;
   pool.execute(rw);
  }
  public void finsh() {
@@ -33,7 +33,7 @@ final static ExecutorService pool=Executors.newCachedThreadPool();
   out.print(System.currentTimeMillis() - g);
   out.println("ms");
  }
- void fali(Exception e) {
+ void fali(Throwable e) {
   e.printStackTrace();
  }
 }

@@ -170,7 +170,7 @@ public class rwmodProtect implements Runnable {
   }
   return map;
  }
- public static void init(File path)throws Exception {
+ public static void init(File path)throws IOException {
   HashMap<String,HashMap> map;
   map = new loder(new FileReader(path), null).ini;
   HashMap<String,String> set=map.get("set");
@@ -774,7 +774,7 @@ public class rwmodProtect implements Runnable {
     out.close();
     zip.close();
    }
-  } catch (Exception e) {
+  } catch (Throwable e) {
    ui.fali(e);
   }
   ui.finsh();
