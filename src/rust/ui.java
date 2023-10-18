@@ -26,7 +26,7 @@ public class ui {
   rw.Ui = ui;
   pool.execute(rw);
  }
- public void finsh() {
+ void finsh() {
   PrintStream out=System.out;
   out.print(show);
   out.print(':');
