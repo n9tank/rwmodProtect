@@ -622,7 +622,6 @@ public class rwmodProtect implements Runnable {
   return false;
   }*/
  public void run() {
-  ui ui=Ui;
   arr = new int[5];
   arr[0] = 1;
   HashMap filemap = new HashMap();
@@ -745,9 +744,9 @@ public class rwmodProtect implements Runnable {
     }
     zip.close();
    }
+   Ui.finsh();
   } catch (Throwable e) {
-   ui.fali(e);
+   Ui.fali(e);
   }
-  ui.finsh();
  }
 }
