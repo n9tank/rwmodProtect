@@ -728,7 +728,7 @@ public class rwmodProtect implements Runnable {
        musicpath = musicpath.replace("\\", "/").replaceFirst("^/+", "");
        if (musicpath.length() > 0 && !musicpath.endsWith("/"))musicpath = musicpath.concat("/");
        musicPath = musicpath;
-       map.put("sourceFolder", "￸/");
+       map.put("sourceFolder", "￸");
       }
      }
      write(ini);
