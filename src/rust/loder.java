@@ -16,7 +16,7 @@ class loder {
  HashMap put;
  HashMap all;
  String str;
- static int max;
+ static byte max;
  static HashMap<String,HashSet> line=new HashMap();
  loder(InputStreamReader input, StringBuilder buff)throws IOException {
   BufferedReader in=new BufferedReader(input);
@@ -41,7 +41,7 @@ class loder {
    if (nx)out.write('\n');
   }
  }
- static Object wh(String str, HashMap map, int m) {
+ static Object wh(String str, HashMap map,byte m) {
   int i=0;
   String vl=str;
   do{

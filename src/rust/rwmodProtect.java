@@ -43,7 +43,7 @@ public class rwmodProtect implements Runnable {
  String musicPath;
  String rootPath;
  static HashSet skip;
- static int max;
+ static byte max;
  static String fileD;
  static HashMap<String,HashMap> Res;
  static HashSet music;
@@ -176,8 +176,8 @@ public class rwmodProtect implements Runnable {
   HashMap<String,String> set=map.get("set");
   String str=set.get("line");
   String list[]=str.split(",");
-  loder.max = Integer.valueOf(list[0]);
-  max = Integer.valueOf(list[1]);
+  loder.max = Byte.valueOf(list[0]);
+  max = Byte.valueOf(list[1]);
   String file= set.get("file");
   fileD = file;
   HashSet musics=new HashSet();
