@@ -7,14 +7,14 @@ import rust.ui;
 public class Main {
  public static void main(String[] args) {
   long g=System.currentTimeMillis();
-  String path=System.getProperty("user.dir");
-  if (path.length() == 1) {
-   path = "sdcard/rustedWarfare/rwmod";
+  String dir=System.getProperty("user.dir");
+  if (dir.length() == 1) {
+   dir = "sdcard/rustedWarfare/rwmod";
   }
   try {
-   rwmodProtect.init(new File(path, ".ini"));
+   rwmodProtect.init(new File(dir, ".ini"));
    try {
-    rwmodProtect.lib(new File(path, "lib.zip"));
+    rwmodProtect.lib(new File(dir, "lib.zip"));
    } catch (Throwable e) {
     e.printStackTrace();
    }
@@ -23,12 +23,12 @@ public class Main {
    out.println("ms");
    Scanner sc=new Scanner(System.in);
    while (true) {
-    File f=new File(sc.nextLine());
-    if (f.length() == 0) {
+    File path=new File(sc.nextLine());
+    if (path.length() == 0) {
      out.println("文件异常");
      continue;
     } else {
-     ui.exec(f);
+     ui.exec(path, new cui(path.getPath()));
     }
    }
   } catch (Throwable e) {

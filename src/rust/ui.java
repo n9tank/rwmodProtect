@@ -1,16 +1,15 @@
 package rust;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-public class ui {
- //控制台的ui显示，请重写该类，让它用于GUI
- String show;
- long g;
+public abstract class ui {
  final static ExecutorService pool=Executors.newCachedThreadPool();
- public static void exec(File path) {
+ public abstract void finsh();
+ public abstract void fali(Throwable e);
+ public static Future exec(File path, ui ui) {
   String name=path.getName();
   int l=name.length();
   if (name.startsWith(".", l -= 6)) {
@@ -18,22 +17,10 @@ public class ui {
   }
   File ou = new File(path.getParent(), name.concat("_r.rwmod"));
   rwmodProtect rw=new rwmodProtect();
+  //只有一处使用，所以无初始化。
   rw.In = path;
   rw.Ou = ou;
-  ui ui =new ui();
-  ui.show = ou.getPath();
-  ui.g = System.currentTimeMillis();
   rw.Ui = ui;
-  pool.execute(rw);
- }
- void finsh() {
-  PrintStream out=System.out;
-  out.print(show);
-  out.print(':');
-  out.print(System.currentTimeMillis() - g);
-  out.println("ms");
- }
- void fali(Throwable e) {
-  e.printStackTrace();
+  return ui.pool.submit(rw);
  }
 }

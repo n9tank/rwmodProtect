@@ -25,10 +25,10 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 public class rwmodProtect implements Runnable {
- File In;
- File Ou;
+ public File In;
+ public File Ou;
+ public ui Ui;
  ZipFile Zip;
- ui Ui;
  int arr[];
  ZipOutputStream Zipout;
  HashMap low;
@@ -269,7 +269,7 @@ public class rwmodProtect implements Runnable {
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
-  write(ini);
+  loder.write(ini, Zipout, Ow);
   ini.ini = null;
  }
  void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
@@ -576,42 +576,6 @@ public class rwmodProtect implements Runnable {
   }
   return en;
  }
- void write(loder ini) throws IOException {
-  ZipOutputStream zip=Zipout;
-  OutputStreamWriter out=Ow;
-  zip.putNextEntry(new ZipEntry(ini.str));
-  HashMap map=ini.ini;
-  HashMap gloab=(HashMap)map.get("");
-  map.remove("");
-  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-  boolean wt=false;
-  if (ite.hasNext()) {
-   Map.Entry<String,HashMap> en = ite.next();
-   map = en.getValue();
-   boolean size=map.size() > 0;
-   while (true) {
-    if (size) {
-     wt = true;
-     out.write('[');
-     out.write(en.getKey());
-     out.write("]\n");
-     loder.writeKeys(map, out);
-    }
-    if (!ite.hasNext())break;
-    en = ite.next();
-    map = en.getValue();
-    size = map.size() > 0;
-    if (size)out.write('\n');
-   }
-  }
-  if (gloab.size() > 0) {
-   if (!wt)out.write("[]");
-   out.write('\n');
-   loder.writeKeys(gloab, out);
-  }
-  out.flush();
-  zip.closeEntry();
- }
  byte getType(String file) {
   int i=file.length() - 4;
   int ed=i;
@@ -719,7 +683,7 @@ public class rwmodProtect implements Runnable {
        map.put("sourceFolder", "￸");
       }
      }
-     write(ini);
+     loder.write(ini, zipout, wt);
     }
     zipEntrys = zip.entries();
     do{
@@ -770,9 +734,9 @@ public class rwmodProtect implements Runnable {
      if (loder.str == null)write(loder, filename, true, buff);
     }
    } finally {
-    if(out!=null){
-    wt.close();
-    out.close();
+    if (out != null) {
+     wt.close();
+     out.close();
     }
     zip.close();
    }

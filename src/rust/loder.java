@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 class loder {
  HashMap ini;
  HashMap put;
@@ -28,6 +30,40 @@ class loder {
  }
  loder(BufferedReader in, StringBuilder buff)throws IOException {
   init(in, buff);
+ }
+ static void write(loder ini,ZipOutputStream zip,OutputStreamWriter out) throws IOException {
+  zip.putNextEntry(new ZipEntry(ini.str));
+  HashMap map=ini.ini;
+  HashMap gloab=(HashMap)map.get("");
+  map.remove("");
+  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+  boolean wt=false;
+  if (ite.hasNext()) {
+   Map.Entry<String,HashMap> en = ite.next();
+   map = en.getValue();
+   boolean size=map.size() > 0;
+   while (true) {
+    if (size) {
+     wt = true;
+     out.write('[');
+     out.write(en.getKey());
+     out.write("]\n");
+     loder.writeKeys(map, out);
+    }
+    if (!ite.hasNext())break;
+    en = ite.next();
+    map = en.getValue();
+    size = map.size() > 0;
+    if (size)out.write('\n');
+   }
+  }
+  if (gloab.size() > 0) {
+   if (!wt)out.write("[]");
+   out.write('\n');
+   loder.writeKeys(gloab, out);
+  }
+  out.flush();
+  zip.closeEntry();
  }
  static void writeKeys(HashMap map, OutputStreamWriter out)throws IOException {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
