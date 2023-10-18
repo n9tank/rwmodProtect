@@ -31,10 +31,11 @@ public class Main {
      out.println("文件异常");
      continue;
     } else {
+     cui ui=new cui(str);
      if (islib) {
-      File ou=new File(dir,".zip");
-      lib.exec(path, ou, new cui(str));
-     } else rwmodProtect.exec(path, new cui(str));
+      File ou=new File(dir, ".zip");
+      lib.exec(path, ou, ui);
+     } else rwmodProtect.exec(path, ui);
     }
    }
   } catch (Throwable e) {
