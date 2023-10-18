@@ -781,12 +781,11 @@ public class rwmodProtect implements Runnable {
      loder loder=ini.getValue();
      if (loder.str == null)write(loder, filename, true, buff);
     }
-   } catch (Exception e) {
-    ui.fali(e);
+   } finally {
+    wt.close();
+    out.close();
+    zip.close();
    }
-   wt.close();
-   out.close();
-   zip.close();
   } catch (Exception e) {
    ui.fali(e);
   }
