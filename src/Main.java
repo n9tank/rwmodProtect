@@ -2,8 +2,8 @@
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Scanner;
+import rust.lib;
 import rust.rwmodProtect;
-import rust.ui;
 public class Main {
  public static void main(String[] args) {
   long g=System.currentTimeMillis();
@@ -23,12 +23,18 @@ public class Main {
    out.println("ms");
    Scanner sc=new Scanner(System.in);
    while (true) {
-    File path=new File(sc.nextLine());
+    String str=sc.next();
+    boolean islib;
+    if (islib = str.hashCode() == 107141)str = sc.next();
+    File path=new File(str);
     if (path.length() == 0) {
      out.println("文件异常");
      continue;
     } else {
-     rwmodProtect.exec(path, new cui(path.getPath()));
+     if (islib) {
+      File ou=new File(dir,".zip");
+      lib.exec(path, ou, new cui(str));
+     } else rwmodProtect.exec(path, new cui(str));
     }
    }
   } catch (Throwable e) {
