@@ -245,7 +245,7 @@ public class rwmodProtect implements Runnable {
    zipw.closeEntry();
   }
  }
- loder replace(String str, boolean isini) throws Exception {
+ loder replace(String str, boolean isini) throws IOException {
   loder lod=null;
   ZipEntry en=toPath(str);
   str = en.getName();
@@ -264,7 +264,7 @@ public class rwmodProtect implements Runnable {
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
- void write(loder ini, String path, boolean isini, StringBuilder buff) throws Exception {
+ void write(loder ini, String path, boolean isini, StringBuilder buff) throws IOException {
   String r=FileName((byte)(isini ?3: 0));
   ini.str = r;
   path = loder.getSuperPath(path);
@@ -330,7 +330,7 @@ public class rwmodProtect implements Runnable {
   }
   buff.append(str);
  }
- void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
+ void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws IOException {
   int st=0;
   HashMap put=new HashMap();
   HashMap cou=new HashMap();
