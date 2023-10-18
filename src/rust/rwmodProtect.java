@@ -48,7 +48,7 @@ public class rwmodProtect implements Runnable {
  static HashMap<String,HashMap> Res;
  static HashSet music;
  static HashMap wmap;
- public static void lib(File file) throws Exception {
+ public static void lib(File file) throws IOException {
   if (file.exists()) {
    HashMap inimap=new HashMap();
    wmap = inimap;
