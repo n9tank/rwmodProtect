@@ -240,9 +240,9 @@ public class rwmodProtect implements Runnable {
     wt.write(warp);
     warp.clear();
    }
+   zipw.closeEntry();
   } finally {
    in.close();
-   zipw.closeEntry();
   }
  }
  loder replace(String str, boolean isini) throws IOException {
