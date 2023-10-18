@@ -21,3 +21,11 @@ ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx
 
 多线程等扩张业务不考虑。
 懒得写了，开摆。
+
+文件：user.dir/
+.ini 配置
+lib.zip 加载依赖，用于copyFrom:CORE:
+
+命令：
+默认 rwmod混淆(*_r.rwmod)
+lib 制作依赖在当前目录(${user.dir}/.zip)
