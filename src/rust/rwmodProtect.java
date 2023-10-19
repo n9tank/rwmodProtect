@@ -704,7 +704,7 @@ public class rwmodProtect implements Runnable {
       }
      }
      loder.write(ini, zipout, wt);
-     ui.poss(++index,++size);
+     ui.poss(++index, ++size);
     }
     zipEntrys = zip.entries();
     do{
@@ -726,9 +726,9 @@ public class rwmodProtect implements Runnable {
        }
        HashMap put;
        if (istm)put = inihide;
-       else{
-       put = iniMap;
-       ++size;
+       else {
+        put = iniMap;
+        ++size;
        }
        put.put(name, lod);
       } else if (type == 1) {
@@ -749,7 +749,7 @@ public class rwmodProtect implements Runnable {
        copy(FileName(type), zipEntry);
       }
      }
-     ui.poss(++index,size);
+     ui.poss(++index, size);
     }while(zipEntrys.hasMoreElements());
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
@@ -757,7 +757,7 @@ public class rwmodProtect implements Runnable {
      String filename=ini.getKey();
      loder loder=ini.getValue();
      if (loder.str == null)write(loder, filename, true, buff);
-     ui.poss(++index,size);
+     ui.poss(++index, size);
     }
    } finally {
     if (out != null) {
