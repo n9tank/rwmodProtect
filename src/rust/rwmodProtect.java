@@ -748,6 +748,7 @@ public class rwmodProtect implements Runnable {
        copy(FileName(type), zipEntry);
       }
      }
+     //糊弄用户的进度，不正确，经常假死。
      ui.poss(++index, size);
     }while(zipEntrys.hasMoreElements());
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
