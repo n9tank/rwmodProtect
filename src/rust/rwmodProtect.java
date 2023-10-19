@@ -651,6 +651,7 @@ public class rwmodProtect implements Runnable {
   StringBuilder mbuff = new StringBuilder();
   Buff = mbuff;
   StringBuilder buff=new StringBuilder();
+  ui ui=Ui;
   try {
    ZipFile zip = new ZipFile(In);
    Zip = zip;
@@ -682,6 +683,8 @@ public class rwmodProtect implements Runnable {
       name = "";
      }
     }while(zipEntrys.hasMoreElements());
+    int size=zip.size();
+    int index=0;
     rootPath = name;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
@@ -701,6 +704,7 @@ public class rwmodProtect implements Runnable {
       }
      }
      loder.write(ini, zipout, wt);
+     ui.poss(++index,++size);
     }
     zipEntrys = zip.entries();
     do{
@@ -722,7 +726,10 @@ public class rwmodProtect implements Runnable {
        }
        HashMap put;
        if (istm)put = inihide;
-       else put = iniMap;
+       else{
+       put = iniMap;
+       ++size;
+       }
        put.put(name, lod);
       } else if (type == 1) {
        String loc = loder.getName(name);
@@ -742,6 +749,7 @@ public class rwmodProtect implements Runnable {
        copy(FileName(type), zipEntry);
       }
      }
+     ui.poss(++index,size);
     }while(zipEntrys.hasMoreElements());
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
@@ -749,6 +757,7 @@ public class rwmodProtect implements Runnable {
      String filename=ini.getKey();
      loder loder=ini.getValue();
      if (loder.str == null)write(loder, filename, true, buff);
+     ui.poss(++index,size);
     }
    } finally {
     if (out != null) {
@@ -757,10 +766,10 @@ public class rwmodProtect implements Runnable {
     }
     zip.close();
    }
-   Ui.finsh();
+   ui.finsh();
   } catch (InterruptedIOException e) {
   } catch (Throwable e) {
-   Ui.fali(e);
+   ui.fali(e);
   }
  }
 }
