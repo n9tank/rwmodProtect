@@ -50,10 +50,12 @@ public class rwmodProtect implements Runnable {
  static HashMap<String,HashMap> Res;
  static HashSet music;
  static HashMap wmap;
- public rwmodProtect(File in, File ou, ui ui) {
-  In = in;
-  Ou = ou;
-  Ui = ui;
+ public static Future exec(File in, File ou, ui ui) {
+  rwmodProtect rw=new rwmodProtect();
+  rw.In = in;
+  rw.Ou = ou;
+  rw.Ui = ui;
+  return ui.pool.submit(rw);
  }
  public static Future exec(File path, ui ui) {
   String name=path.getName();
@@ -62,7 +64,7 @@ public class rwmodProtect implements Runnable {
    name = name.substring(0, l);
   }
   File ou = new File(path.getParent(), name.concat("_r.rwmod"));
-  return ui.pool.submit(new rwmodProtect(path, ou, ui));
+  return exec(path, ou, ui);
  }
  public static void lib(File file) throws IOException {
   if (file.exists()) {

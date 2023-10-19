@@ -33,8 +33,7 @@ public class Main {
     } else {
      cui ui=new cui(str);
      if (islib) {
-      File ou=new File(dir, ".zip");
-      lib.exec(path, ou, ui);
+      lib.exec(path, new File(dir, ".zip"), ui);
      } else rwmodProtect.exec(path, ui);
     }
    }
