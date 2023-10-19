@@ -726,7 +726,10 @@ public class rwmodProtect implements Runnable {
        }
        HashMap put;
        if (istm)put = inihide;
-       else put = iniMap;
+       else {
+        put = iniMap;
+        ++size;
+       }
        put.put(name, lod);
       } else if (type == 1) {
        String loc = loder.getName(name);
@@ -748,8 +751,6 @@ public class rwmodProtect implements Runnable {
      }
      ui.poss(++index, size);
     }while(zipEntrys.hasMoreElements());
-    size=inimap.size();
-    index=0;
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
      Map.Entry<String,loder> ini=ite.next();
