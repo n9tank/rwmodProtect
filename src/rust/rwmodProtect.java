@@ -141,7 +141,7 @@ public class rwmodProtect implements Runnable {
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
- static HashMap set(Object o, int i) {
+ static HashMap set(Object o, int is) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -162,23 +162,17 @@ public class rwmodProtect implements Runnable {
     } else key = null;
     if (value != null) {
      String list[]=value.split(",");
-     if (i == 0) {
-      HashSet set=new HashSet();
-      Collections.addAll(set, list);
-      o = set;
-     } else {
-      HashMap vmap=new HashMap();
-      o = vmap;
-      int size=list.length;
-      while (--size >= 0) {
-       String str=list[size];
-       int n=i;
-       if (str.endsWith("_")) {
-        str = str.substring(0, str.length() - 1);
-        ++n;
-       }
-       vmap.put(str, n);
+     HashMap vmap=new HashMap();
+     o = vmap;
+     int size=list.length;
+     while (--size >= 0) {
+      String str=list[size];
+      int n=is;
+      if (str.endsWith("_")) {
+       str = str.substring(0, str.length() - 1);
+       ++n;
       }
+      vmap.put(str, n);
      }
      en.setValue(o);
      if (key != null)map.put(key, o);
@@ -191,29 +185,26 @@ public class rwmodProtect implements Runnable {
   HashMap<String,HashMap> map;
   map = new loder(new FileReader(path), null).ini;
   HashMap<String,String> set=map.get("set");
-  String str=set.get("line");
-  String list[]=str.split(",");
-  loder.max = Integer.valueOf(list[0]);
-  max = Integer.valueOf(list[1]);
+  String str=set.get("cou");
+  max = Integer.valueOf(str);
   String file= set.get("file");
   fileD = file;
   HashSet musics=new HashSet();
   music = musics;
+  String[] list = set.get("music").split(",");
   Collections.addAll(musics, list);
-  list = set.get("music").split(",");
   list = set.get("skip").split(",");
   musics = new HashSet();
   skip = musics;
   Collections.addAll(musics, list);
-  loder.line = set(map.get("line"), 0);
-  HashMap image=set(map.get("image"), 1);
+  HashMap image=set(map.get("image"), -1);
   Iterator ite=image.values().iterator();
   HashMap tm=new HashMap();
   while (ite.hasNext()) {
    HashMap en=(HashMap)ite.next();
    tm.putAll(en);
   }
-  HashMap music=set(map.get("music"), 3);
+  HashMap music=set(map.get("music"), 1);
   loder.put(image, music);
   ite = music.values().iterator();
   while (ite.hasNext()) {
@@ -542,10 +533,10 @@ public class rwmodProtect implements Runnable {
       if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
-      if (i > 1) {
+      if (i >= 0) {
        String list2[]=str.split(",");
        int l=0,size=list2.length;
-       boolean img=i == 2;
+       boolean img=i == 0;
        String sp;
        char to;
        if (img) {

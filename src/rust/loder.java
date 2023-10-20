@@ -18,8 +18,6 @@ class loder {
  HashMap put;
  HashMap all;
  String str;
- static int max;
- static HashMap<String,HashSet> line=new HashMap();
  loder(InputStreamReader input, StringBuilder buff)throws IOException {
   BufferedReader in=new BufferedReader(input);
   try {
@@ -304,25 +302,32 @@ class loder {
   HashMap global=new HashMap();
   String str;
   HashMap list=null;
-  HashMap lines=line;
   HashMap table=new LinkedHashMap();
   table.put("", global);
   ini = table;
-  HashSet hashset=null;
   while ((str = buff.readLine()) != null) {
    str = str.trim();
    if (str.startsWith("#"))continue;
+   String with;
+   if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
+    int len=str.length();
+    if (len > 3)len = -3;
+    while (!str.startsWith(with, len)) {
+     str = buff.readLine().trim();
+     len = str.length() - 3;
+    }
+   }
    if (str.startsWith("[") && str.endsWith("]")) {
     str = str.substring(1, str.length() - 1).trim();
     if (str.contains("]"))continue;
     if (str.startsWith("comment_")) {
      list = null;
     } else {
-     Object o=wh(str, lines, max);
-     if (o != null)hashset = (HashSet)o;
-     else hashset = null;
-     list = new HashMap();
-     table.put(str, list);
+     Object o=table.get(str);
+     if (o == null) {
+      list = new HashMap();
+      table.put(str, list);
+     } else list = (HashMap)o;
     }
    } else if (list != null) {
     String value[]=str.split("[=:]", 2);
@@ -333,21 +338,18 @@ class loder {
       if (value.equals("IGNORE"))continue;
       global.put(key, set);
      } else {
-      if (hashset != null && hashset.contains(key)) {
-       String with;
-       if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-        set = set.substring(3);
-        bf.setLength(0);
-        do{
-         set = set.trim();
-         if (set.endsWith(with)) {
-          bf.append(set, 0, set.length() - 3);
-          break;
-         }
-         bf.append(set);
-        }while((set = buff.readLine()) != null);
-        set = bf.toString();
-       }
+      if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
+       set = set.substring(3);
+       bf.setLength(0);
+       do{
+        set = set.trim();
+        if (set.endsWith(with)) {
+         bf.append(set, 0, set.length() - 3);
+         break;
+        }
+        bf.append(set);
+       }while((set = buff.readLine()) != null);
+       set = bf.toString();
       }
       list.put(key, set);
      }
@@ -435,11 +437,10 @@ class loder {
    return true;
   String list[]=null;
   Pattern upt=pt;
-  if (i >= 2) {
+  if (i >= 0) {
    list = str.split("\\,");
   }
-  if (i == 2) {
-   list = str.split("\\,");
+  if (i == 0) {
    int l=list.length;
    while (--l >= 0) {
     str = list[l].trim();
@@ -447,7 +448,7 @@ class loder {
     if (r > 0)str = str.substring(0, r);
     if (!upt.matcher(str).find())return false;
    }
-  } else if (i == 1) {
+  } else if (i < 0) {
    return upt.matcher(str).find();
   } else {
    HashSet music=rwmodProtect.music;
