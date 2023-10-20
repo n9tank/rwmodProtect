@@ -18,7 +18,7 @@ class loder {
  HashMap put;
  HashMap all;
  String str;
- static byte max;
+ static int max;
  static HashMap<String,HashSet> line=new HashMap();
  loder(InputStreamReader input, StringBuilder buff)throws IOException {
   BufferedReader in=new BufferedReader(input);
@@ -31,7 +31,7 @@ class loder {
  loder(BufferedReader in, StringBuilder buff)throws IOException {
   init(in, buff);
  }
- static void write(loder ini,ZipOutputStream zip,OutputStreamWriter out) throws IOException {
+ static void write(loder ini, ZipOutputStream zip, OutputStreamWriter out) throws IOException {
   zip.putNextEntry(new ZipEntry(ini.str));
   HashMap map=ini.ini;
   HashMap gloab=(HashMap)map.get("");
@@ -77,7 +77,7 @@ class loder {
    if (nx)out.write('\n');
   }
  }
- static Object wh(String str, HashMap map,byte m) {
+ static Object wh(String str, HashMap map, int m) {
   int i=0;
   String vl=str;
   do{
@@ -430,7 +430,7 @@ class loder {
  static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- static boolean isV(String str, String s, byte i) {
+ static boolean isV(String str, String s, int i) {
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
    return true;
   String list[]=null;

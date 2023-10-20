@@ -45,7 +45,7 @@ public class rwmodProtect implements Runnable {
  String musicPath;
  String rootPath;
  static HashSet skip;
- static byte max;
+ static int max;
  static String fileD;
  static HashMap<String,HashMap> Res;
  static HashSet music;
@@ -141,7 +141,7 @@ public class rwmodProtect implements Runnable {
   if (path.length() > 0)str = path.concat(str);
   return str;
  }
- static HashMap set(Object o, byte i) {
+ static HashMap set(Object o, int i) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
   while (ite.hasNext()) {
@@ -172,7 +172,7 @@ public class rwmodProtect implements Runnable {
       int size=list.length;
       while (--size >= 0) {
        String str=list[size];
-       byte n=i;
+       int n=i;
        if (str.endsWith("_")) {
         str = str.substring(0, str.length() - 1);
         ++n;
@@ -193,8 +193,8 @@ public class rwmodProtect implements Runnable {
   HashMap<String,String> set=map.get("set");
   String str=set.get("line");
   String list[]=str.split(",");
-  loder.max = Byte.valueOf(list[0]);
-  max = Byte.valueOf(list[1]);
+  loder.max = Integer.valueOf(list[0]);
+  max = Integer.valueOf(list[1]);
   String file= set.get("file");
   fileD = file;
   HashSet musics=new HashSet();
@@ -205,15 +205,15 @@ public class rwmodProtect implements Runnable {
   musics = new HashSet();
   skip = musics;
   Collections.addAll(musics, list);
-  loder.line = set(map.get("line"), (byte)0);
-  HashMap image=set(map.get("image"), (byte)1);
+  loder.line = set(map.get("line"), 0);
+  HashMap image=set(map.get("image"), 1);
   Iterator ite=image.values().iterator();
   HashMap tm=new HashMap();
   while (ite.hasNext()) {
    HashMap en=(HashMap)ite.next();
    tm.putAll(en);
   }
-  HashMap music=set(map.get("music"), (byte)3);
+  HashMap music=set(map.get("music"), 3);
   loder.put(image, music);
   ite = music.values().iterator();
   while (ite.hasNext()) {
@@ -223,7 +223,7 @@ public class rwmodProtect implements Runnable {
   image.put("template_", tm);
   Res = image;
  }
- String FileName(byte ini) {
+ String FileName(int ini) {
   StringBuilder buff=Buff;
   buff.setLength(0);
   ini -= 2;
@@ -282,7 +282,7 @@ public class rwmodProtect implements Runnable {
   return lod;
  }
  void write(loder ini, String path, boolean isini, StringBuilder buff) throws IOException {
-  String r=FileName((byte)(isini ?3: 0));
+  String r=FileName(isini ?3: 0);
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
@@ -538,7 +538,7 @@ public class rwmodProtect implements Runnable {
      str = ini.get(old, key, as, list, buff);
      if (str == null)continue;
      tag: {
-      byte i = en2.getValue();
+      int i = en2.getValue();
       if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
@@ -593,7 +593,7 @@ public class rwmodProtect implements Runnable {
   }
   return en;
  }
- byte getType(String file) {
+ int getType(String file) {
   int i=file.length() - 4;
   int ed=i;
   if (file.endsWith("/"))--ed;
@@ -704,15 +704,13 @@ public class rwmodProtect implements Runnable {
       }
      }
      loder.write(ini, zipout, wt);
-     int to=(index += 100) / ++size;
-     if (to != now)ui.poss(now = to);
     }
     zipEntrys = zip.entries();
     do{
      ZipEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0l) { 
       name = zipEntry.getName();
-      byte type=getType(name);
+      int type=getType(name);
       boolean istm=type == 2;
       if (istm || type == 3) {
        loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), mbuff);
