@@ -31,7 +31,9 @@ public class Main {
      out.println("文件异常");
      continue;
     } else {
-     cui ui=new cui(str);
+     cui ui=new cui();
+     ui.show=str;
+     ui.g=System.currentTimeMillis();
      if (islib) {
       lib.exec(path, new File(dir, ".zip"), ui);
      } else rwmodProtect.exec(path,rwmodProtect.getOut(path),ui);
