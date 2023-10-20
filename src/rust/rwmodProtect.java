@@ -685,6 +685,7 @@ public class rwmodProtect implements Runnable {
     int size=zip.size();
     int index=0;
     rootPath = name;
+    int now=0;
     ZipEntry inf=toPath(name.concat("mod-info.txt"));
     if (inf != null) {
      loder ini=new loder(new InputStreamReader(zip.getInputStream(inf)), mbuff);
@@ -703,7 +704,8 @@ public class rwmodProtect implements Runnable {
       }
      }
      loder.write(ini, zipout, wt);
-     ui.poss(++index, ++size);
+     int to=++index * 100 / ++size;
+     if (to != now)ui.poss(now = to);
     }
     zipEntrys = zip.entries();
     do{
@@ -748,8 +750,8 @@ public class rwmodProtect implements Runnable {
        copy(FileName(type), zipEntry);
       }
      }
-     //糊弄用户的进度，不正确，经常假死。
-     ui.poss(++index, size);
+     int to=++index * 100 / size;
+     if (to != now)ui.poss(now = to);
     }while(zipEntrys.hasMoreElements());
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
@@ -757,7 +759,8 @@ public class rwmodProtect implements Runnable {
      String filename=ini.getKey();
      loder loder=ini.getValue();
      if (loder.str == null)write(loder, filename, true, buff);
-     ui.poss(++index, size);
+     int to=++index * 100 / size;
+     if (to != now)ui.poss(now = to);
     }
    } finally {
     if (out != null) {

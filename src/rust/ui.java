@@ -5,6 +5,6 @@ import java.util.concurrent.Executors;
 
 public interface ui {
  public final static ExecutorService pool=Executors.newCachedThreadPool();
- public void poss(int i,int e);
+ public void poss(int i);
  public void end(Throwable e);
 }
