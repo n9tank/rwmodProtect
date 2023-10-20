@@ -427,7 +427,7 @@ class loder {
   sset.add("sin");
   sset.add("sqrt");
  }
- static final Pattern find=Pattern.compile("[aA-zZ_][aA-zZ_.0-9]*");;
+ static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
  static boolean isV(String str, String s, int i) {
