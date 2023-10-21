@@ -451,14 +451,12 @@ class loder {
   } else if (i < 0) {
    return upt.matcher(str).find();
   } else {
-   HashSet music=rwmodProtect.music;
    int l=list.length;
    while (--l >= 0) {
     str = list[l].trim();
+    i=str.length()-4;
+    if(!str.regionMatches(true,i,".ogg",0,4)&&!str.regionMatches(true,i,".wav",0,4))continue;
     if (str.startsWith("ROOT:"))return false;
-    int r=str.indexOf(":");
-    if (r > 0)str = str.substring(0, r);
-    if (!music.contains(str))return false;
    }
   }
   return true;

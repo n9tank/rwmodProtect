@@ -48,7 +48,6 @@ public class rwmodProtect implements Runnable {
  static int max;
  static String fileD;
  static HashMap<String,HashMap> Res;
- static HashSet music;
  static HashMap wmap;
  public static Future exec(File in, File ou, ui ui) {
   rwmodProtect rw=new rwmodProtect();
@@ -185,18 +184,12 @@ public class rwmodProtect implements Runnable {
   HashMap<String,HashMap> map;
   map = new loder(new FileReader(path), null).ini;
   HashMap<String,String> set=map.get("set");
-  String str=set.get("cou");
-  max = Integer.valueOf(str);
+  max = Integer.valueOf(set.get("cou"));
   String file= set.get("file");
   fileD = file;
-  HashSet musics=new HashSet();
-  music = musics;
-  String[] list = set.get("music").split(",");
-  Collections.addAll(musics, list);
-  list = set.get("skip").split(",");
-  musics = new HashSet();
-  skip = musics;
-  Collections.addAll(musics, list);
+  HashSet put=new HashSet();
+  skip = put;
+  Collections.addAll(put,set.get("skip").split(","));
   HashMap image=set(map.get("image"), -1);
   Iterator ite=image.values().iterator();
   HashMap tm=new HashMap();
@@ -284,7 +277,7 @@ public class rwmodProtect implements Runnable {
   String file;
   tag: {
    if (!isimg) {
-    if (music.contains(str))break tag;
+    if (getType(str) < 4)break tag;
     file = getPath(str, path);
    } else {
     boolean shadow=false;
