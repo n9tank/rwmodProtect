@@ -305,6 +305,7 @@ class loder {
   HashMap table=new LinkedHashMap();
   table.put("", global);
   ini = table;
+  wh:
   while ((str = buff.readLine()) != null) {
    str = str.trim();
    if (str.startsWith("#"))continue;
@@ -312,7 +313,8 @@ class loder {
    if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
     int len=str.length();
     if (len > 3)len = -3;
-    while (!str.startsWith(with, len)) {
+    while (true) {
+     if (str.startsWith(with, len))continue wh;
      str = buff.readLine().trim();
      len = str.length() - 3;
     }
