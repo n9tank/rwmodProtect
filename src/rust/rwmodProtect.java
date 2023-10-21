@@ -422,6 +422,7 @@ public class rwmodProtect implements Runnable {
   cache.put(ini.str, as);
   HashSet skp=skip;
   Iterator ite = as.entrySet().iterator();
+  Boolean tru=Boolean.TRUE;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
@@ -487,7 +488,7 @@ public class rwmodProtect implements Runnable {
      }
      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
       eq = false;
-      if (list3 == null || !list3.containsKey(key))listv.put(key, null);
+      if (list3 == null || !list3.containsKey(key))listv.put(key,tru);
      }
     }
     if (list3 != null && !sikp && (eq || (same && !skp.contains(key)))) {
@@ -553,8 +554,8 @@ public class rwmodProtect implements Runnable {
       } else up=replaceR(str, file, buff, true, post);
       if(up)old = buff.toString();
      }
-     if (list3 != null && list3.containsKey(s)) {
-      list3.put(s, old);
+     if (list3 != null && list3.get(s)==tru) {
+      list3.put(s,old);
      }
     }
    }

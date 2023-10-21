@@ -112,6 +112,9 @@ class loder {
  static void putAnd(HashMap map, HashMap map2, HashMap cou, boolean is) {
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
+  Boolean tru;
+  if(is)tru=Boolean.TRUE;
+  else tru=null;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
@@ -191,7 +194,7 @@ class loder {
       en = (Map.Entry)ite2.next();
       key = (String)en.getKey();
       if (fid.containsKey(key)) {
-       now.put(key, is);
+       now.put(key,tru);
       }
      }
      put.putAll(now);
