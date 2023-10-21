@@ -226,7 +226,7 @@ public class rwmodProtect implements Runnable {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
-  if (ini < 2)buff.append('/');
+ // if (ini < 2)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
@@ -422,7 +422,6 @@ public class rwmodProtect implements Runnable {
   cache.put(ini.str, as);
   HashSet skp=skip;
   Iterator ite = as.entrySet().iterator();
-  Boolean tru=Boolean.TRUE;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
@@ -472,7 +471,7 @@ public class rwmodProtect implements Runnable {
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
-    boolean islib=re != null && re.get(key) == true;
+    boolean islib=re != null && re.get(key) !=null;
     if (list2 != null) {
      str = (String)list2.get(key);
      if (str != null)ov = loder.get(str, ac, coe, list2, buff);
@@ -488,7 +487,7 @@ public class rwmodProtect implements Runnable {
      }
      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
       eq = false;
-      if (list3 == null || !list3.containsKey(key))listv.put(key,tru);
+      if (list3 == null || !list3.containsKey(key))listv.put(key,null);
      }
     }
     if (list3 != null && !sikp && (eq || (same && !skp.contains(key)))) {
@@ -554,7 +553,7 @@ public class rwmodProtect implements Runnable {
       } else up=replaceR(str, file, buff, true, post);
       if(up)old = buff.toString();
      }
-     if (list3 != null && list3.get(s)==tru) {
+     if (list3 != null && list3.containsKey(s)) {
       list3.put(s,old);
      }
     }
