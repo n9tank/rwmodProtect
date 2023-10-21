@@ -109,12 +109,9 @@ class loder {
    }
   }
  }
- static void putAnd(HashMap map, HashMap map2, HashMap cou, boolean is) {
+ static void putAnd(HashMap map, HashMap map2, HashMap cou, String path) {
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
-  Boolean tru;
-  if(is)tru=Boolean.TRUE;
-  else tru=null;
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
@@ -194,7 +191,7 @@ class loder {
       en = (Map.Entry)ite2.next();
       key = (String)en.getKey();
       if (fid.containsKey(key)) {
-       now.put(key,tru);
+       now.put(key, path);
       }
      }
      put.putAll(now);
@@ -435,37 +432,35 @@ class loder {
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- static boolean isB(String str,String s){
+ static boolean isB(String str, String s) {
   return str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow"));
  }
  static boolean isV(String str, String s, int i) {
-  if (isB(str,s))return true;
-  String list[]=null;
+  if (isB(str, s))return true;
   Pattern upt=pt;
   if (i >= 0) {
+   String list[];
    list = str.split("\\,");
-  }
-  if (i == 0) {
-   int l=list.length;
-   while (--l >= 0) {
-    str = list[l].trim();
-    int r=str.indexOf("*");
-    if (r > 0)str = str.substring(0, r);
-    if (!upt.matcher(str).find())return false;
+   if (i == 0) {
+    int l=list.length;
+    while (--l >= 0) {
+     str = list[l].trim();
+     int r=str.indexOf("*");
+     if (r > 0)str = str.substring(0, r);
+     if (!upt.matcher(str).find())return false;
+    }
+   } else {
+    int l=list.length;
+    while (--l >= 0) {
+     str = list[l].trim();
+     if (ismusic(str))return false;
+    }
    }
-  } else if (i < 0) {
-   return upt.matcher(str).find();
-  } else {
-   int l=list.length;
-   while (--l >= 0) {
-    str = list[l].trim();
-    if(ismusic(str))return false;
-   }
-  }
+  } else return upt.matcher(str).find();
   return true;
  }
  public static boolean ismusic(String str) {
   int i=str.length() - 4;
-  return i>=0&&(str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4));
+  return i >= 0 && (str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4));
  }
 }

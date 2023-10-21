@@ -120,12 +120,12 @@ public class rwmodProtect implements Runnable {
     do{
      str = list[i];
      loder loder=getlod(file.concat(str), iniMap);
-     loder.putAnd(put, loder.put, null, false);
+     loder.putAnd(put, loder.put, null, null);
     }while(++i < l);
    }
   }
   if (put != null) {
-   loder.putAnd(put, ini, null, false);
+   loder.putAnd(put, ini, null, null);
   } else put = ini;
   lod.put = put;
   lod.ini = null;
@@ -189,7 +189,7 @@ public class rwmodProtect implements Runnable {
   fileD = file;
   HashSet put=new HashSet();
   skip = put;
-  Collections.addAll(put,set.get("skip").split(","));
+  Collections.addAll(put, set.get("skip").split(","));
   HashMap image=set(map.get("image"), -1);
   Iterator ite=image.values().iterator();
   HashMap tm=new HashMap();
@@ -226,7 +226,7 @@ public class rwmodProtect implements Runnable {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
- // if (ini < 2)buff.append('/');
+  // if (ini < 2)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
@@ -273,62 +273,101 @@ public class rwmodProtect implements Runnable {
   loder.write(ini, Zipout, Ow);
   ini.ini = null;
  }
- boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
-  String file=null;
-  tag: {
-   if (!isimg) {
-    if (!loder.ismusic(str))break tag;
-    file = getPath(str, path);
+ String getResPath(String str, String path, boolean isimg, StringBuilder buff) {
+  if (!isimg) {
+   if (!loder.ismusic(str))return null;
+   str = getPath(str, path);
+  } else {
+   boolean shadow=false;
+   int st;
+   if (str.startsWith("SHADOW:")) {
+    shadow = true;
+    st = 7;
+   } else st = 0;
+   if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
+    return null;
    } else {
-    boolean shadow=false;
-    int st;
-    if (str.startsWith("SHADOW:")) {
-     shadow = true;
-     st = 7;
-    } else st = 0;
-    if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
-     file = null;
-    } else {
-     if (str.startsWith("ROOT:", st)) {
-      st += 5;
-      path = rootPath;
-     }
-     if (str.startsWith("SHADOW:", st)) {
-      shadow = true;
-      st += 7;
-     }
-     if (st != 0)file = str.substring(st);
-     else file = str;
-     file = file.replaceFirst("^/+", "");
-     if (path.length() > 0)file = path.concat(file);
-     if (shadow)buff.append("SHADOW:");
+    if (str.startsWith("ROOT:", st)) {
+     st += 5;
+     path = rootPath;
     }
+    if (str.startsWith("SHADOW:", st)) {
+     shadow = true;
+     st += 7;
+    }
+    if (st != 0)str = str.substring(st);
+    str = str.replaceFirst("^/+", "");
+    if (path.length() > 0)str = path.concat(str);
+    if (shadow && buff != null)buff.append("SHADOW:");
    }
-   if (file != null) {
-    ZipEntry en = toPath(file);
-    if (en != null) {
-     file = en.getName();
-     HashMap map;
-     map = Filemap;
-     Object o=map.get(file);
-     res res;
-     if (o == null) {
-      res = new res();
-      res.str = str = FileName(getType(file));
-      map.put(file, res);
-     } else {
-      res = (res)o;
-      str = res.str;
-     }
-     if (post && !res.close) {
-      res.close = true;
-      copy(str, en);
-     }
+  }
+  return str;
+ }
+ String getAllPath(String str, String s, String path, int type) {
+  if (loder.isB(str, s))return str;
+  StringBuilder buff=Buff;
+  buff.setLength(0);
+  str = str.replace('\\', '/');
+  if (type >= 0) {
+   String list[];
+   list = str.split("\\,");
+   int l=list.length,m=0;
+   String sp;
+   char to;
+   boolean isimg;
+   if (isimg = type == 0) {
+    sp = "\\*";
+    to = '*';
+   } else {
+    sp = "(?<!^ROOT):";
+    to = ':';
+   }
+   do {
+    str = list[m].trim();
+    String listr[] = str.split(sp, 2);
+    String add=listr[0];
+    str = getResPath(add, path, isimg, buff);
+    if (str != null)add = str;
+    buff.append(add);
+    if (listr.length > 1) {
+     buff.append(to);
+     buff.append(listr[1]);
+    }
+    buff.append(",");
+    buff.setLength(buff.length() - 1);
+   }while(++m < l);
+  } else {
+   str = getResPath(str, path, type <= 0, buff);
+   buff.append(str);
+  }
+  return buff.toString();
+ }
+ boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
+  String file=getResPath(str, path, isimg, buff);
+  if (file != null) {
+   ZipEntry en = toPath(file);
+   if (en != null) {
+    file = en.getName();
+    HashMap map;
+    map = Filemap;
+    Object o=map.get(file);
+    res res;
+    if (o == null) {
+     res = new res();
+     res.str = str = FileName(getType(file));
+     map.put(file, res);
+    } else {
+     res = (res)o;
+     str = res.str;
+    }
+    if (post && !res.close) {
+     res.close = true;
+     copy(str, en);
     }
    }
   }
   buff.append(str);
-  return file!=null;
+  return file != null;
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws IOException {
   int st=0;
@@ -342,11 +381,12 @@ public class rwmodProtect implements Runnable {
    loder all=null;
    int i=file.length();
    buff.append(file);
+   String str;
    do{
     i = file.lastIndexOf("/", --i);
     buff.setLength(i + 1);
     buff.append("all-units.template");
-    String str= buff.toString();
+    str = buff.toString();
     ZipEntry en=toPath(str);
     if (en != null) {
      all = (loder)iniHide.get(str = en.getName());
@@ -359,7 +399,7 @@ public class rwmodProtect implements Runnable {
     buff.append(',');
     st = buff.length();
     ini.all = alls = all.put;
-    ini.putAnd(put, all.put, cou, false);
+    ini.putAnd(put, all.put, cou, loder.getSuperPath(str));
    }
   }
   HashMap map=ini.ini;
@@ -389,7 +429,7 @@ public class rwmodProtect implements Runnable {
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, cou, s);
+      ini.putAnd(put, lod.put, cou, s ?null: loder.getSuperPath(str));
       if (!s && alls == lod.all)alls = null;
      }
      buff.append(path);
@@ -416,7 +456,7 @@ public class rwmodProtect implements Runnable {
    coe = (HashMap)o;
   }
   as = new HashMap();
-  loder.putAnd(put, map, cou, false);
+  loder.putAnd(put, map, cou, null);
   loder.put(as, put);
   loder.as(as);
   cache.put(ini.str, as);
@@ -471,23 +511,27 @@ public class rwmodProtect implements Runnable {
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
-    boolean islib=re != null && re.get(key) !=null;
+    String path=re == null ?null: (String)re.get(key);
     if (list2 != null) {
      str = (String)list2.get(key);
      if (str != null)ov = loder.get(str, ac, coe, list2, buff);
     } else str = null;
-    boolean img=islib | (tr != null && (o = tr.get(key)) != null);
-    String vl = loder.get(v, ac, as, list, buff);
+    boolean img=tr != null && (o = tr.get(key)) != null;
+    String vl =loder.get(v, ac, as, list, buff);
     boolean eq=v.equals(str);
     boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
-    if (vl != null && img && (islib || !vl.equals(ov))) {
-     boolean last=ov != null && !loder.isV(ov, key, o);
-     if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
-      same = false;
-     }
-     if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
-      eq = false;
-      if (list3 == null || !list3.containsKey(key))listv.put(key,null);
+    int type;
+    if (vl != null && img) {
+     type = (int)o;
+     if (path == null || ov == null || !vl.equals(ov) || !getAllPath(vl, ac, file, type).equals(getAllPath(ov, ac, path, type))) {
+      boolean last=ov != null && !loder.isV(ov, key, o);
+      if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
+       same = false;
+      }
+      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
+       eq = false;
+       if (list3 == null || !list3.containsKey(key))listv.put(key, null);
+      }
      }
     }
     if (list3 != null && !sikp && (eq || (same && !skp.contains(key)))) {
@@ -522,7 +566,7 @@ public class rwmodProtect implements Runnable {
      if (str == null)continue;
      boolean up=false;
      tag: {
-      if(loder.isB(str,s))break tag;
+      if (loder.isB(str, s))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
       int i = en2.getValue();
@@ -542,7 +586,7 @@ public class rwmodProtect implements Runnable {
        do {
         str = list2[l].trim();
         String listr[] = str.split(sp, 2);
-        up=replaceR(listr[0], file, buff, img, post)||up;
+        up = replaceR(listr[0], file, buff, img, post) || up;
         if (listr.length > 1) {
          buff.append(to);
          buff.append(listr[1]);
@@ -550,11 +594,11 @@ public class rwmodProtect implements Runnable {
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
-      } else up=replaceR(str, file, buff, true, post);
-      if(up)old = buff.toString();
+      } else up = replaceR(str, file, buff, true, post);
+      if (up)old = buff.toString();
      }
      if (list3 != null && list3.containsKey(s)) {
-      list3.put(s,old);
+      list3.put(s, old);
      }
     }
    }
