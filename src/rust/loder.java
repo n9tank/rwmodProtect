@@ -454,11 +454,13 @@ class loder {
    int l=list.length;
    while (--l >= 0) {
     str = list[l].trim();
-    i=str.length()-4;
-    if(!str.regionMatches(true,i,".ogg",0,4)&&!str.regionMatches(true,i,".wav",0,4))continue;
-    if (str.startsWith("ROOT:"))return false;
+    if (str.startsWith("ROOT:")||ismusic(str))return false;
    }
   }
   return true;
+ }
+ public static boolean ismusic(String str) {
+  int i=str.length() - 4;
+  return str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4);
  }
 }

@@ -273,11 +273,11 @@ public class rwmodProtect implements Runnable {
   loder.write(ini, Zipout, Ow);
   ini.ini = null;
  }
- void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
-  String file;
+ boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
+  String file=null;
   tag: {
    if (!isimg) {
-    if (getType(str) < 4)break tag;
+    if (!loder.ismusic(str))break tag;
     file = getPath(str, path);
    } else {
     boolean shadow=false;
@@ -330,6 +330,7 @@ public class rwmodProtect implements Runnable {
    }
   }
   buff.append(str);
+  return file!=null;
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws IOException {
   int st=0;
@@ -521,9 +522,9 @@ public class rwmodProtect implements Runnable {
      String old = (String)o;
      str = ini.get(old, key, as, list, buff);
      if (str == null)continue;
+     boolean up=false;
      tag: {
       int i = en2.getValue();
-      if (loder.isV(str, s, i))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
       if (i >= 0) {
@@ -542,7 +543,7 @@ public class rwmodProtect implements Runnable {
        do {
         str = list2[l].trim();
         String listr[] = str.split(sp, 2);
-        replaceR(listr[0], file, buff, img, post);
+        up=up||replaceR(listr[0], file, buff, img, post);
         if (listr.length > 1) {
          buff.append(to);
          buff.append(listr[1]);
@@ -550,8 +551,8 @@ public class rwmodProtect implements Runnable {
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
-      } else replaceR(str, file, buff, true, post);
-      old = buff.toString();
+      } else up=replaceR(str, file, buff, true, post);
+      if(up)old = buff.toString();
      }
      if (list3 != null && list3.containsKey(s)) {
       list3.put(s, old);
