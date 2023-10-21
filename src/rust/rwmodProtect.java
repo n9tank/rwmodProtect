@@ -523,6 +523,7 @@ public class rwmodProtect implements Runnable {
      boolean up=false;
      tag: {
       int i = en2.getValue();
+      if(loder.isB(str,s))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
       if (i >= 0) {

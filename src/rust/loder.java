@@ -432,9 +432,11 @@ class loder {
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
+ static boolean isB(String str,String s){
+  return str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow"));
+ }
  static boolean isV(String str, String s, int i) {
-  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
-   return true;
+  if (isB(str,s))return true;
   String list[]=null;
   Pattern upt=pt;
   if (i >= 0) {
@@ -454,13 +456,13 @@ class loder {
    int l=list.length;
    while (--l >= 0) {
     str = list[l].trim();
-    if (str.startsWith("ROOT:")||ismusic(str))return false;
+    if(ismusic(str))return false;
    }
   }
   return true;
  }
  public static boolean ismusic(String str) {
   int i=str.length() - 4;
-  return str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4);
+  return i>=0&&(str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4));
  }
 }
