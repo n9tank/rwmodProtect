@@ -522,10 +522,10 @@ public class rwmodProtect implements Runnable {
      if (str == null)continue;
      boolean up=false;
      tag: {
-      int i = en2.getValue();
       if(loder.isB(str,s))break tag;
       buff.setLength(0);
       str = str.replace('\\', '/');
+      int i = en2.getValue();
       if (i >= 0) {
        String list2[]=str.split(",");
        int l=0,size=list2.length;
@@ -542,7 +542,7 @@ public class rwmodProtect implements Runnable {
        do {
         str = list2[l].trim();
         String listr[] = str.split(sp, 2);
-        up=up||replaceR(listr[0], file, buff, img, post);
+        up=replaceR(listr[0], file, buff, img, post)||up;
         if (listr.length > 1) {
          buff.append(to);
          buff.append(listr[1]);
