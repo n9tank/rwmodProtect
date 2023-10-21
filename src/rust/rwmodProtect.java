@@ -334,7 +334,6 @@ public class rwmodProtect implements Runnable {
      buff.append(listr[1]);
     }
     buff.append(",");
-    buff.setLength(buff.length() - 1);
    }while(++m < l);
   } else {
    str = getResPath(str, path, type <= 0, buff);
