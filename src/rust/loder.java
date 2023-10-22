@@ -350,10 +350,10 @@ class loder {
        if (ed <= 6)ed = 3;else ed -= 3;
        while (true) {
         boolean now;
-        if (now=set.startsWith(with, ed))len=ed;
+        if (now = set.startsWith(with, ed))len = ed;
         bf.append(set, st, len);
-        if(now)break;
-        st=0;
+        if (now)break;
+        st = 0;
         set = buff.readLine();
         if (set == null)return;
         set = set.trim();
@@ -443,9 +443,6 @@ class loder {
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- static boolean isB(String str, String s) {
-  return str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow"));
- }
  static boolean isV(String list[], String s, int i) {
   String str;
   Pattern upt=pt;

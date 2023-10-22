@@ -227,7 +227,7 @@ public class rwmodProtect implements Runnable {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
-  //if (ini < 2)buff.append('/');
+  if (ini < 2)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
@@ -305,7 +305,8 @@ public class rwmodProtect implements Runnable {
   return str;
  }
  String[] AllPath(String str, String s, String path, int type) {
-  if (loder.isB(str, s))return null;
+  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
+   return null;
   str = str.replace('\\', '/');
   StringBuilder buff=Buff;
   String list[];
@@ -553,7 +554,7 @@ public class rwmodProtect implements Runnable {
       v = buff.toString();
      }
      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-     if (path == null || !vl.equals(ov) || !Arrays.equals(vll,ovl)) {
+     if (path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl))) {
       boolean last=ovl != null && !loder.isV(ovl, key, o);
       if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
