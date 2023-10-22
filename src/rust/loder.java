@@ -447,8 +447,7 @@ class loder {
   return str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow"));
  }
  static boolean isV(String list[], String s, int i) {
-  String str=list[0];
-  if (isB(str, s))return true;
+  String str;
   Pattern upt=pt;
   if (i >= 0) {
    if (i == 0) {
@@ -466,7 +465,7 @@ class loder {
      if (ismusic(str))return false;
     }
    }
-  } else return upt.matcher(str).find();
+  } else return upt.matcher(list[0]).find();
   return true;
  }
  public static boolean ismusic(String str) {
