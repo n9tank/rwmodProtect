@@ -350,12 +350,12 @@ class loder {
        if (ed <= 6)ed = 3;else ed -= 3;
        while (true) {
         boolean now;
-        if (now=set.startsWith(with, ed))len-=3;
+        if (now=set.startsWith(with, ed))len=ed;
         bf.append(set, st, len);
         if(now)break;
         st=0;
         set = buff.readLine();
-        if (str == null)return;
+        if (set == null)return;
         set = set.trim();
         len = set.length();
         ed = len - 3;
