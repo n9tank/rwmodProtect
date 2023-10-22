@@ -437,12 +437,11 @@ class loder {
  static boolean isB(String str, String s) {
   return str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow"));
  }
- static boolean isV(String str, String s, int i) {
+ static boolean isV(String list[], String s, int i) {
+  String str=list[0];
   if (isB(str, s))return true;
   Pattern upt=pt;
   if (i >= 0) {
-   String list[];
-   list = str.split("\\,");
    if (i == 0) {
     int l=list.length;
     while (--l >= 0) {

@@ -303,13 +303,12 @@ public class rwmodProtect implements Runnable {
   }
   return str;
  }
- String getAllPath(String str, String s, String path, int type) {
+ String getAllPath(String list[], String s, String path, int type) {
+  String str=list[0];
   if (loder.isB(str, s))return str;
   StringBuilder buff=Buff;
   buff.setLength(0);
   if (type >= 0) {
-   String list[];
-   list = str.split("\\,");
    int l=list.length,m=0;
    char to;
    boolean isimg;
@@ -517,12 +516,14 @@ public class rwmodProtect implements Runnable {
     int type;
     if (vl != null && img) {
      type = (int)o;
-     if (path == null || !vl.equals(ov) || !getAllPath(vl, ac, file, type).equals(getAllPath(ov, ac, path, type))) {
-      boolean last=ov != null && !loder.isV(ov, key, o);
+     String vll[]=vl.split(",");
+     String ovl[]=ov==null?null:ov.split(",");
+     if (path == null || !vl.equals(ov) || !getAllPath(vll, ac, file, type).equals(getAllPath(ovl, ac, path, type))) {
+      boolean last=ov != null && !loder.isV(ovl, key, o);
       if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
-      if (!same && (last || !loder.isV(vl, key, o) || !eq)) {
+      if (!same && (last || !loder.isV(vll, key, o) || !eq)) {
        eq = false;
        if (list3 == null || !list3.containsKey(key))listv.put(key, null);
       }
