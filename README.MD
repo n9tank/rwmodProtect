@@ -4,6 +4,8 @@
 纯在很多bug和兼容性问题。
 .ini配置不正确（待修正）
 
+已编译的测试程序：https://cra.lanzouj.com/b0agtlmih 密码:00
+
 要使用all-units.template，请确保复制对象（仅ini，不包括不加载）的all-units.template与目标的相同。
 如：以下场景，这可能抛错。
 a.ini copyFrom:a/b.ini
