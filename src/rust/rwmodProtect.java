@@ -396,6 +396,7 @@ public class rwmodProtect implements Runnable {
    }
   }
   HashMap map=ini.ini;
+  
   String cput=null;
   Object o=map.get("core");
   if (o != null) {
@@ -573,7 +574,7 @@ public class rwmodProtect implements Runnable {
        if (img = i == 0) to = '*';
        else to = ':';
        do {
-        str = list2[l].trim();
+        str = list2[l].trim(); 
         if (str.startsWith("ROOT:"))st = 5;
         else st = 0;
         st = str.indexOf(to, st);

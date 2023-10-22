@@ -312,10 +312,12 @@ class loder {
    String with;
    if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
     int len=str.length();
-    if (len > 3)len = -3;
+    if (len <= 6)len = 3;else len -= 3;
     while (true) {
      if (str.startsWith(with, len))continue wh;
-     str = buff.readLine().trim();
+     str = buff.readLine();
+     if (str == null)return;
+     str = str.trim();
      len = str.length() - 3;
     }
    }
@@ -341,16 +343,22 @@ class loder {
       global.put(key, set);
      } else {
       if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-       set = set.substring(3);
        bf.setLength(0);
-       do{
+       int len=set.length();
+       int ed=len;
+       int st=3;
+       if (len <= 6)len = 3;else len -= 3;
+       while (true) {
+        boolean now;
+        if (now=set.startsWith(with, ed))len-=3;
+        bf.append(set, st, len);
+        if(now)break;
+        set = buff.readLine();
+        if (str == null)return;
         set = set.trim();
-        if (set.endsWith(with)) {
-         bf.append(set, 0, set.length() - 3);
-         break;
-        }
-        bf.append(set);
-       }while((set = buff.readLine()) != null);
+        len = set.length();
+        ed = len - 3;
+       }
        set = bf.toString();
       }
       list.put(key, set);
