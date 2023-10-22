@@ -286,7 +286,7 @@ public class rwmodProtect implements Runnable {
     st = 7;
    } else st = 0;
    if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
-    return null;
+    return str;
    } else {
     if (str.startsWith("ROOT:", st)) {
      st += 5;
@@ -327,18 +327,12 @@ public class rwmodProtect implements Runnable {
     String add;
     if (st >= 0)add = str.substring(0, st);
     else add = str;
-    str = getResPath(add, path, isimg, buff);
-    if (str != null)add = str;
-    buff.append(add);
+    buff.append(getResPath(add, path, isimg, buff));
     if (st >= 0)buff.append(str, st, str.length());
     list[m] = buff.toString();
    }while(++m < l);
   } else {
-   String file=getResPath(str, path, true, buff);
-   if (file != null) {
-    buff.append(file);
-    str = buff.toString();
-   }
+   str=getResPath(str, path, true, buff);
    list = new String[]{str};
   }
   return list;
@@ -556,7 +550,8 @@ public class rwmodProtect implements Runnable {
      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
      if (path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl))) {
       boolean last=ovl != null && !loder.isV(ovl, key, o);
-      if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
+      if (same && ov != null && ((last && ((str =
+      (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
       if (!same && (last || img || !eq)) {
