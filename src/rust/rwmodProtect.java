@@ -307,32 +307,27 @@ public class rwmodProtect implements Runnable {
   if (loder.isB(str, s))return str;
   StringBuilder buff=Buff;
   buff.setLength(0);
-  str = str.replace('\\', '/');
   if (type >= 0) {
    String list[];
    list = str.split("\\,");
    int l=list.length,m=0;
-   String sp;
    char to;
    boolean isimg;
-   if (isimg = type == 0) {
-    sp = "\\*";
-    to = '*';
-   } else {
-    sp = "(?<!^ROOT):";
-    to = ':';
-   }
+   if (isimg = type == 0) to = '*';
+   else  to = ':';
    do {
     str = list[m].trim();
-    String listr[] = str.split(sp, 2);
-    String add=listr[0];
+    int st;
+    if (str.startsWith("ROOT:"))st = 5;
+    else st = 0;
+    st = str.indexOf(to, st);
+    String add;
+    if (st >= 0)add = str.substring(0, st);
+    else add = str;
     str = getResPath(add, path, isimg, buff);
     if (str != null)add = str;
     buff.append(add);
-    if (listr.length > 1) {
-     buff.append(to);
-     buff.append(listr[1]);
-    }
+    if (st >= 0)buff.append(str, st, str.length());
     buff.append(",");
    }while(++m < l);
   } else {
@@ -522,7 +517,7 @@ public class rwmodProtect implements Runnable {
     int type;
     if (vl != null && img) {
      type = (int)o;
-     if (path == null || ov == null || !vl.equals(ov) || !getAllPath(vl, ac, file, type).equals(getAllPath(ov, ac, path, type))) {
+     if (path == null || !vl.equals(ov) || !getAllPath(vl, ac, file, type).equals(getAllPath(ov, ac, path, type))) {
       boolean last=ov != null && !loder.isV(ov, key, o);
       if (same && ov != null && ((last && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
@@ -572,24 +567,20 @@ public class rwmodProtect implements Runnable {
       if (i >= 0) {
        String list2[]=str.split(",");
        int l=0,size=list2.length;
-       boolean img=i == 0;
-       String sp;
+       boolean img;
        char to;
-       if (img) {
-        sp = "\\*";
-        to = '*';
-       } else {
-        sp = "(?<!^ROOT):";
-        to = ':';
-       }
+       if (img = i == 0) to = '*';
+       else to = ':';
        do {
         str = list2[l].trim();
-        String listr[] = str.split(sp, 2);
-        up = replaceR(listr[0], file, buff, img, post) || up;
-        if (listr.length > 1) {
-         buff.append(to);
-         buff.append(listr[1]);
-        }
+        if (str.startsWith("ROOT:"))st = 5;
+        else st = 0;
+        st = str.indexOf(to, st);
+        String add;
+        if (st >= 0)add = str.substring(0, st);
+        else add = str;
+        up = replaceR(add, file, buff, img, post) || up;
+        if (st >= 0)buff.append(str, st, str.length());
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
@@ -647,19 +638,6 @@ public class rwmodProtect implements Runnable {
   }
   return 0;
  }
- /*
-  .tmx .ogg
-  这些行为对游戏有影响，我认为没有这个必要
-  _map.png 没有使用场景，不考虑优化
-  boolean used(String str){
-  res res;
-  if(iniHide.get(str)!=null){
-  return true;
-  }else if((res=(res)Filemap.get(str))!=null&&!res.close){
-  return true;
-  }
-  return false;
-  }*/
  public void run() {
   arr = new int[5];
   arr[0] = 1;
