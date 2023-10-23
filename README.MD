@@ -21,8 +21,7 @@ a/b.ini a/all-units.template
 tmx的名称不能相同，这将抛错。
 ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg。
 
-多线程等扩张业务不考虑。
-懒得写了，开摆。
+（又不是不能用，多线程就别想了。）
 
 文件：user.dir/
 .ini 配置
