@@ -442,29 +442,6 @@ class loder {
  }
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
- static final Pattern pt=Pattern.compile("^(?:SHADOW:)?(?:CORE|SHARED):");
- static boolean isV(String list[], String s, int i) {
-  String str;
-  Pattern upt=pt;
-  if (i >= 0) {
-   if (i == 0) {
-    int l=list.length;
-    while (--l >= 0) {
-     str = list[l].trim();
-     int r=str.indexOf("*");
-     if (r > 0)str = str.substring(0, r);
-     if (!upt.matcher(str).find())return false;
-    }
-   } else {
-    int l=list.length;
-    while (--l >= 0) {
-     str = list[l].trim();
-     if (ismusic(str))return false;
-    }
-   }
-  } else return upt.matcher(list[0]).find();
-  return true;
- }
  public static boolean ismusic(String str) {
   int i=str.length() - 4;
   return i >= 0 && (str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4));
