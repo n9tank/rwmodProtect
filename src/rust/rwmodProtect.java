@@ -276,16 +276,14 @@ public class rwmodProtect implements Runnable {
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
   int st=0;
-  boolean shaow=false;
   if (isimg) {
-   if (shaow = file.startsWith("SHADOW:")) {
-    shaow = true;
-    st = 5;
+   if (file.startsWith("SHADOW:")) {
+    st = 7;
    }
    if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
     st = -1;
   } else if (!loder.ismusic(file))st = -1;
-  if (st >= 0 && shaow) {
+  if (st >0) {
    buff.append("SHADOW:");
   }
   return st;
@@ -296,7 +294,7 @@ public class rwmodProtect implements Runnable {
    if (!isimg) {
     str = getPath(str, path);
    } else {
-    boolean shaow=st == 5;
+    boolean shaow=st>0;
     if (str.startsWith("ROOT:", st)) {
      st += 5;
      path = rootPath;
