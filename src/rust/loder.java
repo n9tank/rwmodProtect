@@ -1,9 +1,9 @@
 package rust;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -93,7 +93,7 @@ class loder {
    buff.close();
   }
  }
- static void write(loder ini, String str, ZipOutputStream zip, OutputStreamWriter out) throws IOException {
+ static void write(loder ini, String str, ZipOutputStream zip, BufferedWriter out) throws IOException {
   zip.putNextEntry(new ZipEntry(str));
   HashMap map=ini.ini;
   HashMap gloab=(HashMap)map.get("");
@@ -127,7 +127,7 @@ class loder {
   out.flush();
   zip.closeEntry();
  }
- static void writeKeys(HashMap map, OutputStreamWriter out)throws IOException {
+ static void writeKeys(HashMap map, BufferedWriter out)throws IOException {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   boolean nx=ite.hasNext();
   while (nx) {

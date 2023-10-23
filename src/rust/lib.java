@@ -1,5 +1,6 @@
 package rust;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -70,7 +71,7 @@ public class lib implements Runnable {
   try {
    ZipFile zip=new ZipFile(in);
    File tmp=null;
-   OutputStreamWriter wt=null;
+   BufferedWriter wt=null;
    int size=zip.size();
    Enumeration<? extends ZipEntry> ens=zip.entries();
    try {
@@ -89,7 +90,7 @@ public class lib implements Runnable {
      tmp = new File(ou.getParent(), "tmp");
      ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
      out.setLevel(9);
-     wt = new OutputStreamWriter(out);
+     wt = new BufferedWriter(new OutputStreamWriter(out));
      StringBuilder def= new StringBuilder();
      try {
       while (ens.hasMoreElements()) {

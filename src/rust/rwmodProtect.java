@@ -1,10 +1,8 @@
 package rust;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,7 +23,6 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 public class rwmodProtect implements Runnable {
  File In;
@@ -41,7 +38,7 @@ public class rwmodProtect implements Runnable {
  HashMap Filemap;
  ByteBuffer Warp;
  WritableByteChannel Out;
- OutputStreamWriter Ow;
+ BufferedWriter Ow;
  StringBuilder Buff;
  String musicPath;
  String rootPath;
@@ -171,9 +168,9 @@ public class rwmodProtect implements Runnable {
    in.close();
   }
  }
- loder replace(ZipEntry en,String str) throws IOException {
+ loder replace(ZipEntry en, String str) throws IOException {
   loder lod=null;
-  boolean isini=getType(str)==3;
+  boolean isini=getType(str) == 3;
   HashMap map;
   if (isini) {
    map = iniMap;
@@ -194,7 +191,7 @@ public class rwmodProtect implements Runnable {
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
-  loder.write(ini,r,Zipout, Ow);
+  loder.write(ini, r, Zipout, Ow);
   ini.ini = null;
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
@@ -355,7 +352,7 @@ public class rwmodProtect implements Runnable {
       if (sup.length() > 0)str = sup.concat(str);
       ZipEntry en = toPath(str);
       str = en.getName();
-      lod = replace(en,str);
+      lod = replace(en, str);
       path = lod.str;
      } else if (libs != null) {
       str = str.replaceFirst("^CORE:/*", "").toLowerCase();
@@ -566,7 +563,7 @@ public class rwmodProtect implements Runnable {
    ZipOutputStream zipout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(Ou)));
    Zipout = zipout;
    zipout.setLevel(9);
-   OutputStreamWriter wt=new OutputStreamWriter(zipout);
+   BufferedWriter wt=new BufferedWriter(new OutputStreamWriter(zipout));
    Ow = wt;
    WritableByteChannel out = Channels.newChannel(zipout);
    Out = out;
@@ -612,7 +609,7 @@ public class rwmodProtect implements Runnable {
        map.put("sourceFolder", "￸");
       }
      }
-     loder.write(ini,ini.str,zipout, wt);
+     loder.write(ini, ini.str, zipout, wt);
     }
     zipEntrys = zip.entries();
     do{

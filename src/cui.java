@@ -10,7 +10,7 @@ public class cui implements ui {
  long g;
  int len;
  cui(String s) {
-  show=s;
+  show = s;
   g = System.currentTimeMillis();
  }
  public void poss(int i) {
@@ -44,7 +44,7 @@ public class cui implements ui {
   try {
    rwmodProtect.init(new File(dir, ".ini"));
    File in=new File(dir, "lib.zip");
-   if(in.length()>0)lib.exec(in, null, new cui("lib"));
+   if (in.length() > 0)lib.exec(in, null, new cui("lib"));
    PrintStream out=System.out;
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
@@ -60,7 +60,7 @@ public class cui implements ui {
     } else {
      cui ui=new cui(str);
      if (islib) {
-      lib.exec(path, new File(dir,"lib.zip"), ui);
+      lib.exec(path, new File(dir, "lib.zip"), ui);
      } else rwmodProtect.exec(path, new File(path.getParent(), rwmodProtect.out(path)), ui);
     }
    }
