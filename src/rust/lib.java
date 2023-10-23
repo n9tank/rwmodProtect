@@ -76,7 +76,7 @@ public class lib implements Runnable {
   try {
    if (ou == null) {
     FileInputStream input=new FileInputStream(in);
-    size=input.available();
+    size = input.available();
     ZipInputStream zip=new ZipInputStream(new BufferedInputStream(input));
     BufferedReader red=new BufferedReader(new InputStreamReader(zip));
     try {
@@ -86,25 +86,26 @@ public class lib implements Runnable {
       loder lod=new loder(red, buf);
       zip.closeEntry();
       inimap.put(fileName, lod);
-      index=size-input.available();
-      int ov=index*50/size;
-      if(ov!=now)ui.poss(now=ov);
+      index = size - input.available();
+      int ov=index * 50 / size;
+      if (ov != now)ui.poss(now = ov);
      }
-     size=inimap.size();
-     index=size*100;
-     size<<=1;
+     size = inimap.size();
+     index = size * 100;
+     size <<= 1;
     } finally {
      red.close();
     }
    } else {
-    File tmp=new File(ou.getParent(), "tmp");
     ZipFile zip=new ZipFile(in);
     size = zip.size();
+    File tmp=null;
     OutputStreamWriter wt=null;
     try {
+     tmp=new File(ou.getParent(), "tmp");
      ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
      out.setLevel(9);
-     wt=new OutputStreamWriter(out);
+     wt = new OutputStreamWriter(out);
      Enumeration<? extends ZipEntry> en=zip.entries();
      StringBuilder def= new StringBuilder();
      while (en.hasMoreElements()) {
@@ -123,9 +124,11 @@ public class lib implements Runnable {
      }
      tmp.renameTo(ou);
     } finally {
-     if (wt != null)wt.close();
+     if (wt != null) {
+      wt.close();
+      tmp.delete();
+     }
      zip.close();
-     tmp.delete();
     }
    }
    Iterator ite=inimap.entrySet().iterator();
@@ -143,7 +146,7 @@ public class lib implements Runnable {
      ui.poss(now = ov);
     }
    }
-   rwmodProtect.wmap=inimap;
+   rwmodProtect.wmap = inimap;
    ui.end(null);
   } catch (Throwable e) {
    ui.end(e);
