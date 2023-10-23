@@ -237,10 +237,10 @@ public class rwmodProtect implements Runnable {
    in.close();
   }
  }
- loder replace(String str, boolean isini) throws IOException {
+ loder replace(ZipEntry en) throws IOException {
   loder lod=null;
-  ZipEntry en=toPath(str);
-  str = en.getName();
+  String str = en.getName();
+  boolean isini=getType(str)==3;
   HashMap map;
   if (isini) {
    map = iniMap;
@@ -422,7 +422,7 @@ public class rwmodProtect implements Runnable {
       if (sup.length() > 0)str = sup.concat(str);
       ZipEntry en = toPath(str);
       str = en.getName();
-      lod = replace(str, getType(str) == 3);
+      lod = replace(en);
       path = lod.str;
      } else if (libs != null) {
       str = str.replaceFirst("^CORE:/*", "").toLowerCase();
