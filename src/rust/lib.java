@@ -1,9 +1,6 @@
 package rust;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -13,9 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.nio.channels.FileChannel;
 
 public class lib implements Runnable {
  File In;
@@ -70,66 +65,56 @@ public class lib implements Runnable {
   StringBuilder buf=new StringBuilder();
   File in=In;
   File ou=Ou;
-  int size=0;
   int index=0;
   int now=0;
   try {
-   if (ou == null) {
-    FileInputStream input=new FileInputStream(in);
-    size = input.available();
-    ZipInputStream zip=new ZipInputStream(new BufferedInputStream(input));
-    BufferedReader red=new BufferedReader(new InputStreamReader(zip));
-    try {
-     ZipEntry zipEntry;
-     while ((zipEntry = zip.getNextEntry()) != null) {
+   ZipFile zip=new ZipFile(in);
+   File tmp=null;
+   OutputStreamWriter wt=null;
+   int size=zip.size();
+   Enumeration<? extends ZipEntry> ens=zip.entries();
+   try {
+    if (ou == null) {
+     size <<= 1;
+     while (ens.hasMoreElements()) {
+      ZipEntry zipEntry=ens.nextElement();
       String fileName=zipEntry.getName().toLowerCase();
-      loder lod=new loder(red, buf);
-      zip.closeEntry();
+      loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), buf);
       inimap.put(fileName, lod);
-      index = size - input.available();
-      int ov=index * 50 / size;
+      index += 100;
+      int ov=index * 10 / size;
       if (ov != now)ui.poss(now = ov);
      }
-     size = inimap.size();
-     index = size * 100;
-     size <<= 1;
-    } finally {
-     red.close();
-    }
-   } else {
-    ZipFile zip=new ZipFile(in);
-    size = zip.size();
-    File tmp=null;
-    OutputStreamWriter wt=null;
-    try {
-     tmp=new File(ou.getParent(), "tmp");
+    } else {
+     tmp = new File(ou.getParent(), "tmp");
      ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
      out.setLevel(9);
      wt = new OutputStreamWriter(out);
      Enumeration<? extends ZipEntry> en=zip.entries();
      StringBuilder def= new StringBuilder();
-     while (en.hasMoreElements()) {
-      ZipEntry zipe=en.nextElement();
-      String name;
-      if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
-       loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
-       name = name.substring(13).toLowerCase();
-       inimap.put(name, loder);
-       ++size;
-       loder.write(loder, name, out, wt);
+     try {
+      while (en.hasMoreElements()) {
+       ZipEntry zipe=en.nextElement();
+       String name;
+       if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
+        loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
+        name = name.substring(13).toLowerCase();
+        inimap.put(name, loder);
+        ++size;
+        loder.write(loder, name, out, wt);
+       }
+       index += 100;
+       int ov;
+       if ((ov = index / size) != now)ui.poss(now = ov);
       }
-      index += 100;
-      int ov;
-      if ((ov = index / size) != now)ui.poss(now = ov);
-     }
-     tmp.renameTo(ou);
-    } finally {
-     if (wt != null) {
-      wt.close();
+      tmp.renameTo(ou);
+     } finally {
       tmp.delete();
+      wt.close();
      }
-     zip.close();
     }
+   } finally {
+    zip.close();
    }
    Iterator ite=inimap.entrySet().iterator();
    while (ite.hasNext()) {
