@@ -76,13 +76,13 @@ public class lib implements Runnable {
    Enumeration<? extends ZipEntry> ens=zip.entries();
    try {
     if (ou == null) {
-     size <<= 1;
+     size <<= 2;
      while (ens.hasMoreElements()) {
       ZipEntry zipEntry=ens.nextElement();
       String fileName=zipEntry.getName().toLowerCase();
       loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), buf);
       inimap.put(fileName, lod);
-      index += 100;
+      index += 300;
       int ov=index / size;
       if (ov != now)ui.poss(now = ov);
      }
