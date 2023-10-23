@@ -274,10 +274,9 @@ public class rwmodProtect implements Runnable {
   loder.write(ini, Zipout, Ow);
   ini.ini = null;
  }
- String getResPath(String str, String path, boolean isimg, StringBuilder buff) {
+ boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
   if (!isimg) {
-   if (!loder.ismusic(str))return null;
-   str = getPath(str, path);
+   if (loder.ismusic(str))str = getPath(str, path);
   } else {
    boolean shadow=false;
    int st;
@@ -285,9 +284,7 @@ public class rwmodProtect implements Runnable {
     shadow = true;
     st = 7;
    } else st = 0;
-   if (str.startsWith("CORE:", st) || str.startsWith("SHARED:", st)) {
-    return str;
-   } else {
+   if (!str.startsWith("CORE:", st) && !str.startsWith("SHARED:", st)) {
     if (str.startsWith("ROOT:", st)) {
      st += 5;
      path = rootPath;
@@ -298,11 +295,12 @@ public class rwmodProtect implements Runnable {
     }
     if (st != 0)str = str.substring(st);
     str = str.replaceFirst("^/+", "");
-    if (path.length() > 0)str = path.concat(str);
     if (shadow && buff != null)buff.append("SHADOW:");
+    buff.append(path);
    }
   }
-  return str;
+  buff.append(str);
+  return true;
  }
  String[] AllPath(String str, String s, String path, int type) {
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
@@ -327,23 +325,28 @@ public class rwmodProtect implements Runnable {
     String add;
     if (st >= 0)add = str.substring(0, st);
     else add = str;
-    buff.append(getResPath(add, path, isimg, buff));
+    addResPath(add, path, isimg, buff);
     if (st >= 0)buff.append(str, st, str.length());
     list[m] = buff.toString();
    }while(++m < l);
   } else {
-   str=getResPath(str, path, true, buff);
-   list = new String[]{str};
+   addResPath(str, path, true, buff);
+   list = new String[]{buff.toString()};
   }
   return list;
  }
  void replaceR(String file, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
-  boolean shaow;
+  boolean shaow=false;
+  if(isimg){
   if (shaow = file.startsWith("SHADOW:")) {
    shaow = true;
    file = file.substring(7);
   }
-  if (!file.startsWith("CORE:") && !file.startsWith("SHARED:")) {
+  if (file.startsWith("CORE:") || !file.startsWith("SHARED:")) {
+   file=null;
+  }
+  }else if(!loder.ismusic(file))file=null;
+  if (file != null) {
    ZipEntry en = toPath(file);
    if (en != null) {
     file = en.getName();
@@ -365,7 +368,7 @@ public class rwmodProtect implements Runnable {
     }
    }
   }
-  if (shaow)buff.append("SHADOW:");
+  if(shaow)buff.append(file);
   buff.append(file);
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws IOException {
@@ -551,7 +554,7 @@ public class rwmodProtect implements Runnable {
      if (path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl))) {
       boolean last=ovl != null && !loder.isV(ovl, key, o);
       if (same && ov != null && ((last && ((str =
-      (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
+          (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
       if (!same && (last || img || !eq)) {
