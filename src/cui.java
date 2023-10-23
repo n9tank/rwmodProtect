@@ -9,14 +9,18 @@ public class cui implements ui {
  String show;
  long g;
  int len;
+ cui(String s) {
+  show=s;
+  g = System.currentTimeMillis();
+ }
  public void poss(int i) {
   PrintStream out=System.out;
   int last=len;
-  while(--last>=0){
-  out.print('\b');
+  while (--last >= 0) {
+   out.print('\b');
   }
   String str=String.valueOf(i);
-  len=str.length();
+  len = str.length();
   out.print(str);
  }
  public void end(Throwable e) {
@@ -24,14 +28,14 @@ public class cui implements ui {
    e.printStackTrace();
   } else {
    PrintStream out=System.out;
-   if(len>0)out.print('\n');
+   if (len > 0)out.print('\n');
    out.print(show);
    out.print(':');
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
   }
  }
-  public static void main(String[] args) {
+ public static void main(String[] args) {
   long g=System.currentTimeMillis();
   String dir=System.getProperty("user.dir");
   if (dir.length() == 1) {
@@ -39,11 +43,8 @@ public class cui implements ui {
   }
   try {
    rwmodProtect.init(new File(dir, ".ini"));
-   try {
-    rwmodProtect.lib(new File(dir, "lib.zip"));
-   } catch (Throwable e) {
-    e.printStackTrace();
-   }
+   File in=new File(dir, "lib.zip");
+   if(in.length()>0)lib.exec(in, null, new cui("lib"));
    PrintStream out=System.out;
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
@@ -57,12 +58,10 @@ public class cui implements ui {
      out.println("文件异常");
      continue;
     } else {
-     cui ui=new cui();
-     ui.show=str;
-     ui.g=System.currentTimeMillis();
+     cui ui=new cui(str);
      if (islib) {
-      lib.exec(path, new File(dir, ".zip"), ui);
-     } else rwmodProtect.exec(path,new File(path.getParent(),rwmodProtect.out(path)),ui);
+      lib.exec(path, new File(dir,"lib.zip"), ui);
+     } else rwmodProtect.exec(path, new File(path.getParent(), rwmodProtect.out(path)), ui);
     }
    }
   } catch (Throwable e) {

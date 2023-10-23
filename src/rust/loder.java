@@ -29,8 +29,8 @@ class loder {
  loder(BufferedReader in, StringBuilder buff)throws IOException {
   init(in, buff);
  }
- static void write(loder ini, ZipOutputStream zip, OutputStreamWriter out) throws IOException {
-  zip.putNextEntry(new ZipEntry(ini.str));
+ static void write(loder ini,String str, ZipOutputStream zip, OutputStreamWriter out) throws IOException {
+  zip.putNextEntry(new ZipEntry(str));
   HashMap map=ini.ini;
   HashMap gloab=(HashMap)map.get("");
   map.remove("");

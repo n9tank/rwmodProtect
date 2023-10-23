@@ -65,72 +65,6 @@ public class rwmodProtect implements Runnable {
   }
   return name.concat("_r.rwmod");
  }
- public static void lib(File file) throws IOException {
-  if (file.exists()) {
-   HashMap inimap=new HashMap();
-   wmap = inimap;
-   StringBuilder buf=new StringBuilder();
-   ZipInputStream zip=new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
-   BufferedReader red=new BufferedReader(new InputStreamReader(zip));
-   try {
-    ZipEntry zipEntry;
-    while ((zipEntry = zip.getNextEntry()) != null) {
-     String fileName=zipEntry.getName().toLowerCase();
-     loder lod=new loder(red, buf);
-     zip.closeEntry();
-     inimap.put(fileName, lod);
-    }
-    Iterator ite=inimap.entrySet().iterator();
-    while (ite.hasNext()) {
-     Map.Entry en=(Map.Entry)ite.next();
-     String key=(String)en.getKey();
-     loder lod=(loder)en.getValue();
-     if (lod.str == null) {
-      lod.str = "";
-      lodAllCopy(lod, key, inimap);
-     }
-    }
-   } finally {
-    red.close();
-   }
-  }
- }
- static loder getlod(String str, HashMap iniMap) {
-  str = str.toLowerCase();
-  Object o=iniMap.get(str);
-  loder lod=(loder)o;
-  if (lod.str == null) {
-   lod.str = "";
-   lodAllCopy(lod, str, iniMap);
-  }
-  return lod;
- }
- static void lodAllCopy(loder lod, String file, HashMap iniMap) {
-  file = loder.getSuperPath(file);
-  HashMap ini=lod.ini;
-  Object o=ini.get("core");
-  HashMap put=null;
-  if (o != null) {
-   HashMap map=(HashMap)o;
-   o = map.get("copyFrom");
-   if (o != null) {
-    String str=(String)o;
-    put = new HashMap();
-    String list[]=str.split(",");
-    int i=0,l=list.length;
-    do{
-     str = list[i];
-     loder loder=getlod(file.concat(str), iniMap);
-     loder.putAnd(put, loder.put, null, null);
-    }while(++i < l);
-   }
-  }
-  if (put != null) {
-   loder.putAnd(put, ini, null, null);
-  } else put = ini;
-  lod.put = put;
-  lod.ini = null;
- }
  static HashMap set(Object o, int is) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
@@ -237,9 +171,8 @@ public class rwmodProtect implements Runnable {
    in.close();
   }
  }
- loder replace(ZipEntry en) throws IOException {
+ loder replace(ZipEntry en,String str) throws IOException {
   loder lod=null;
-  String str = en.getName();
   boolean isini=getType(str)==3;
   HashMap map;
   if (isini) {
@@ -261,7 +194,7 @@ public class rwmodProtect implements Runnable {
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
-  loder.write(ini, Zipout, Ow);
+  loder.write(ini,r,Zipout, Ow);
   ini.ini = null;
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
@@ -422,7 +355,7 @@ public class rwmodProtect implements Runnable {
       if (sup.length() > 0)str = sup.concat(str);
       ZipEntry en = toPath(str);
       str = en.getName();
-      lod = replace(en);
+      lod = replace(en,str);
       path = lod.str;
      } else if (libs != null) {
       str = str.replaceFirst("^CORE:/*", "").toLowerCase();
@@ -679,7 +612,7 @@ public class rwmodProtect implements Runnable {
        map.put("sourceFolder", "￸");
       }
      }
-     loder.write(ini, zipout, wt);
+     loder.write(ini,ini.str,zipout, wt);
     }
     zipEntrys = zip.entries();
     do{

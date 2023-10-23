@@ -1,57 +1,150 @@
 package rust;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
-import java.util.concurrent.Future;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import java.nio.channels.FileChannel;
 
 public class lib implements Runnable {
  File In;
  File Ou;
  ui Ui;
- public static Future exec(File in, File ou, ui ui) {
+ public static void exec(File in, File ou, ui ui) {
   lib lib=new lib();
   lib.In = in;
   lib.Ou = ou;
   lib.Ui = ui;
-  return ui.pool.submit(lib);
+  ui.pool.execute(lib);
+ }
+ static loder getlod(String str, HashMap iniMap) {
+  str = str.toLowerCase();
+  Object o=iniMap.get(str);
+  loder lod=(loder)o;
+  if (lod.str == null) {
+   lod.str = "";
+   lodAllCopy(lod, str, iniMap);
+  }
+  return lod;
+ }
+ static void lodAllCopy(loder lod, String file, HashMap iniMap) {
+  file = loder.getSuperPath(file);
+  HashMap ini=lod.ini;
+  Object o=ini.get("core");
+  HashMap put=null;
+  if (o != null) {
+   HashMap map=(HashMap)o;
+   o = map.get("copyFrom");
+   if (o != null) {
+    String str=(String)o;
+    put = new HashMap();
+    String list[]=str.split(",");
+    int i=0,l=list.length;
+    do{
+     str = list[i];
+     loder loder=getlod(file.concat(str), iniMap);
+     loder.putAnd(put, loder.put, null, null);
+    }while(++i < l);
+   }
+  }
+  if (put != null) {
+   loder.putAnd(put, ini, null, null);
+  } else put = ini;
+  lod.put = put;
+  lod.ini = null;
  }
  public void run() {
   ui ui=Ui;
+  HashMap inimap=new HashMap();
+  StringBuilder buf=new StringBuilder();
+  File in=In;
+  File ou=Ou;
+  int size=0;
+  int index=0;
+  int now=0;
   try {
-   ZipFile zip=new ZipFile(In);
-   int size=zip.size();
-   int now=0;
-   int index=0;
-   ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(Ou)));
-   out.setLevel(9);
-   OutputStreamWriter wt=new OutputStreamWriter(out);
-   try {
-    Enumeration<? extends ZipEntry> en=zip.entries();
-    StringBuilder def= new StringBuilder();
-    while (en.hasMoreElements()) {
-     ZipEntry zipe=en.nextElement();
-     String name;
-     if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
-      loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
-      loder.str = name.substring(13);
-      loder.write(loder, out, wt);
+   if (ou == null) {
+    FileInputStream input=new FileInputStream(in);
+    size=input.available();
+    ZipInputStream zip=new ZipInputStream(new BufferedInputStream(input));
+    BufferedReader red=new BufferedReader(new InputStreamReader(zip));
+    try {
+     ZipEntry zipEntry;
+     while ((zipEntry = zip.getNextEntry()) != null) {
+      String fileName=zipEntry.getName().toLowerCase();
+      loder lod=new loder(red, buf);
+      zip.closeEntry();
+      inimap.put(fileName, lod);
+      index=size-input.available();
+      int ov=index*50/size;
+      if(ov!=now)ui.poss(now=ov);
      }
-     int to=(index += 100) / size;
-     if (to != now)ui.poss(now = to);
+     size=inimap.size();
+     index=size*100;
+     size<<=1;
+    } finally {
+     red.close();
     }
-   } finally {
-    if (wt != null)wt.close();
-    zip.close();
+   } else {
+    File tmp=new File(ou.getParent(), "tmp");
+    ZipFile zip=new ZipFile(in);
+    size = zip.size();
+    OutputStreamWriter wt=null;
+    try {
+     ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
+     out.setLevel(9);
+     wt=new OutputStreamWriter(out);
+     Enumeration<? extends ZipEntry> en=zip.entries();
+     StringBuilder def= new StringBuilder();
+     while (en.hasMoreElements()) {
+      ZipEntry zipe=en.nextElement();
+      String name;
+      if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
+       loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
+       name = name.substring(13).toLowerCase();
+       inimap.put(name, loder);
+       ++size;
+       loder.write(loder, name, out, wt);
+      }
+      index += 100;
+      int ov;
+      if ((ov = index / size) != now)ui.poss(now = ov);
+     }
+     tmp.renameTo(ou);
+    } finally {
+     if (wt != null)wt.close();
+     zip.close();
+     tmp.delete();
+    }
    }
+   Iterator ite=inimap.entrySet().iterator();
+   while (ite.hasNext()) {
+    Map.Entry en=(Map.Entry)ite.next();
+    String key=(String)en.getKey();
+    loder lod=(loder)en.getValue();
+    if (lod.str == null) {
+     lod.str = "";
+     lodAllCopy(lod, key, inimap);
+    }
+    index += 100;
+    int ov;
+    if ((ov = index / size) != now) {
+     ui.poss(now = ov);
+    }
+   }
+   rwmodProtect.wmap=inimap;
    ui.end(null);
-  } catch (InterruptedIOException e) {
   } catch (Throwable e) {
    ui.end(e);
   }
