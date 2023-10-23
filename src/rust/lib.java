@@ -83,7 +83,7 @@ public class lib implements Runnable {
       loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), buf);
       inimap.put(fileName, lod);
       index += 100;
-      int ov=index * 10 / size;
+      int ov=index / size;
       if (ov != now)ui.poss(now = ov);
      }
     } else {
