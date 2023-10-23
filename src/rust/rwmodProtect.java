@@ -550,7 +550,6 @@ public class rwmodProtect implements Runnable {
   HashMap lows= new HashMap();
   coeMap = new HashMap();
   low = lows;
-  ByteBuffer warp = ByteBuffer.allocateDirect(8192);
   Warp = new byte[8192];
   StringBuilder mbuff = new StringBuilder();
   Buff = mbuff;
