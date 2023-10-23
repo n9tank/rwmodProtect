@@ -90,11 +90,10 @@ public class lib implements Runnable {
      ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
      out.setLevel(9);
      wt = new OutputStreamWriter(out);
-     Enumeration<? extends ZipEntry> en=zip.entries();
      StringBuilder def= new StringBuilder();
      try {
-      while (en.hasMoreElements()) {
-       ZipEntry zipe=en.nextElement();
+      while (ens.hasMoreElements()) {
+       ZipEntry zipe=ens.nextElement();
        String name;
        if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
         loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
