@@ -227,7 +227,7 @@ public class rwmodProtect implements Runnable {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
-  if (ini < 2)buff.append('/');
+  //if (ini < 2)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
@@ -276,7 +276,7 @@ public class rwmodProtect implements Runnable {
  }
  boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
   if (!isimg) {
-   if (loder.ismusic(str))str = getPath(str, path);
+   if (isimg=loder.ismusic(str))str = getPath(str, path);
   } else {
    boolean shadow=false;
    int st;
@@ -297,10 +297,10 @@ public class rwmodProtect implements Runnable {
     str = str.replaceFirst("^/+", "");
     if (shadow && buff != null)buff.append("SHADOW:");
     buff.append(path);
-   }
+   }else isimg=false;
   }
   buff.append(str);
-  return true;
+  return isimg;
  }
  String[] AllPath(String str, String s, String path, int type) {
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
@@ -309,6 +309,7 @@ public class rwmodProtect implements Runnable {
   StringBuilder buff=Buff;
   String list[];
   buff.setLength(0);
+  boolean ru=false;
   if (type >= 0) {
    list = str.split(",");
    int l=list.length,m=0;
@@ -325,27 +326,30 @@ public class rwmodProtect implements Runnable {
     String add;
     if (st >= 0)add = str.substring(0, st);
     else add = str;
-    addResPath(add, path, isimg, buff);
+    ru=ru||addResPath(add, path, isimg, buff);
     if (st >= 0)buff.append(str, st, str.length());
     list[m] = buff.toString();
    }while(++m < l);
   } else {
-   addResPath(str, path, true, buff);
+   if(ru=addResPath(str, path, true, buff))
    list = new String[]{buff.toString()};
+   else list=null;
   }
+  if(!ru)list=null;
   return list;
  }
- void replaceR(String file, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
   boolean shaow=false;
+  String file=str;
   if(isimg){
-  if (shaow = file.startsWith("SHADOW:")) {
+  if (shaow = str.startsWith("SHADOW:")) {
    shaow = true;
-   file = file.substring(7);
+   file = str.substring(7);
   }
-  if (file.startsWith("CORE:") || !file.startsWith("SHARED:")) {
+  if (file.startsWith("CORE:")||file.startsWith("SHARED:")) {
    file=null;
   }
-  }else if(!loder.ismusic(file))file=null;
+  }else if(!loder.ismusic(str))file=null;
   if (file != null) {
    ZipEntry en = toPath(file);
    if (en != null) {
@@ -357,19 +361,19 @@ public class rwmodProtect implements Runnable {
     if (o == null) {
      res = new res();
      map.put(file, res);
-     res.str = file = FileName(getType(file));
+     res.str = str = FileName(getType(file));
     } else {
      res = (res)o;
-     file = res.str;
+     str = res.str;
     }
     if (post && !res.close) {
      res.close = true;
-     copy(file, en);
+     copy(str, en);
     }
    }
   }
-  if(shaow)buff.append(file);
-  buff.append(file);
+  if(shaow)buff.append("SHADOW:");
+  buff.append(str);
  }
  void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws IOException {
   int st=0;
