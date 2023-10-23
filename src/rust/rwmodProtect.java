@@ -57,13 +57,13 @@ public class rwmodProtect implements Runnable {
   rw.Ui = ui;
   return ui.pool.submit(rw);
  }
- public static File getOut(File path) {
+ public static String out(File path) {
   String name=path.getName();
   int l=name.length();
   if (name.startsWith(".", l -= 6)) {
    name = name.substring(0, l);
   }
-  return new File(path.getParent(), name.concat("_r.rwmod"));
+  return name.concat("_r.rwmod");
  }
  public static void lib(File file) throws IOException {
   if (file.exists()) {

@@ -233,6 +233,8 @@ class loder {
   int i=0,j=0;
   buff.setLength(0);
   HashMap gl=(HashMap)map.get("");
+  Pattern find0=find;
+  Pattern find1=find2;
   do{
    i = str.indexOf("${", i);
    if (i >= 0) {
@@ -242,9 +244,9 @@ class loder {
     if (n > 0) {
      String key=str.substring(i, n).trim();
      if (key.length() > 0) {
-      boolean isNumber=find2.matcher(key).find();
+      boolean isNumber=find1.matcher(key).find();
       HashSet sset=set;
-      Matcher matcher=find.matcher(key);
+      Matcher matcher=find0.matcher(key);
       int q=0,st=buff.length();
       while (matcher.find()) {
        buff.append(key, q, matcher.start());
@@ -440,7 +442,7 @@ class loder {
   sset.add("sin");
   sset.add("sqrt");
  }
- static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");;
+ static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  public static boolean ismusic(String str) {
   int i=str.length() - 4;
