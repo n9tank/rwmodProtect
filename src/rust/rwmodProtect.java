@@ -131,16 +131,6 @@ public class rwmodProtect implements Runnable {
   lod.put = put;
   lod.ini = null;
  }
- String getPath(String str, String path) {
-  if (str.startsWith("CORE:"))return null;
-  if (str.startsWith("ROOT:")) {
-   str = str.substring(5);
-   path = rootPath;
-  }
-  str = str.replaceFirst("^/+", "");
-  if (path.length() > 0)str = path.concat(str);
-  return str;
- }
  static HashMap set(Object o, int is) {
   HashMap map=(HashMap)o;
   Iterator ite=map.entrySet().iterator();
@@ -227,7 +217,7 @@ public class rwmodProtect implements Runnable {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
-  //if (ini < 2)buff.append('/');
+  if (ini < 2)buff.append('/');
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
@@ -283,7 +273,7 @@ public class rwmodProtect implements Runnable {
    if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
     st = -1;
   } else if (!loder.ismusic(file))st = -1;
-  if (st >0) {
+  if (st > 0) {
    buff.append("SHADOW:");
   }
   return st;
@@ -291,22 +281,20 @@ public class rwmodProtect implements Runnable {
  boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
   int st=ResTry(str, isimg, buff);
   if (st >= 0) {
-   if (!isimg) {
-    str = getPath(str, path);
-   } else {
-    boolean shaow=st>0;
-    if (str.startsWith("ROOT:", st)) {
-     st += 5;
-     path = rootPath;
-    }
+   if (str.startsWith("ROOT:", st)) {
+    st += 5;
+    path = rootPath;
+   }
+   if (isimg) {
+    boolean shaow=st > 0;
     if (str.startsWith("SHADOW:", st)) {
      st += 7;
      if (!shaow)buff.append("SHADOW:");
     }
-    if (st != 0)str = str.substring(st);
-    str = str.replaceFirst("^/+", "");
-    buff.append(path);
    }
+   if (st != 0)str = str.substring(st);
+   str = str.replaceFirst("^/+", "");
+   buff.append(path);
   }
   buff.append(str);
   return st >= 0;
@@ -420,22 +408,29 @@ public class rwmodProtect implements Runnable {
     int i=0,n=list.length;
     HashMap libs=wmap;
     do {
-     String path=list[i].trim();
-     str = getPath(path, file);
+     str = list[i].trim();
+     String path=str;
      loder lod=null;
-     boolean s=str == null;
-     if (!s) {
+     boolean s;
+     if (s = !str.startsWith("CORE:")) {
+      String sup;
+      if (str.startsWith("ROOT:")) {
+       str = str.substring(5);
+       sup = rootPath;
+      } else sup = file;
+      str = str.replaceFirst("^/+", "");
+      if (sup.length() > 0)str = sup.concat(str);
       ZipEntry en = toPath(str);
       str = en.getName();
       lod = replace(str, getType(str) == 3);
       path = lod.str;
      } else if (libs != null) {
-      str = path.replaceFirst("^CORE:/*", "").toLowerCase();
+      str = str.replaceFirst("^CORE:/*", "").toLowerCase();
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, cou, s ?null: loder.getSuperPath(str));
-      if (!s && alls == lod.all)alls = null;
+      ini.putAnd(put, lod.put, cou, !s ?null: loder.getSuperPath(str));
+      if (alls == lod.all)alls = null;
      }
      buff.append(path);
      buff.append(',');
