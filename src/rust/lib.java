@@ -17,6 +17,8 @@ public class lib implements Runnable {
  File In;
  File Ou;
  ui Ui;
+ HashMap iniMap;
+ static HashMap libMap;
  public static void exec(File in, File ou, ui ui) {
   lib lib=new lib();
   lib.In = in;
@@ -24,17 +26,17 @@ public class lib implements Runnable {
   lib.Ui = ui;
   ui.pool.execute(lib);
  }
- static loder getlod(String str, HashMap iniMap) {
+ loder getlod(String str) {
   str = str.toLowerCase();
   Object o=iniMap.get(str);
   loder lod=(loder)o;
   if (lod.str == null) {
    lod.str = "";
-   lodAllCopy(lod, str, iniMap);
+   lodAllCopy(lod, str);
   }
   return lod;
  }
- static void lodAllCopy(loder lod, String file, HashMap iniMap) {
+ void lodAllCopy(loder lod, String file) {
   file = loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
@@ -49,7 +51,7 @@ public class lib implements Runnable {
     int i=0,l=list.length;
     do{
      str = list[i];
-     loder loder=getlod(file.concat(str), iniMap);
+     loder loder=getlod(file.concat(str));
      loder.putAnd(put, loder.put, null, null);
     }while(++i < l);
    }
@@ -63,6 +65,7 @@ public class lib implements Runnable {
  public void run() {
   ui ui=Ui;
   HashMap inimap=new HashMap();
+  iniMap=inimap;
   StringBuilder buf=new StringBuilder();
   File in=In;
   File ou=Ou;
@@ -123,7 +126,7 @@ public class lib implements Runnable {
     loder lod=(loder)en.getValue();
     if (lod.str == null) {
      lod.str = "";
-     lodAllCopy(lod, key, inimap);
+     lodAllCopy(lod, key);
     }
     index += 100;
     int ov;
@@ -131,7 +134,7 @@ public class lib implements Runnable {
      ui.poss(now = ov);
     }
    }
-   rwmodProtect.wmap = inimap;
+   libMap= inimap;
    ui.end(null);
   } catch (Throwable e) {
    ui.end(e);

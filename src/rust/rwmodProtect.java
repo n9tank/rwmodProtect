@@ -24,15 +24,11 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-public class rwmodProtect implements Runnable {
- File In;
- File Ou;
- ui Ui;
+public class rwmodProtect extends lib implements Runnable {
  ZipFile Zip;
  int arr[];
  ZipOutputStream Zipout;
  HashMap low;
- HashMap iniMap;
  HashMap iniHide;
  HashMap coeMap;
  HashMap Filemap;
@@ -46,7 +42,6 @@ public class rwmodProtect implements Runnable {
  static int max;
  static String fileD;
  static HashMap<String,HashMap> Res;
- static HashMap wmap;
  public static Future exec(File in, File ou, ui ui) {
   rwmodProtect rw=new rwmodProtect();
   rw.In = in;
@@ -335,7 +330,7 @@ public class rwmodProtect implements Runnable {
     str = str.replace('\\', '/');
     String list[]=str.split(",");
     int i=0,n=list.length;
-    HashMap libs=wmap;
+    HashMap libs=lib.libMap;
     do {
      str = list[i].trim();
      String path=str;
