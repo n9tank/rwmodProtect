@@ -1,5 +1,6 @@
 package rust;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,7 +12,6 @@ import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,8 +36,8 @@ public class rwmodProtect implements Runnable {
  HashMap iniHide;
  HashMap coeMap;
  HashMap Filemap;
- ByteBuffer Warp;
- WritableByteChannel Out;
+ byte Warp[];
+ BufferedOutputStream Out;
  BufferedWriter Ow;
  StringBuilder Buff;
  String musicPath;
@@ -152,17 +152,16 @@ public class rwmodProtect implements Runnable {
   return buff.toString();
  }
  void copy(String name, ZipEntry en) throws IOException {
-  ByteBuffer warp=Warp;
-  WritableByteChannel wt=Out;
+  byte[] warp=Warp;
+  BufferedOutputStream wt=Out;
   ZipOutputStream zipw=Zipout;
-  ReadableByteChannel in=Channels.newChannel(Zip.getInputStream(en));
-  zipw.putNextEntry(new ZipEntry(name));
+  BufferedInputStream in=new BufferedInputStream(Zip.getInputStream(en));
   try {
-   while (in.read(warp) > 0) {
-    warp.flip();
-    wt.write(warp);
-    warp.clear();
-   }
+   zipw.putNextEntry(new ZipEntry(name));
+   int l;
+   while ((l = in.read(warp)) > 0)
+    wt.write(warp, 0, l);
+    wt.flush();
    zipw.closeEntry();
   } finally {
    in.close();
@@ -552,7 +551,7 @@ public class rwmodProtect implements Runnable {
   coeMap = new HashMap();
   low = lows;
   ByteBuffer warp = ByteBuffer.allocateDirect(8192);
-  Warp = warp;
+  Warp = new byte[8192];
   StringBuilder mbuff = new StringBuilder();
   Buff = mbuff;
   StringBuilder buff=new StringBuilder();
@@ -565,8 +564,8 @@ public class rwmodProtect implements Runnable {
    zipout.setLevel(9);
    BufferedWriter wt=new BufferedWriter(new OutputStreamWriter(zipout));
    Ow = wt;
-   WritableByteChannel out = Channels.newChannel(zipout);
-   Out = out;
+   BufferedOutputStream out=new BufferedOutputStream(zipout);
+   Out=out;
    String name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
@@ -668,8 +667,8 @@ public class rwmodProtect implements Runnable {
     }
    } finally {
     if (out != null) {
-     wt.close();
      out.close();
+     wt.close();
     }
     zip.close();
    }
