@@ -666,10 +666,10 @@ public class rwmodProtect implements Runnable {
     }
     zip.close();
    }
-   ui.poss(-1);
+   ui.end(null);
   } catch (InterruptedIOException e) {
   } catch (Throwable e) {
-   ui.err(e);
+   ui.end(e);
   }
  }
 }
