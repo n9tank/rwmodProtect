@@ -5,11 +5,11 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -98,9 +98,9 @@ public class rwmodProtect implements Runnable {
   }
   return map;
  }
- public static void init(File path)throws IOException {
+ public static void init(Reader io)throws IOException {
   HashMap<String,HashMap> map;
-  map = new loder(new FileReader(path), null).ini;
+  map = new loder(io, null).ini;
   HashMap<String,String> set=map.get("set");
   max = Integer.valueOf(set.get("cou"));
   String file= set.get("file");
@@ -157,7 +157,7 @@ public class rwmodProtect implements Runnable {
    int l;
    while ((l = in.read(warp)) > 0)
     wt.write(warp, 0, l);
-    wt.flush();
+   wt.flush();
    zipw.closeEntry();
   } finally {
    in.close();
@@ -560,7 +560,7 @@ public class rwmodProtect implements Runnable {
    BufferedWriter wt=new BufferedWriter(new OutputStreamWriter(zipout));
    Ow = wt;
    BufferedOutputStream out=new BufferedOutputStream(zipout);
-   Out=out;
+   Out = out;
    String name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();

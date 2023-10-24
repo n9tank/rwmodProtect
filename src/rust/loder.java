@@ -3,7 +3,7 @@ package rust;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +18,7 @@ class loder {
  HashMap put;
  HashMap all;
  String str;
- loder(InputStreamReader inp, StringBuilder bf) throws IOException {
+ loder(Reader inp, StringBuilder bf) throws IOException {
   BufferedReader buff=new BufferedReader(inp);
   try {
    init(buff, bf);

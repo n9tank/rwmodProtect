@@ -30,7 +30,7 @@ public class lib implements Runnable {
   lib lib=new lib();
   lib.inp = in;
   lib.Ui = ui;
- return ui.pool.submit(lib);
+  return ui.pool.submit(lib);
  }
  public static Future exec(File in, File ou, ui ui) {
   lib lib=new lib();
@@ -97,26 +97,26 @@ public class lib implements Runnable {
       loder lod=new loder(red, buf);
       zip.closeEntry();
       inimap.put(fileName, lod);
-      index = size - buff.available();
-      int ov=index * 90 / size;
+      index = (size - buff.available()) * 90;
+      int ov=index / size;
       if (ov != now)ui.poss(now = ov);
      }
     } finally {
      red.close();
     }
-    size=inimap.size();
-    index=size*900;
-    size*=10;
+    size = inimap.size();
+    index = size * 900;
+    size *= 10;
    } else {
     ZipFile zip=new ZipFile(In);
-    size = zip.size();
     BufferedWriter wt =null;
-    Enumeration<? extends ZipEntry> ens=zip.entries();
     try {
      ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
      out.setLevel(9);
      wt = new BufferedWriter(new OutputStreamWriter(out));
      StringBuilder def= new StringBuilder();
+     size = zip.size();
+     Enumeration<? extends ZipEntry> ens=zip.entries();
      while (ens.hasMoreElements()) {
       ZipEntry zipe=ens.nextElement();
       String name;
