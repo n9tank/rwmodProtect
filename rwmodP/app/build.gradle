@@ -1,0 +1,25 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        applicationId "rust.rwp"
+        minSdkVersion 19
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        versionCode 0
+        versionName "0"
+    }
+
+    buildTypes {
+        release {
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+		}
+    }
+}
+
+dependencies {
+implementation fileTree(dir: "libs", include: ["*.jar"])
+}
