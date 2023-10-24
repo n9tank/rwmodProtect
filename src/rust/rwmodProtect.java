@@ -99,8 +99,7 @@ public class rwmodProtect implements Runnable {
   return map;
  }
  public static void init(Reader io)throws IOException {
-  HashMap<String,HashMap> map;
-  map = new loder(io, null).ini;
+  HashMap<String,HashMap> map= new loder(io, null).ini;
   HashMap<String,String> set=map.get("set");
   max = Integer.valueOf(set.get("cou"));
   String file= set.get("file");
