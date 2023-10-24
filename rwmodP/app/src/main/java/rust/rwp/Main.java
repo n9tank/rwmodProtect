@@ -46,7 +46,6 @@ public class Main extends Activity {
   AlertDialog.Builder show=new AlertDialog.Builder(c);
   ByteArrayOutputStream brr=new ByteArrayOutputStream();
   PrintStream pr= new PrintStream(brr);
-  pr.println(where);
   e.printStackTrace(pr);
   pr.close();
   show.setTitle(where);
@@ -203,7 +202,9 @@ public class Main extends Activity {
   if (s.length() != 0 && (f = new File(s)).exists()) {
    init = true;
    ed.setText("");
-   lib.exec(f,new File("sdcard/rustedWarfare/rwmod/lib.zip"),new cui("lib"));
+   File lb=new File("sdcard/rustedWarfare/rwmod");
+   lb.mkdirs();
+   lib.exec(f, new File(lb,"lib.zip"),new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
  public void ch(View v) {
