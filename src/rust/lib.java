@@ -1,8 +1,11 @@
 package rust;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
@@ -11,20 +14,30 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import java.util.concurrent.Future;
+import java.io.InterruptedIOException;
 
 public class lib implements Runnable {
+ InputStream inp;
  File In;
  File Ou;
  ui Ui;
  HashMap iniMap;
  static HashMap libMap;
- public static void exec(File in, File ou, ui ui) {
+ public static Future exec(InputStream in, ui ui) {
+  lib lib=new lib();
+  lib.inp = in;
+  lib.Ui = ui;
+ return ui.pool.submit(lib);
+ }
+ public static Future exec(File in, File ou, ui ui) {
   lib lib=new lib();
   lib.In = in;
   lib.Ou = ou;
   lib.Ui = ui;
-  ui.pool.execute(lib);
+  return ui.pool.submit(lib);
  }
  loder getlod(String str) {
   str = str.toLowerCase();
@@ -65,60 +78,61 @@ public class lib implements Runnable {
  public void run() {
   ui ui=Ui;
   HashMap inimap=new HashMap();
-  iniMap=inimap;
+  iniMap = inimap;
   StringBuilder buf=new StringBuilder();
-  File in=In;
   File ou=Ou;
   int index=0;
   int now=0;
+  int size=0;
   try {
-   ZipFile zip=new ZipFile(in);
-   File tmp=null;
-   BufferedWriter wt=null;
-   int size=zip.size();
-   Enumeration<? extends ZipEntry> ens=zip.entries();
-   try {
-    if (ou == null) {
-     size <<= 4;
-     while (ens.hasMoreElements()) {
-      ZipEntry zipEntry=ens.nextElement();
+   if (ou == null) {
+    BufferedInputStream buff=new BufferedInputStream(inp);
+    size = buff.available();
+    ZipInputStream zip=new ZipInputStream(buff);
+    BufferedReader red=new BufferedReader(new InputStreamReader(zip));
+    try {
+     ZipEntry zipEntry;
+     while ((zipEntry = zip.getNextEntry()) != null) {
       String fileName=zipEntry.getName().toLowerCase();
-      loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), buf);
+      loder lod=new loder(red, buf);
+      zip.closeEntry();
       inimap.put(fileName, lod);
-      index += 1500;
-      int ov=index / size;
+      index = size - buff.available();
+      int ov=index * 90 / size;
       if (ov != now)ui.poss(now = ov);
      }
-    } else {
-     tmp = new File(ou.getParent(), "tmp");
-     ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)));
+    } finally {
+     red.close();
+    }
+   } else {
+    ZipFile zip=new ZipFile(In);
+    size = zip.size();
+    BufferedWriter wt =null;
+    Enumeration<? extends ZipEntry> ens=zip.entries();
+    try {
+     ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
      out.setLevel(9);
      wt = new BufferedWriter(new OutputStreamWriter(out));
      StringBuilder def= new StringBuilder();
-     try {
-      while (ens.hasMoreElements()) {
-       ZipEntry zipe=ens.nextElement();
-       String name;
-       if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
-        loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
-        name = name.substring(13).toLowerCase();
-        inimap.put(name, loder);
-        ++size;
-        loder.write(loder, name, out, wt);
-       }
-       index += 100;
-       int ov;
-       if ((ov = index / size) != now)ui.poss(now = ov);
+     while (ens.hasMoreElements()) {
+      ZipEntry zipe=ens.nextElement();
+      String name;
+      if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
+       loder loder=new loder(new InputStreamReader(zip.getInputStream(zipe)), def);
+       name = name.substring(13).toLowerCase();
+       inimap.put(name, loder);
+       ++size;
+       loder.write(loder, name, out, wt);
       }
-      tmp.renameTo(ou);
-     } finally {
-      tmp.delete();
-      wt.close();
+      index += 100;
+      int ov;
+      if ((ov = index / size) != now)ui.poss(now = ov);
      }
+    } finally {
+     if (wt != null)wt.close();
+     zip.close();
     }
-   } finally {
-    zip.close();
-   }
+   } 
    Iterator ite=inimap.entrySet().iterator();
    while (ite.hasNext()) {
     Map.Entry en=(Map.Entry)ite.next();
@@ -134,8 +148,9 @@ public class lib implements Runnable {
      ui.poss(now = ov);
     }
    }
-   libMap= inimap;
+   libMap = inimap;
    ui.end(null);
+  } catch (InterruptedIOException e) {
   } catch (Throwable e) {
    ui.end(e);
   }

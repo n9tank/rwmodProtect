@@ -4,6 +4,7 @@ import java.util.Scanner;
 import rust.lib;
 import rust.rwmodProtect;
 import rust.ui;
+import java.io.FileInputStream;
 
 public class cui implements ui {
  String show;
@@ -44,7 +45,7 @@ public class cui implements ui {
   try {
    rwmodProtect.init(new File(dir, ".ini"));
    File in=new File(dir, "lib.zip");
-   if (in.length() > 0)lib.exec(in, null, new cui("lib"));
+   if (in.length() > 0)lib.exec(new FileInputStream(in),new cui("lib"));
    PrintStream out=System.out;
    out.print(System.currentTimeMillis() - g);
    out.println("ms");

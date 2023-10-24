@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -24,7 +21,11 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-public class rwmodProtect extends lib implements Runnable {
+public class rwmodProtect implements Runnable {
+ File In;
+ File Ou;
+ ui Ui;
+ HashMap iniMap;
  ZipFile Zip;
  int arr[];
  ZipOutputStream Zipout;

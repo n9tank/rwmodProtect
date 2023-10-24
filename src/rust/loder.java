@@ -18,79 +18,85 @@ class loder {
  HashMap put;
  HashMap all;
  String str;
- loder(InputStreamReader input, StringBuilder bf)throws IOException {
-  BufferedReader buff=new BufferedReader(input);
+ loder(InputStreamReader inp, StringBuilder bf) throws IOException {
+  BufferedReader buff=new BufferedReader(inp);
   try {
-   HashMap global=new HashMap();
-   String str;
-   HashMap list=null;
-   HashMap table=new LinkedHashMap();
-   table.put("", global);
-   ini = table;
-   wh:
-   while ((str = buff.readLine()) != null) {
-    str = str.trim();
-    if (str.startsWith("#"))continue;
-    String with;
-    if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
-     int len=str.length();
-     if (len <= 6)len = 3;else len -= 3;
-     while (true) {
-      if (str.startsWith(with, len))continue wh;
-      str = buff.readLine();
-      if (str == null)return;
-      str = str.trim();
-      len = str.length() - 3;
-     }
+   init(buff, bf);
+  } finally {
+   buff.close();
+  }
+ }
+ loder(BufferedReader inp, StringBuilder bf)throws IOException {
+  init(inp, bf);
+ }
+ void init(BufferedReader buff, StringBuilder bf)throws IOException {
+  HashMap global=new HashMap();
+  String str;
+  HashMap list=null;
+  HashMap table=new LinkedHashMap();
+  table.put("", global);
+  ini = table;
+  wh:
+  while ((str = buff.readLine()) != null) {
+   str = str.trim();
+   if (str.startsWith("#"))continue;
+   String with;
+   if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
+    int len=str.length();
+    if (len <= 6)len = 3;else len -= 3;
+    while (true) {
+     if (str.startsWith(with, len))continue wh;
+     str = buff.readLine();
+     if (str == null)return;
+     str = str.trim();
+     len = str.length() - 3;
     }
-    if (str.startsWith("[") && str.endsWith("]")) {
-     str = str.substring(1, str.length() - 1).trim();
-     if (str.contains("]"))continue;
-     if (str.startsWith("comment_")) {
-      list = null;
+   }
+   if (str.startsWith("[") && str.endsWith("]")) {
+    str = str.substring(1, str.length() - 1).trim();
+    if (str.contains("]"))continue;
+    if (str.startsWith("comment_")) {
+     list = null;
+    } else {
+     Object o=table.get(str);
+     if (o == null) {
+      list = new HashMap();
+      table.put(str, list);
+     } else list = (HashMap)o;
+    }
+   } else if (list != null) {
+    String value[]=str.split("[=:]", 2);
+    if (value.length > 1) {
+     String key=value[0].trim();
+     String set=value[1].trim();
+     if (key.startsWith("@global ")) {
+      if (value.equals("IGNORE"))continue;
+      global.put(key, set);
      } else {
-      Object o=table.get(str);
-      if (o == null) {
-       list = new HashMap();
-       table.put(str, list);
-      } else list = (HashMap)o;
-     }
-    } else if (list != null) {
-     String value[]=str.split("[=:]", 2);
-     if (value.length > 1) {
-      String key=value[0].trim();
-      String set=value[1].trim();
-      if (key.startsWith("@global ")) {
-       if (value.equals("IGNORE"))continue;
-       global.put(key, set);
-      } else {
-       if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-        bf.setLength(0);
-        int len=set.length();
-        int ed=len;
-        int st=3;
-        if (ed <= 6)ed = 3;else ed -= 3;
-        while (true) {
-         boolean now;
-         if (now = set.startsWith(with, ed))len = ed;
-         bf.append(set, st, len);
-         if (now)break;
-         st = 0;
-         set = buff.readLine();
-         if (set == null)return;
-         set = set.trim();
-         len = set.length();
-         ed = len - 3;
-        }
-        set = bf.toString();
+      if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
+       bf.setLength(0);
+       int len=set.length();
+       int ed=len;
+       int st=3;
+       if (ed <= 6)ed = 3;else ed -= 3;
+       while (true) {
+        boolean now;
+        if (now = set.startsWith(with, ed))len = ed;
+        bf.append(set, st, len);
+        if (now)break;
+        st = 0;
+        set = buff.readLine();
+        if (set == null)return;
+        set = set.trim();
+        len = set.length();
+        ed = len - 3;
        }
-       list.put(key, set);
+       set = bf.toString();
       }
+      list.put(key, set);
      }
     }
    }
-  } finally {
-   buff.close();
   }
  }
  static void write(loder ini, String str, ZipOutputStream zip, BufferedWriter out) throws IOException {
