@@ -151,11 +151,11 @@ public class lib implements Runnable {
     }
    }
    libMap = inimap;
-   ui.end(null);
+   ui.poss(-1);
   } catch (Throwable e) {
    if(ou!=null)ou.delete();
    if(!(e instanceof InterruptedException)){
-   ui.end(e);
+   ui.err(e);
    }
   }
  }

@@ -16,18 +16,16 @@ public class cui implements ui {
   g = System.currentTimeMillis();
  }
  public void poss(int i) {
-  PrintStream out=System.out;
-  int last=len;
-  while (--last >= 0) {
-   out.print('\b');
-  }
-  String str=String.valueOf(i);
-  len = str.length();
-  out.print(str);
- }
- public void end(Throwable e) {
-  if (e != null)e.printStackTrace();
-  else {
+  if (i >= 0) {
+   PrintStream out=System.out;
+   int last=len;
+   while (--last >= 0) {
+    out.print('\b');
+   }
+   String str=String.valueOf(i);
+   len = str.length();
+   out.print(str);
+  } else {
    PrintStream out=System.out;
    if (len > 0)out.print('\n');
    out.print(show);
@@ -35,6 +33,9 @@ public class cui implements ui {
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
   }
+ }
+ public void err(Throwable e) {
+  e.printStackTrace();
  }
  public static void main(String[] args) {
   long g=System.currentTimeMillis();
