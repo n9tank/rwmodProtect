@@ -104,6 +104,9 @@ public class lib implements Runnable {
     } finally {
      red.close();
     }
+    size=inimap.size();
+    index=size*900;
+    size*=10;
    } else {
     ZipFile zip=new ZipFile(In);
     size = zip.size();

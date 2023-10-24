@@ -45,7 +45,7 @@ public class cui implements ui {
   try {
    rwmodProtect.init(new File(dir, ".ini"));
    File in=new File(dir, "lib.zip");
-   if (in.length() > 0)lib.exec(new FileInputStream(in),new cui("lib"));
+   if (in.length() > 0)lib.exec(new FileInputStream(in), new cui("lib"));
    PrintStream out=System.out;
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
@@ -61,7 +61,7 @@ public class cui implements ui {
     } else {
      cui ui=new cui(str);
      if (islib) {
-      lib.exec(path, new File(dir, "lib.zip"), ui);
+      lib.exec(path, in, ui);
      } else rwmodProtect.exec(path, new File(path.getParent(), rwmodProtect.out(path)), ui);
     }
    }
