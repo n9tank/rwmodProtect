@@ -12,12 +12,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.util.concurrent.Future;
-import java.io.InterruptedIOException;
 
 public class lib implements Runnable {
  InputStream inp;
@@ -152,11 +151,11 @@ public class lib implements Runnable {
     }
    }
    libMap = inimap;
-   ui.end(null);
+   ui.poss(-1);
   } catch (Throwable e) {
    if(ou!=null)ou.delete();
    if(!(e instanceof InterruptedException)){
-   ui.end(e);
+   ui.err(e);
    }
   }
  }
