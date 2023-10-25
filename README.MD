@@ -21,12 +21,11 @@ a/b.ini a/all-units.template
 tmx的名称不能相同，这将抛错。
 ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg。
 
-（又不是不能用，多线程就别想了。）
+（又不是不能用，多线程就别想了（你可以试试使用库优化一下））
 
 文件：user.dir/
 .ini 配置
 lib.zip 加载依赖，用于copyFrom:CORE:
 
-命令：
-<rwmod> 默认rwmod混淆(*_r.rwmod)
-lib <apk> 制作依赖在当前目录(${user.dir}/.zip)
+Android相关
+又不是不能用，data授权我懒得写（最开始没用库，就不用了）
