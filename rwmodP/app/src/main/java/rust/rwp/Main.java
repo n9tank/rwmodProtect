@@ -39,7 +39,6 @@ public class Main extends Activity {
  Intent Intent;
  Intent sw;
  String pe[];
- uis apps;
  EditText ed;
  static uis ui;
  static ProgressBar bar;
@@ -143,10 +142,8 @@ public class Main extends Activity {
   st(intent);
  }
  public void st(Intent intent) {
-  String type=intent.getType();
-  if (type == null) {
-   return;
-  }
+  String type=intent.getAction();
+  if (type == null)return;
   Uri o;
   if (type.equals(Intent.ACTION_SEND))o = intent.getParcelableExtra(Intent.EXTRA_STREAM);
   else if (type.equals(intent.ACTION_SEND_MULTIPLE)) {
@@ -182,6 +179,7 @@ public class Main extends Activity {
     }
    }
   }
+  Log.d("rwp",path);
   File f=new File(path);
   if (f.exists()) {
    cui cui=new cui(path);
