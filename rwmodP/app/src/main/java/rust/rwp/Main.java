@@ -153,7 +153,7 @@ public class Main extends Activity {
    }
    return;
   } else o = intent.getData();
-  if(o!=null)add(o);
+  if (o != null)add(o);
  }
  public void add(Uri uri) {
   String type=uri.getScheme();
@@ -164,21 +164,23 @@ public class Main extends Activity {
     path = "sdcard/".concat(path.substring(18));
    } else if (ab.startsWith("com.android.providers.downloads")) {
     String ids=path.substring(14);
-    ContentResolver contentResolver = getContentResolver();
-    Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"), new String[] {MediaStore.Files.FileColumns.DATA}, "_id=?", new String[]{ids}, null);
-    if (cursor != null) {
-     cursor.moveToFirst();
-     try {
-      int idx = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-      path = cursor.getString(idx);
-     } catch (Throwable e) {
-     } finally {
-      cursor.close();
+    //raw: msf:
+    if (!path.startsWith("w", 12)) {
+     ContentResolver contentResolver = getContentResolver();
+     Cursor cursor = contentResolver.query(MediaStore.Downloads.getContentUri("external"), new String[]{"_data"}, "_id=?", new String[]{ids}, null);
+     if (cursor != null) {
+      cursor.moveToFirst();
+      try {
+       int idx = cursor.getColumnIndex("_data");
+       path = cursor.getString(idx);
+      } catch (Throwable e) {
+      } finally {
+       cursor.close();
+      }
      }
-    }
+    } else path = ids;
    }
   }
-  Log.d("rwp",path);
   File f=new File(path);
   if (f.exists()) {
    cui cui=new cui(path);
