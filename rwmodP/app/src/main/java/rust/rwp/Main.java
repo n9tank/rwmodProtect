@@ -3,14 +3,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -86,11 +90,11 @@ public class Main extends Activity {
   } else {
    init();
   }
-  Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
   intent.addCategory(Intent.CATEGORY_OPENABLE);
   intent.setType("*/*");
   intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-  sw = intent;
+  sw = intent.createChooser(intent, "");
  }
  public void lib() {
   File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
@@ -157,17 +161,30 @@ public class Main extends Activity {
  }
  public void add(Uri uri) {
   String type=uri.getScheme();
-  if (type.startsWith("f")) {
-   type = uri.getPath();
-  } else {
-   String ids=uri.getPathSegments().get(1);
-   if (ids.startsWith("p")) {
-    type = "sdcard/".concat(ids.substring(8));
-   } else return;
+  String path=uri.getPath();
+  if (type.startsWith("c")) {
+   String ab=uri.getAuthority();
+   if (ab.startsWith("com.android.externalstorage")) {
+    path = "sdcard/".concat(path.substring(18));
+   } else if (ab.startsWith("com.android.providers.downloads")) {
+    String ids=path.substring(14);
+    ContentResolver contentResolver = getContentResolver();
+    Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"), new String[] {MediaStore.Files.FileColumns.DATA}, "_id=?", new String[]{ids}, null);
+    if (cursor != null) {
+     cursor.moveToFirst();
+     try {
+      int idx = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
+      path = cursor.getString(idx);
+     } catch (Throwable e) {
+     } finally {
+      cursor.close();
+     }
+    }
+   }
   }
-  File f=new File(type);
+  File f=new File(path);
   if (f.exists()) {
-   cui cui=new cui(type);
+   cui cui=new cui(path);
    cui.ui = true;
    rwmodProtect.exec(f, new File(f.getParent(), rwmodProtect.out(f)), cui);
    uis.arr.add(cui);
@@ -204,7 +221,7 @@ public class Main extends Activity {
    ed.setText("");
    File lb=new File("sdcard/rustedWarfare/rwmod");
    lb.mkdirs();
-   lib.exec(f, new File(lb,"lib.zip"),new cui("lib"));
+   lib.exec(f, new File(lb, "lib.zip"), new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
  public void ch(View v) {

@@ -25,18 +25,21 @@ public class lib implements Runnable {
  ui Ui;
  HashMap iniMap;
  static HashMap libMap;
- public static Future exec(InputStream in, ui ui) {
+ static Future fu;
+ public static void exec(InputStream in, ui ui) {
+  if(fu!=null)fu.cancel(true);
   lib lib=new lib();
   lib.inp = in;
   lib.Ui = ui;
-  return ui.pool.submit(lib);
+  fu=ui.pool.submit(lib);
  }
- public static Future exec(File in, File ou, ui ui) {
+ public static void exec(File in, File ou, ui ui) {
+  if(fu!=null)fu.cancel(true);
   lib lib=new lib();
   lib.In = in;
   lib.Ou = ou;
   lib.Ui = ui;
-  return ui.pool.submit(lib);
+  fu=ui.pool.submit(lib);
  }
  loder getlod(String str) {
   str = str.toLowerCase();
