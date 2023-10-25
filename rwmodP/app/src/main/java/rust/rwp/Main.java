@@ -143,7 +143,6 @@ public class Main extends Activity {
  }
  public void st(Intent intent) {
   String type=intent.getAction();
-  if (type == null)return;
   Uri o;
   if (type.equals(Intent.ACTION_SEND))o = intent.getParcelableExtra(Intent.EXTRA_STREAM);
   else if (type.equals(intent.ACTION_SEND_MULTIPLE)) {
@@ -154,7 +153,7 @@ public class Main extends Activity {
    }
    return;
   } else o = intent.getData();
-  add(o);
+  if(o!=null)add(o);
  }
  public void add(Uri uri) {
   String type=uri.getScheme();
