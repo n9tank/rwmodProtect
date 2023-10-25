@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import java.io.InputStream;
 public class rwmodProtect implements Runnable {
  File In;
  File Ou;
@@ -34,7 +35,6 @@ public class rwmodProtect implements Runnable {
  HashMap coeMap;
  HashMap Filemap;
  byte Warp[];
- BufferedOutputStream Out;
  BufferedWriter Ow;
  StringBuilder Buff;
  String musicPath;
@@ -148,15 +148,13 @@ public class rwmodProtect implements Runnable {
  }
  void copy(String name, ZipEntry en) throws IOException {
   byte[] warp=Warp;
-  BufferedOutputStream wt=Out;
   ZipOutputStream zipw=Zipout;
-  BufferedInputStream in=new BufferedInputStream(Zip.getInputStream(en));
+  InputStream in=Zip.getInputStream(en);
   try {
    zipw.putNextEntry(new ZipEntry(name));
    int l;
    while ((l = in.read(warp)) > 0)
-    wt.write(warp, 0, l);
-   wt.flush();
+    zipw.write(warp, 0, l);
    zipw.closeEntry();
   } finally {
    in.close();
@@ -558,8 +556,6 @@ public class rwmodProtect implements Runnable {
    zipout.setLevel(9);
    BufferedWriter wt=new BufferedWriter(new OutputStreamWriter(zipout));
    Ow = wt;
-   BufferedOutputStream out=new BufferedOutputStream(zipout);
-   Out = out;
    String name = null;
    try {
     Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
@@ -660,16 +656,13 @@ public class rwmodProtect implements Runnable {
      if (to != now)ui.poss(now = to);
     }
    } finally {
-    if (out != null) {
-     out.close();
-     wt.close();
-    }
+    if (wt != null)wt.close();
     zip.close();
    }
-   ui.poss(-1);
+   ui.end(null);
   } catch (InterruptedIOException e) {
   } catch (Throwable e) {
-   ui.err(e);
+   ui.end(e);
   }
  }
 }
