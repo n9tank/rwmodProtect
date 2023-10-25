@@ -16,7 +16,6 @@ public class cui implements ui {
   g = System.currentTimeMillis();
  }
  public void poss(int i) {
-  if (i >= 0) {
    PrintStream out=System.out;
    int last=len;
    while (--last >= 0) {
@@ -25,7 +24,10 @@ public class cui implements ui {
    String str=String.valueOf(i);
    len = str.length();
    out.print(str);
-  } else {
+ }
+ public void end(Throwable e) {
+ if(e!=null)e.printStackTrace();
+  else {
    PrintStream out=System.out;
    if (len > 0)out.print('\n');
    out.print(show);
@@ -33,9 +35,6 @@ public class cui implements ui {
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
   }
- }
- public void err(Throwable e) {
-  e.printStackTrace();
  }
  public static void main(String[] args) {
   long g=System.currentTimeMillis();
