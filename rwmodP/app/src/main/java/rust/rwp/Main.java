@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import rust.lib;
 import rust.rwmodProtect;
 import rust.rwp.cpstr;
@@ -67,7 +68,7 @@ public class Main extends Activity {
   bar = findViewById(R.id.lib);
   ed = findViewById(R.id.ed);
   ListView list=findViewById(R.id.list);
-  ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new ArrayList());
+  ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new LinkedList());
   list.setAdapter(ar);
   arr = ar;
   boolean def=sh.getBoolean("", false);
