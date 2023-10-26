@@ -10,7 +10,8 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:id="@+id/lib"
-		android:visibility="gone"/>
+		android:visibility="gone"
+		android:text="wait..."/>
 
 	<LinearLayout
 		android:orientation="horizontal"
