@@ -12,6 +12,8 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 
 public class lib implements Runnable {
  InputStream inp;
@@ -21,12 +23,19 @@ public class lib implements Runnable {
  HashMap iniMap;
  static HashMap libMap;
  static Future fu;
- public static void exec(File in, File ou, ui ui) {
+ lib(File ou, ui ui) {
   if (fu != null)fu.cancel(true);
-  lib lib=new lib();
+  Ou = ou;
+  Ui = ui;
+ }
+ public static void exec(InputStream in, File ou, ui ui) {
+  lib lib=new lib(ou, ui);
+  lib.inp = in;
+  fu = ui.pool.submit(lib);
+ }
+ public static void exec(File in, File ou, ui ui) {
+  lib lib=new lib(ou, ui);
   lib.In = in;
-  lib.Ou = ou;
-  lib.Ui = ui;
   fu = ui.pool.submit(lib);
  }
  loder getlod(String str) {
@@ -76,11 +85,23 @@ public class lib implements Runnable {
   iniMap = inimap;
   File ou=Ou;
   try {
-   ZipFile zip=new ZipFile(In);
+   File red;
+   InputStream in=inp;
+   if (ou != null)ou.getParentFile().mkdirs();
+   if (in != null) {
+    red = ou;
+    FileChannel ch=new FileOutputStream(ou).getChannel();
+    ou=null;
+    try {
+     ch.transferFrom(Channels.newChannel(in),0L,Long.MAX_VALUE);
+    } finally {
+     ch.close();
+    }
+   } else red = In;
+   ZipFile zip=new ZipFile(red);
    Enumeration<? extends ZipArchiveEntry> ens=zip.getEntries();
    try {
     if (ou != null) {
-     ou.getParentFile().mkdirs();
      ParallelScatterZipCreator cre=null;
      ZipArchiveOutputStream out=null;
      try {
