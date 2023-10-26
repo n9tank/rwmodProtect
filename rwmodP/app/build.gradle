@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "rust.rwp"
-        minSdkVersion 19
+        minSdkVersion 21
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 0

@@ -14,18 +14,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
@@ -40,8 +37,8 @@ public class Main extends Activity {
  Intent sw;
  String pe[];
  EditText ed;
- static uis ui;
- static ProgressBar bar;
+ static ArrayAdapter arr;
+ static TextView bar;
  public void finish() {
   moveTaskToBack(true);
  }
@@ -63,7 +60,6 @@ public class Main extends Activity {
   super.onCreate(savedInstanceState);
   carsh.log.init(this);
   carsh.log.bind();
-  uis.layout = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE));
   cpstr.manager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
   SharedPreferences sh=getSharedPreferences("", MODE_PRIVATE);
   sha = sh;
@@ -71,7 +67,9 @@ public class Main extends Activity {
   bar = findViewById(R.id.lib);
   ed = findViewById(R.id.ed);
   ListView list=findViewById(R.id.list);
-  list.setAdapter(ui = new uis());
+  ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new ArrayList());
+  list.setAdapter(ar);
+  arr = ar;
   boolean def=sh.getBoolean("", false);
   if (def) {
    CheckBox checkbox=findViewById(R.id.ch);
@@ -96,16 +94,13 @@ public class Main extends Activity {
   sw = intent.createChooser(intent, "");
  }
  public void lib() {
+  bar.setVisibility(0);
+  bar.setText("wait...");
   File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
   cui ui=new cui("lib");
-  InputStream in;
-  try {
-   if (li.exists()) {
-    in = new FileInputStream(li);
-   } else in = getResources().openRawResource(R.raw.lib);
-   lib.exec(in, ui);
-  } catch (Throwable e) {
-  }
+  if (!li.exists()) {
+   lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
+  } else lib.exec(li, null, ui);
  }
  public void init() {
   File ini=new File("sdcard/rustedWarfare/rwmod/.ini");
@@ -186,8 +181,7 @@ public class Main extends Activity {
    cui cui=new cui(path);
    cui.ui = true;
    rwmodProtect.exec(f, new File(f.getParent(), rwmodProtect.out(f)), cui);
-   uis.arr.add(cui);
-   ui.notifyDataSetChanged();
+   arr.add(cui);
   }
  }
  public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -218,9 +212,8 @@ public class Main extends Activity {
   if (s.length() != 0 && (f = new File(s)).exists()) {
    init = true;
    ed.setText("");
-   File lb=new File("sdcard/rustedWarfare/rwmod");
-   lb.mkdirs();
-   lib.exec(f, new File(lb, "lib.zip"), new cui("lib"));
+   File lb=getExternalFilesDir("lib");
+   lib.exec(f, lb, new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
  public void ch(View v) {
