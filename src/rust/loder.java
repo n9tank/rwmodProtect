@@ -2,7 +2,13 @@ package rust;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,128 +17,113 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-class loder {
+import org.apache.commons.compress.parallel.InputStreamSupplier;
+class loder implements Runnable {
+ public void run() {
+  Reader red=read;
+  if (red == null)red = new InputStreamReader(wi.get());
+  BufferedReader buff=new BufferedReader(red);
+  StringBuilder bf=new StringBuilder();
+  Throwable ex=null;
+  try {
+   try {
+    HashMap global=new HashMap();
+    String str;
+    HashMap list=null;
+    HashMap table=new LinkedHashMap();
+    table.put("", global);
+    ini = table;
+    wh:
+    while ((str = buff.readLine()) != null) {
+     str = str.trim();
+     if (str.startsWith("#"))continue;
+     String with;
+     if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
+      int len=str.length();
+      if (len <= 6)len = 3;else len -= 3;
+      while (true) {
+       if (str.startsWith(with, len))continue wh;
+       str = buff.readLine();
+       if (str == null)return;
+       str = str.trim();
+       len = str.length() - 3;
+      }
+     }
+     if (str.startsWith("[") && str.endsWith("]")) {
+      str = str.substring(1, str.length() - 1).trim();
+      if (str.contains("]"))continue;
+      if (str.startsWith("comment_")) {
+       list = null;
+      } else {
+       Object o=table.get(str);
+       if (o == null) {
+        list = new HashMap();
+        table.put(str, list);
+       } else list = (HashMap)o;
+      }
+     } else if (list != null) {
+      String value[]=str.split("[=:]", 2);
+      if (value.length > 1) {
+       String key=value[0].trim();
+       String set=value[1].trim();
+       if (key.startsWith("@global ")) {
+        if (value.equals("IGNORE"))continue;
+        global.put(key, set);
+       } else {
+        if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
+         bf.setLength(0);
+         int len=set.length();
+         int ed=len;
+         int st=3;
+         if (ed <= 6)ed = 3;else ed -= 3;
+         while (true) {
+          boolean now;
+          if (now = set.startsWith(with, ed))len = ed;
+          bf.append(set, st, len);
+          if (now)break;
+          st = 0;
+          set = buff.readLine();
+          if (set == null)return;
+          set = set.trim();
+          len = set.length();
+          ed = len - 3;
+         }
+         set = bf.toString();
+        }
+        list.put(key, set);
+       }
+      }
+     }
+    }
+    Object o=table.get("core");
+    if (o != null) {
+     HashMap map=(HashMap)o;
+     o = map.remove("dont_load");
+      if (o != null) {
+      str=(String)o;
+      if("1".equals(str) || "true".equalsIgnoreCase(str))ishide=true;
+     }
+    }
+   } finally {
+    if (red != null)buff.close();
+   }
+  } catch (InterruptedIOException e) {
+  } catch (Throwable e) {
+   ex = e;
+  }
+  TaskWait tas=task;
+  if (tas != null)task.down(ex);
+ }
  HashMap ini;
  HashMap put;
  HashMap all;
  String str;
- loder(Reader inp, StringBuilder bf) throws IOException {
-  BufferedReader buff=new BufferedReader(inp);
-  try {
-   init(buff, bf);
-  } finally {
-   buff.close();
-  }
- }
- loder(BufferedReader inp, StringBuilder bf)throws IOException {
-  init(inp, bf);
- }
- void init(BufferedReader buff, StringBuilder bf)throws IOException {
-  HashMap global=new HashMap();
-  String str;
-  HashMap list=null;
-  HashMap table=new LinkedHashMap();
-  table.put("", global);
-  ini = table;
-  wh:
-  while ((str = buff.readLine()) != null) {
-   str = str.trim();
-   if (str.startsWith("#"))continue;
-   String with;
-   if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
-    int len=str.length();
-    if (len <= 6)len = 3;else len -= 3;
-    while (true) {
-     if (str.startsWith(with, len))continue wh;
-     str = buff.readLine();
-     if (str == null)return;
-     str = str.trim();
-     len = str.length() - 3;
-    }
-   }
-   if (str.startsWith("[") && str.endsWith("]")) {
-    str = str.substring(1, str.length() - 1).trim();
-    if (str.contains("]"))continue;
-    if (str.startsWith("comment_")) {
-     list = null;
-    } else {
-     Object o=table.get(str);
-     if (o == null) {
-      list = new HashMap();
-      table.put(str, list);
-     } else list = (HashMap)o;
-    }
-   } else if (list != null) {
-    String value[]=str.split("[=:]", 2);
-    if (value.length > 1) {
-     String key=value[0].trim();
-     String set=value[1].trim();
-     if (key.startsWith("@global ")) {
-      if (value.equals("IGNORE"))continue;
-      global.put(key, set);
-     } else {
-      if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-       bf.setLength(0);
-       int len=set.length();
-       int ed=len;
-       int st=3;
-       if (ed <= 6)ed = 3;else ed -= 3;
-       while (true) {
-        boolean now;
-        if (now = set.startsWith(with, ed))len = ed;
-        bf.append(set, st, len);
-        if (now)break;
-        st = 0;
-        set = buff.readLine();
-        if (set == null)return;
-        set = set.trim();
-        len = set.length();
-        ed = len - 3;
-       }
-       set = bf.toString();
-      }
-      list.put(key, set);
-     }
-    }
-   }
-  }
- }
- static void write(loder ini, String str, ZipOutputStream zip, BufferedWriter out) throws IOException {
-  zip.putNextEntry(new ZipEntry(str));
-  HashMap map=ini.ini;
-  HashMap gloab=(HashMap)map.get("");
-  map.remove("");
-  Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-  boolean wt=false;
-  if (ite.hasNext()) {
-   Map.Entry<String,HashMap> en = ite.next();
-   map = en.getValue();
-   boolean size=map.size() > 0;
-   while (true) {
-    if (size) {
-     wt = true;
-     out.write('[');
-     out.write(en.getKey());
-     out.write("]\n");
-     loder.writeKeys(map, out);
-    }
-    if (!ite.hasNext())break;
-    en = ite.next();
-    map = en.getValue();
-    size = map.size() > 0;
-    if (size)out.write('\n');
-   }
-  }
-  if (gloab.size() > 0) {
-   if (!wt)out.write("[]");
-   out.write('\n');
-   loder.writeKeys(gloab, out);
-  }
-  out.flush();
-  zip.closeEntry();
- }
+ Reader read;
+ InputStreamSupplier wi;
+ TaskWait task;
+ boolean ishide;
+ loder(Reader inp) {read = inp;}
+ loder(InputStreamSupplier will) {wi = will;}
  static void writeKeys(HashMap map, BufferedWriter out)throws IOException {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   boolean nx=ite.hasNext();

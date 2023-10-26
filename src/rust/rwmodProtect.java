@@ -1,14 +1,10 @@
 package rust;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,23 +14,24 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Future;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-import java.io.InputStream;
+import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 public class rwmodProtect implements Runnable {
  File In;
  File Ou;
  ui Ui;
- HashMap iniMap;
  ZipFile Zip;
- int arr[];
- ZipOutputStream Zipout;
- HashMap low;
+ ZipArchiveOutputStream out;
+ ParallelScatterZipCreator cre;
+ HashMap iniMap;
  HashMap iniHide;
+ int arr[];
+ HashMap low;
  HashMap coeMap;
  HashMap Filemap;
- byte Warp[];
+ TaskWait task;
  BufferedWriter Ow;
  StringBuilder Buff;
  String musicPath;
@@ -99,7 +96,9 @@ public class rwmodProtect implements Runnable {
   return map;
  }
  public static void init(Reader io)throws IOException {
-  HashMap<String,HashMap> map= new loder(io, null).ini;
+  loder lod=new loder(io);
+  lod.run();
+  HashMap<String,HashMap> map=lod.ini;
   HashMap<String,String> set=map.get("set");
   max = Integer.valueOf(set.get("cou"));
   String file= set.get("file");
@@ -146,36 +145,21 @@ public class rwmodProtect implements Runnable {
   if (ini < 2)buff.append('/');
   return buff.toString();
  }
- void copy(String name, ZipEntry en) throws IOException {
-  byte[] warp=Warp;
-  ZipOutputStream zipw=Zipout;
-  InputStream in=Zip.getInputStream(en);
-  try {
-   zipw.putNextEntry(new ZipEntry(name));
-   int l;
-   while ((l = in.read(warp)) > 0)
-    zipw.write(warp, 0, l);
-   zipw.closeEntry();
-  } finally {
-   in.close();
-  }
- }
- loder replace(ZipEntry en, String str) throws IOException {
+ loder replace(ZipArchiveEntry en, String str) throws IOException {
   loder lod=null;
-  boolean isini=getType(str) == 3;
+  boolean isini=getType(str)>2;
   HashMap map;
-  if (isini) {
-   map = iniMap;
-  } else {
-   map = iniHide;
-  }
+  if (isini)map = iniMap;
+  else map = iniHide;
   Object o=map.get(str);
-  if (!isini && o == null) {
+  if (o == null) {
    ZipFile zip=Zip;
-   lod = new loder(new InputStreamReader(zip.getInputStream(en)), Buff);
+   lod = new loder(new InputStreamReader(zip.getInputStream(en)));
+   lod.run();
    map.put(str, lod);
   } else lod = (loder)o;
-  if (lod.str == null)write(lod, str, isini, new StringBuilder());
+  isini=isini&&!lod.ishide;
+  if (lod.str == null)write(lod, str,isini, new StringBuilder());
   return lod;
  }
  void write(loder ini, String path, boolean isini, StringBuilder buff) throws IOException {
@@ -183,8 +167,7 @@ public class rwmodProtect implements Runnable {
   ini.str = r;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
-  loder.write(ini, r, Zipout, Ow);
-  ini.ini = null;
+  cre.addArchiveEntry(lib.getArc(r),new inputsu(ini));
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
   int st=0;
@@ -261,7 +244,7 @@ public class rwmodProtect implements Runnable {
   int st=ResTry(str, isimg, buff);
   if (st >= 0) {
    if (st > 0)str = str.substring(st);
-   ZipEntry en = toPath(str);
+   ZipArchiveEntry en = toPath(str);
    if (en != null) {
     str = en.getName();
     HashMap map;
@@ -278,7 +261,7 @@ public class rwmodProtect implements Runnable {
     }
     if (post && !res.close) {
      res.close = true;
-     copy(str, en);
+     cre.addArchiveEntry(lib.getArc(str),new inputsu(Zip,en));
     }
    }
   }
@@ -302,7 +285,7 @@ public class rwmodProtect implements Runnable {
     buff.setLength(i + 1);
     buff.append("all-units.template");
     str = buff.toString();
-    ZipEntry en=toPath(str);
+    ZipArchiveEntry en=toPath(str);
     if (en != null) {
      all = (loder)iniHide.get(str = en.getName());
      if (all.str == null)write(all, str, false, new StringBuilder());
@@ -342,7 +325,7 @@ public class rwmodProtect implements Runnable {
       } else sup = file;
       str = str.replaceFirst("^/+", "");
       if (sup.length() > 0)str = sup.concat(str);
-      ZipEntry en = toPath(str);
+      ZipArchiveEntry en = toPath(str);
       str = en.getName();
       lod = replace(en, str);
       path = lod.str;
@@ -487,13 +470,13 @@ public class rwmodProtect implements Runnable {
    }
   }
  }
- ZipEntry toPath(String str) {
-  HashMap<String,ZipEntry> lowm=low;
+ ZipArchiveEntry toPath(String str) {
+  HashMap<String,ZipArchiveEntry> lowm=low;
   ZipFile zip=Zip;
-  ZipEntry en=zip.getEntry(str);
+  ZipArchiveEntry en=zip.getEntry(str);
   String lows=str.toLowerCase();
   if (en == null) {
-   ZipEntry r=lowm.get(lows);
+   ZipArchiveEntry r=lowm.get(lows);
    if (r != null)return r;
   } else return en;
   if (!str.endsWith("/")) {
@@ -509,9 +492,7 @@ public class rwmodProtect implements Runnable {
   int ed=i;
   if (file.endsWith("/"))--ed;
   if (file.regionMatches(true, ed, ".ini", 0, 4)) {
-   if (!iniHide.containsKey(file)) {
-    return 3;
-   } else return 0;
+   return 3;
   } else if (file.regionMatches(true, ed, ".tmx", 0, 4)) {
    return 1;
   } else {
@@ -543,24 +524,20 @@ public class rwmodProtect implements Runnable {
   HashMap lows= new HashMap();
   coeMap = new HashMap();
   low = lows;
-  Warp = new byte[8192];
   StringBuilder mbuff = new StringBuilder();
   Buff = mbuff;
   StringBuilder buff=new StringBuilder();
   ui ui=Ui;
+  ZipArchiveOutputStream zipout=null;
+  ParallelScatterZipCreator cr=null;
   try {
-   ZipFile zip = new ZipFile(In);
-   Zip = zip;
-   ZipOutputStream zipout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(Ou)));
-   Zipout = zipout;
-   zipout.setLevel(9);
-   BufferedWriter wt=new BufferedWriter(new OutputStreamWriter(zipout));
-   Ow = wt;
+   ZipFile zip=new ZipFile(In);
+   Zip=zip;
    String name = null;
    try {
-    Enumeration<? extends ZipEntry> zipEntrys=zip.entries();
+    Enumeration<? extends ZipArchiveEntry> zipEntrys=zip.getEntries();
     do{
-     ZipEntry zipEntry=zipEntrys.nextElement();
+     ZipArchiveEntry zipEntry=zipEntrys.nextElement();
      String fileName=zipEntry.getName();
      String root;
      int i=fileName.indexOf("/");
@@ -577,13 +554,15 @@ public class rwmodProtect implements Runnable {
       name = "";
      }
     }while(zipEntrys.hasMoreElements());
-    int size=zip.size();
-    int index=0;
     rootPath = name;
-    int now=0;
-    ZipEntry inf=toPath(name.concat("mod-info.txt"));
+    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
+    zipout=new ZipArchiveOutputStream(Ou);
+    out = zipout;
+    cr=new ParallelScatterZipCreator();
+    cre = cr;
     if (inf != null) {
-     loder ini=new loder(new InputStreamReader(zip.getInputStream(inf)), mbuff);
+     loder ini=new loder(new InputStreamReader(zip.getInputStream(inf)));
+     ini.run();
      HashMap info=ini.ini;
      ini.str = "mod-info.txt/";
      Object o=info.get("music");
@@ -598,65 +577,54 @@ public class rwmodProtect implements Runnable {
        map.put("sourceFolder", "￸");
       }
      }
-     loder.write(ini, ini.str, zipout, wt);
     }
-    zipEntrys = zip.entries();
+    zipEntrys = zip.getEntries();
+    TaskWait tas= new TaskWait();
+    task = tas;
     do{
-     ZipEntry zipEntry=zipEntrys.nextElement();
+     ZipArchiveEntry zipEntry=zipEntrys.nextElement();
      if (zipEntry.getSize() != 0l) { 
       name = zipEntry.getName();
       int type=getType(name);
       boolean istm=type == 2;
       if (istm || type == 3) {
-       loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)), mbuff);
-       Object o=lod.ini.get("core");
-       if (o != null) {
-        HashMap map=(HashMap)o;
-        o = map.remove("dont_load");
-        if (o != null) {
-         String str=(String)o;
-         if ("1".equals(str) || "true".equalsIgnoreCase(str))istm = true;
-        }
-       }
-       HashMap put;
-       if (istm)put = inihide;
-       else {
-        put = iniMap;
-        ++size;
-       }
-       put.put(name, lod);
+       loder lod=new loder(new InputStreamReader(zip.getInputStream(zipEntry)));
+       tas.add(lod);
+       if (istm)inihide.put(name, lod);
+       else inimap.put(name, lod);
       } else if (type == 1) {
        String loc = loder.getName(name);
        int i=name.length();
        if (name.endsWith("/"))--i;
        i -= 4;
-       copy(loc.concat("/"), zipEntry);
+       cr.addArchiveEntry(lib.getArc(loc.concat("/")), new inputsu(zip, zipEntry));
        buff.setLength(0);
        buff.append(name, 0, i);
        buff.append("_map.png");
        zipEntry = toPath(buff.toString());
        if (zipEntry != null) {
         name = loder.getName(zipEntry.getName());
-        copy(name.concat("/"), zipEntry);
+        cr.addArchiveEntry(lib.getArc(name.concat("/")), new inputsu(zip, zipEntry));
        }
       } else if (type == 6) {
-       copy(FileName(type), zipEntry);
+       cr.addArchiveEntry(lib.getArc(FileName(type)), new inputsu(zip, zipEntry));
       }
      }
-     int to=(index += 100) / size;
-     if (to != now)ui.poss(now = to);
     }while(zipEntrys.hasMoreElements());
+    tas.lock();
     Iterator<Map.Entry> ite=inimap.entrySet().iterator();
     while (ite.hasNext()) {
      Map.Entry<String,loder> ini=ite.next();
-     String filename=ini.getKey();
      loder loder=ini.getValue();
+     if(loder.ishide)continue;
+     String filename=ini.getKey();
      if (loder.str == null)write(loder, filename, true, buff);
-     int to=(index += 100) / size;
-     if (to != now)ui.poss(now = to);
     }
    } finally {
-    if (wt != null)wt.close();
+    if(out!=null){
+    cr.writeTo(out);
+    out.close();
+    }
     zip.close();
    }
    ui.end(null);

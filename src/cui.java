@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -15,18 +14,19 @@ public class cui implements ui {
   show = s;
   g = System.currentTimeMillis();
  }
- public void poss(int i) {
-   PrintStream out=System.out;
-   int last=len;
-   while (--last >= 0) {
-    out.print('\b');
-   }
-   String str=String.valueOf(i);
-   len = str.length();
-   out.print(str);
- }
+ /*
+  public void poss(int i) {
+  PrintStream out=System.out;
+  int last=len;
+  while (--last >= 0) {
+  out.print('\b');
+  }
+  String str=String.valueOf(i);
+  len = str.length();
+  out.print(str);
+  }*/
  public void end(Throwable e) {
- if(e!=null)e.printStackTrace();
+  if (e != null)e.printStackTrace();
   else {
    PrintStream out=System.out;
    if (len > 0)out.print('\n');
@@ -36,7 +36,7 @@ public class cui implements ui {
    out.println("ms");
   }
  }
- public static void main(String[] args) {
+ public static void main(String[] args) throws Exception {
   long g=System.currentTimeMillis();
   String dir=System.getProperty("user.dir");
   if (dir.length() == 1) {
@@ -45,7 +45,7 @@ public class cui implements ui {
   try {
    rwmodProtect.init(new FileReader(new File(dir, ".ini")));
    File in=new File(dir, "lib.zip");
-   if (in.length() > 0)lib.exec(new FileInputStream(in), new cui("lib"));
+   if (in.length() > 0)lib.exec(in, null, new cui("lib"));
    PrintStream out=System.out;
    out.print(System.currentTimeMillis() - g);
    out.println("ms");
