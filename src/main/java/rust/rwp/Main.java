@@ -95,7 +95,6 @@ public class Main extends Activity {
  }
  public void lib() {
   bar.setVisibility(0);
-  bar.setText("wait...");
   File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
   cui ui=new cui("lib");
   if (!li.exists()) {
@@ -212,7 +211,8 @@ public class Main extends Activity {
   if (s.length() != 0 && (f = new File(s)).exists()) {
    init = true;
    ed.setText("");
-   File lb=getExternalFilesDir("lib");
+   bar.setVisibility(0);
+   File lb=new File("sdcard/rustedWarfare/rwmod/lib.zip");
    lib.exec(f, lb, new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
