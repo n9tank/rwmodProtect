@@ -43,7 +43,7 @@ public class rwmodProtect implements Runnable,ui {
   rw.In = in;
   rw.Ou = ou;
   rw.Ui = ui;
-  return rw.wait=new TaskWait(rw);
+  return rw.wait = new TaskWait(rw);
  }
  public static String out(File path) {
   String name=path.getName();
@@ -156,14 +156,14 @@ public class rwmodProtect implements Runnable,ui {
    lod.call();
    map.put(str, lod);
   } else lod = (loder)o;
-  isini = isini && !lod.isini;
+  isini = isini && lod.isini;
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
  void write(loder ini, String path, boolean isini, StringBuilder buff) throws Exception {
   String r=FileName(isini ?3: 0);
   ini.str = r;
-  ini.isini=false;
+  ini.isini = false;
   path = loder.getSuperPath(path);
   replaceAll(ini, path, isini, buff);
   cre.addArchiveEntry(lib.getArc(r), new inputsu(ini));
@@ -541,7 +541,7 @@ public class rwmodProtect implements Runnable,ui {
   Throwable err=null;
   ZipArchiveOutputStream zipout=out;
   try {
-   cre.writeTo(v?null:zipout);
+   cre.writeTo(v ?null: zipout);
   } catch (Throwable e) {
    err = e;
   }
