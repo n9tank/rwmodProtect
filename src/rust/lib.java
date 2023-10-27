@@ -46,8 +46,8 @@ public class lib implements Runnable,ui {
   str = str.toLowerCase();
   Object o=iniMap.get(str);
   loder lod=(loder)o;
-  if (lod.str==null) {
-   lod.str="";
+  if (lod.str == null) {
+   lod.str = "";
    lodAllCopy(lod, str);
   }
   return lod;
@@ -84,7 +84,6 @@ public class lib implements Runnable,ui {
   return en;
  }
  public void end(Throwable e) {
-  close.back = null;
   ZipFile zip=Zip;
   if (zip != null) {
    try {
@@ -100,8 +99,8 @@ public class lib implements Runnable,ui {
     Map.Entry en=(Map.Entry)ite.next();
     String key=(String)en.getKey();
     loder lod=(loder)en.getValue();
-    if (lod.str==null) {
-     lod.str="";
+    if (lod.str == null) {
+     lod.str = "";
      lodAllCopy(lod, key);
     }
    }
@@ -114,6 +113,7 @@ public class lib implements Runnable,ui {
   iniMap = inimap;
   File ou=Ou;
   ZipFile zip=null;
+  TaskWait task=close;
   try {
    File red;
    InputStream in=inp;
@@ -156,24 +156,19 @@ public class lib implements Runnable,ui {
     }
     end(null);
    } else {
-    TaskWait task=close;
-    try {
-     while (ens.hasMoreElements()) {
-      ZipArchiveEntry zipe= ens.nextElement();
-      String name=zipe.getName();
-      loder loder=new loder(new inputsu(zip, zipe));
-      loder.task = task;
-      name = name.substring(13).toLowerCase();
-      inimap.put(name, loder);
-      task.add(loder);
-     }
-     task.end();
-    } catch (Throwable e) {
-     task.down(e);
+    while (ens.hasMoreElements()) {
+     ZipArchiveEntry zipe= ens.nextElement();
+     String name=zipe.getName();
+     loder loder=new loder(new inputsu(zip, zipe));
+     loder.task = task;
+     name = name.substring(13).toLowerCase();
+     inimap.put(name, loder);
+     task.add(loder);
     }
+    task.end();
    }
   } catch (Throwable e) {
-   end(e);
+   task.down(e);
   }
  }
 }

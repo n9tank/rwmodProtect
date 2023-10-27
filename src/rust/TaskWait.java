@@ -1,24 +1,24 @@
 package rust;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.ExecutorService;
 
 public class TaskWait {
  AtomicInteger ato;
  volatile Throwable err;
- Vector<Future> ar;
+ ArrayList<Future> ar;
  volatile boolean end;
  ui back;
  public static final InterruptedException cancel=new InterruptedException();
  TaskWait(ui ui) {
   ato = new AtomicInteger();
-  ar = new Vector();
+  ar = new ArrayList();
   back = ui;
-  if(ui!=null)addN(ui);
+  if (ui != null)addN(ui);
  }
- void addN(Object o){
+ void addN(Object o) {
   Future fu;
   ExecutorService pool=ui.pool;
   if (o instanceof Runnable) {
@@ -34,17 +34,13 @@ public class TaskWait {
    if (er != null)throw er;
   }
   ato.incrementAndGet();
-  if(o!=null)addN(o);
+  if (o != null)addN(o);
  }
  public void down(Throwable e) {
+  if (err == null)err = e;
+  else return;
   if (e != null) {
-   Throwable e2;
-   synchronized (this) {
-    e2 = err;
-    if (e2 == null)err = e;
-    else return;
-   }
-   Vector<Future> arr=ar;
+   ArrayList<Future> arr=ar;
    int s=arr.size();
    while (--s >= 0)arr.get(s).cancel(true);
    arr.clear();
@@ -59,13 +55,14 @@ public class TaskWait {
   } else {
    end = false;
    at.set(0);
-   if (e instanceof InterruptedException)ui = null;
   }
   if (ui != null) {
    ui.end(e);
   }
  }
- void end() {
+ void end() throws Throwable {
+  Throwable e=err;
+  if (e != null)throw e;
   AtomicInteger at=ato;
   if (at.get() <= 0) {
    back.end(null);

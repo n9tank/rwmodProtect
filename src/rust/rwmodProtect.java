@@ -509,7 +509,7 @@ public class rwmodProtect implements Runnable,ui {
   return 0;
  }
  public void end(Throwable e) {
-  TaskWait task=wait;
+  Throwable add;
   if (e == null) {
    Iterator<Map.Entry> ite=iniMap.entrySet().iterator();
    try {
@@ -522,16 +522,16 @@ public class rwmodProtect implements Runnable,ui {
      write(lod, key, true, buff);
     }
    } catch (Throwable e2) {
-    task.down(e2);
-    return;
+    e = e2;
    }
-   e = close(false);
-   Ui.end(e);
+   add = close(e == null);
   } else {
-   Throwable add=close(true);
-   if (add != null)e.addSuppressed(add);
-   Ui.end(e);
+   add = close(true);
   }
+  if (e != null) {
+   if (add != null)e.addSuppressed(add);
+  } else e = add;
+  Ui.end(e);
  }
  Throwable close(boolean v) {
   wait.back = null;
