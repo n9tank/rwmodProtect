@@ -160,113 +160,11 @@ public class rwmodProtect implements Runnable,ui {
   if (lod.str == null)write(lod, str, isini, new StringBuilder());
   return lod;
  }
- void write(loder ini, String path, boolean isini, StringBuilder buff) throws Exception {
+ void write(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
   String r=FileName(isini ?3: 0);
   ini.str = r;
   ini.isini = false;
-  path = loder.getSuperPath(path);
-  replaceAll(ini, path, isini, buff);
-  cre.addArchiveEntry(lib.getArc(r), new inputsu(ini));
- }
- static int ResTry(String file, boolean isimg, StringBuilder buff) {
-  int st=0;
-  if (isimg) {
-   if (file.startsWith("SHADOW:")) {
-    st = 7;
-   }
-   if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
-    st = -1;
-  } else if (!loder.ismusic(file))st = -1;
-  if (st > 0) {
-   buff.append("SHADOW:");
-  }
-  return st;
- }
- boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
-  int st=ResTry(str, isimg, buff);
-  if (st >= 0) {
-   if (str.startsWith("ROOT:", st)) {
-    st += 5;
-    path = rootPath;
-   }
-   if (isimg) {
-    boolean shaow=st > 0;
-    if (str.startsWith("SHADOW:", st)) {
-     st += 7;
-     if (!shaow)buff.append("SHADOW:");
-    }
-   }
-   if (st != 0)str = str.substring(st);
-   str = str.replaceFirst("^/+", "");
-   buff.append(path);
-  }
-  buff.append(str);
-  return st >= 0;
- }
- String[] AllPath(String str, String s, String path, int type) {
-  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
-   return null;
-  str = str.replace('\\', '/');
-  StringBuilder buff=Buff;
-  String list[];
-  buff.setLength(0);
-  boolean ru=false;
-  if (type >= 0) {
-   list = str.split(",");
-   int l=list.length,m=0;
-   char to;
-   boolean isimg;
-   if (isimg = type == 0) to = '*';
-   else  to = ':';
-   do {
-    str = list[m].trim();
-    int st;
-    if (str.startsWith("ROOT:"))st = 5;
-    else st = 0;
-    st = str.indexOf(to, st);
-    String add;
-    if (st >= 0)add = str.substring(0, st);
-    else add = str;
-    ru = ru || addResPath(add, path, isimg, buff);
-    if (st >= 0)buff.append(str, st, str.length());
-    list[m] = buff.toString();
-   }while(++m < l);
-  } else {
-   if (ru = addResPath(str, path, true, buff))
-    list = new String[]{buff.toString()};
-   else list = null;
-  }
-  if (!ru)list = null;
-  return list;
- }
- void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
-  int st=ResTry(str, isimg, buff);
-  if (st >= 0) {
-   if (st > 0)str = str.substring(st);
-   ZipArchiveEntry en = toPath(str);
-   if (en != null) {
-    str = en.getName();
-    HashMap map;
-    map = Filemap;
-    Object o=map.get(str);
-    res res;
-    if (o == null) {
-     res = new res();
-     map.put(str, res);
-     res.str = str = FileName(getType(str));
-    } else {
-     res = (res)o;
-     str = res.str;
-    }
-    if (post && !res.close) {
-     res.close = true;
-     cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, en));
-    }
-   }
-  }
-  buff.append(str);
- }
- void replaceAll(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
+  file = loder.getSuperPath(file);
   int st=0;
   HashMap put=new HashMap();
   HashMap cou=new HashMap();
@@ -468,6 +366,105 @@ public class rwmodProtect implements Runnable,ui {
     }
    }
   }
+  cre.addArchiveEntry(lib.getArc(r), new inputsu(ini));
+ }
+ static int ResTry(String file, boolean isimg, StringBuilder buff) {
+  int st=0;
+  if (isimg) {
+   if (file.startsWith("SHADOW:")) {
+    st = 7;
+   }
+   if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
+    st = -1;
+  } else if (!loder.ismusic(file))st = -1;
+  if (st > 0) {
+   buff.append("SHADOW:");
+  }
+  return st;
+ }
+ boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
+  int st=ResTry(str, isimg, buff);
+  if (st >= 0) {
+   if (str.startsWith("ROOT:", st)) {
+    st += 5;
+    path = rootPath;
+   }
+   if (isimg) {
+    boolean shaow=st > 0;
+    if (str.startsWith("SHADOW:", st)) {
+     st += 7;
+     if (!shaow)buff.append("SHADOW:");
+    }
+   }
+   if (st != 0)str = str.substring(st);
+   str = str.replaceFirst("^/+", "");
+   buff.append(path);
+  }
+  buff.append(str);
+  return st >= 0;
+ }
+ String[] AllPath(String str, String s, String path, int type) {
+  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
+   return null;
+  str = str.replace('\\', '/');
+  StringBuilder buff=Buff;
+  String list[];
+  buff.setLength(0);
+  boolean ru=false;
+  if (type >= 0) {
+   list = str.split(",");
+   int l=list.length,m=0;
+   char to;
+   boolean isimg;
+   if (isimg = type == 0) to = '*';
+   else  to = ':';
+   do {
+    str = list[m].trim();
+    int st;
+    if (str.startsWith("ROOT:"))st = 5;
+    else st = 0;
+    st = str.indexOf(to, st);
+    String add;
+    if (st >= 0)add = str.substring(0, st);
+    else add = str;
+    ru = ru || addResPath(add, path, isimg, buff);
+    if (st >= 0)buff.append(str, st, str.length());
+    list[m] = buff.toString();
+   }while(++m < l);
+  } else {
+   if (ru = addResPath(str, path, true, buff))
+    list = new String[]{buff.toString()};
+   else list = null;
+  }
+  if (!ru)list = null;
+  return list;
+ }
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
+  int st=ResTry(str, isimg, buff);
+  if (st >= 0) {
+   if (st > 0)str = str.substring(st);
+   ZipArchiveEntry en = toPath(str);
+   if (en != null) {
+    str = en.getName();
+    HashMap map;
+    map = Filemap;
+    Object o=map.get(str);
+    res res;
+    if (o == null) {
+     res = new res();
+     map.put(str, res);
+     res.str = str = FileName(getType(str));
+    } else {
+     res = (res)o;
+     str = res.str;
+    }
+    if (post && !res.close) {
+     res.close = true;
+     cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, en));
+    }
+   }
+  }
+  buff.append(str);
  }
  ZipArchiveEntry toPath(String str) {
   HashMap<String,ZipArchiveEntry> lowm=low;
