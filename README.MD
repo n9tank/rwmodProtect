@@ -21,6 +21,8 @@ a/b.ini a/all-units.template
 tmx的名称不能相同，这将抛错。
 ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg。
 
+不要使用${core.dont_load}
+
 已添加多线程支持，不过对于非注册的加载对象依旧是单线程的，如果想要保证性能，ini复制对象后缀为ini很有必要。
 
 文件：user.dir/
