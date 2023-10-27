@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Future;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -47,8 +46,8 @@ public class lib implements Runnable,ui {
   str = str.toLowerCase();
   Object o=iniMap.get(str);
   loder lod=(loder)o;
-  if (!lod.ishide) {
-   lod.ishide = true;
+  if (lod.str==null) {
+   lod.str="";
    lodAllCopy(lod, str);
   }
   return lod;
@@ -101,8 +100,8 @@ public class lib implements Runnable,ui {
     Map.Entry en=(Map.Entry)ite.next();
     String key=(String)en.getKey();
     loder lod=(loder)en.getValue();
-    if (lod.ishide) {
-     lod.ishide = false;
+    if (lod.str==null) {
+     lod.str="";
      lodAllCopy(lod, key);
     }
    }

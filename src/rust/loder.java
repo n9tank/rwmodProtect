@@ -92,15 +92,17 @@ class loder implements Callable {
       }
      }
     }
+    boolean istm=isini;
     Object o=table.get("core");
     if (o != null) {
      HashMap map=(HashMap)o;
      o = map.remove("dont_load");
      if (o != null) {
       str = (String)o;
-      if ("1".equals(str) || "true".equalsIgnoreCase(str))ishide = true;
+      istm &= !("1".equals(str) || "true".equalsIgnoreCase(str));
      }
     }
+    isini =istm;
    } finally {
     if (red != null)buff.close();
    }
@@ -115,12 +117,12 @@ class loder implements Callable {
  }
  HashMap ini;
  HashMap put;
- loder all;
+ HashMap all;
  String str;
  Reader read;
  InputStreamSupplier wi;
  TaskWait task;
- boolean ishide;
+ boolean isini;
  loder(Reader inp) {read = inp;}
  loder(InputStreamSupplier will) {wi = will;}
  static void writeKeys(HashMap map, BufferedWriter out)throws IOException {
