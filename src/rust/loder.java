@@ -2,29 +2,26 @@ package rust;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
-class loder implements Runnable {
- public void run() {
+class loder implements Callable {
+ public Object call() throws Exception {
   Reader red=read;
   if (red == null)red = new InputStreamReader(wi.get());
   BufferedReader buff=new BufferedReader(red);
   StringBuilder bf=new StringBuilder();
-  Throwable ex=null;
+  Exception ex=null;
   try {
    try {
     HashMap global=new HashMap();
@@ -44,7 +41,7 @@ class loder implements Runnable {
       while (true) {
        if (str.startsWith(with, len))continue wh;
        str = buff.readLine();
-       if (str == null)return;
+       if (str == null)return null;
        str = str.trim();
        len = str.length() - 3;
       }
@@ -83,7 +80,7 @@ class loder implements Runnable {
           if (now)break;
           st = 0;
           set = buff.readLine();
-          if (set == null)return;
+          if (set == null)return null;
           set = set.trim();
           len = set.length();
           ed = len - 3;
@@ -99,24 +96,26 @@ class loder implements Runnable {
     if (o != null) {
      HashMap map=(HashMap)o;
      o = map.remove("dont_load");
-      if (o != null) {
-      str=(String)o;
-      if("1".equals(str) || "true".equalsIgnoreCase(str))ishide=true;
+     if (o != null) {
+      str = (String)o;
+      if ("1".equals(str) || "true".equalsIgnoreCase(str))ishide = true;
      }
     }
    } finally {
     if (red != null)buff.close();
    }
   } catch (InterruptedIOException e) {
-  } catch (Throwable e) {
+  } catch (Exception e) {
    ex = e;
   }
   TaskWait tas=task;
   if (tas != null)task.down(ex);
+  if (ex != null)throw ex;
+  return null;
  }
  HashMap ini;
  HashMap put;
- HashMap all;
+ loder all;
  String str;
  Reader read;
  InputStreamSupplier wi;
@@ -170,7 +169,7 @@ class loder implements Runnable {
    }
   }
  }
- static void putAnd(HashMap map, HashMap map2, HashMap cou, String path) {
+ static void putAnd(HashMap map, HashMap map2, HashMap cou, Object path) {
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
   while (ite.hasNext()) {

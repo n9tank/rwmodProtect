@@ -2,7 +2,6 @@ package rust;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ class inputsu implements InputStreamSupplier {
  ZipFile zip;
  ZipArchiveEntry en;
  inputsu(loder lod) {
-  ini=lod;
+  ini = lod;
  }
  inputsu(ZipFile in, ZipArchiveEntry e) {
   zip = in;
@@ -31,11 +30,10 @@ class inputsu implements InputStreamSupplier {
     ByteArrayOutputStream rus = new ByteArrayOutputStream();
     BufferedWriter out=new BufferedWriter(new OutputStreamWriter(rus));
     loder lod=ini;
-    if(lod.ini==null)lod.run();
+    if (lod.ini == null)lod.call();
     try {
      HashMap map=lod.ini;
-     HashMap gloab=(HashMap)map.get("");
-     map.remove("");
+     HashMap gloab=(HashMap)map.remove("");
      Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
      boolean wt=false;
      if (ite.hasNext()) {
@@ -44,9 +42,10 @@ class inputsu implements InputStreamSupplier {
       boolean size=map.size() > 0;
       while (true) {
        if (size) {
+        String key=en.getKey();
         wt = true;
         out.write('[');
-        out.write(en.getKey());
+        out.write(key);
         out.write("]\n");
         loder.writeKeys(map, out);
        }
@@ -67,7 +66,7 @@ class inputsu implements InputStreamSupplier {
     } finally {
      out.close();
     }
-   } catch (IOException e) {
+   } catch (Throwable e) {
    }
   } else {
    try {
