@@ -39,9 +39,9 @@ public class TaskWait {
   }
  }
  public void down(Throwable e) {
-  if (err == null)err = e;
-  else return;
+  if (err != null)return;
   if (e != null) {
+   err=e;
    synchronized (this) {
     ArrayList<Future> arr=ar;
     int s=arr.size();
@@ -61,8 +61,7 @@ public class TaskWait {
   }
  }
  void end() {
-  AtomicInteger at=ato;
-  if (at.get() <= 0) {
+  if (ato.get() <= 0) {
    back.end(null);
   } else end = true;
  }
