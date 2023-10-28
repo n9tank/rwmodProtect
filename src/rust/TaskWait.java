@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TaskWait {
  AtomicInteger ato;
@@ -29,10 +30,8 @@ public class TaskWait {
   ar.add(fu);
  }
  void add(Object o) throws Throwable {
-  synchronized (this) {
-   Throwable er=err;
-   if (er != null)throw er;
-  }
+  Throwable er=err;
+  if (er != null)throw er;
   ato.incrementAndGet();
   if (o != null)addN(o);
  }
@@ -50,23 +49,17 @@ public class TaskWait {
   if (e == null) {
    int i=at.decrementAndGet();
    if (i <= 0 && end) {
-    end = false;
    } else ui = null;
-  } else {
-   end = false;
-   at.set(0);
   }
   if (ui != null) {
+   end = false;
    ui.end(e);
   }
  }
  void end() {
-  Throwable e=err;
-  if (e == null) {
-   AtomicInteger at=ato;
-   if (at.get() <= 0) {
-    back.end(null);
-   } else end = true;
-  }
+  AtomicInteger at=ato;
+  if (at.get() <= 0) {
+   back.end(null);
+  } else end = true;
  }
 }
