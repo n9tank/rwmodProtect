@@ -62,8 +62,7 @@ public class TaskWait {
  }
  void end() {
   Throwable e=err;
-  if (e != null)down(e);
-  else {
+  if (e == null) {
    AtomicInteger at=ato;
    if (at.get() <= 0) {
     back.end(null);

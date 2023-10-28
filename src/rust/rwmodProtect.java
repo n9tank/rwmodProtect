@@ -525,25 +525,26 @@ public class rwmodProtect implements Runnable,ui {
     e = e2;
    }
   }
-   add = close(e);
+  add = close(e);
   if (e != null) {
    if (add != null)e.addSuppressed(add);
   } else e = add;
   Ui.end(e);
  }
  Throwable close(Throwable v) {
-  wait.back = null;
   Throwable err=null;
   ZipArchiveOutputStream zipout=out;
-  if(v!=null)Ou.delete();
-  try {
-   cre.writeTo(v!=null ?null: zipout);
-  } catch (Throwable e) {
-   err = e;
-  }
-  try {
-   zipout.close();
-  } catch (Throwable e) {
+  if (zipout != null) {
+   if (v != null)Ou.delete();
+   try {
+    cre.writeTo(v != null ?null: zipout);
+   } catch (Throwable e) {
+    err = e;
+   }
+   try {
+    zipout.close();
+   } catch (Throwable e) {
+   }
   }
   ZipFile zip=Zip;
   if (zip != null) {
