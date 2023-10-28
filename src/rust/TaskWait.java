@@ -29,11 +29,11 @@ public class TaskWait {
   ar.add(fu);
  }
  void add(Object o) throws Throwable {
-  Throwable er=err;
-  if (er != null)throw er;
-  ato.incrementAndGet();
-  if (o != null) {
-   synchronized (this) {
+  synchronized (this) {
+   Throwable er=err;
+   if (er != null)throw er;
+   ato.incrementAndGet();
+   if (o != null) {
     addN(o);
    }
   }
@@ -53,8 +53,7 @@ public class TaskWait {
   AtomicInteger at=ato;
   if (e == null) {
    int i=at.decrementAndGet();
-   if (i <= 0 && end) {
-   } else ui = null;
+   if (i > 0 || !end)ui = null;
   }
   if (ui != null) {
    end = false;
