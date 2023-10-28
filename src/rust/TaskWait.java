@@ -1,24 +1,24 @@
 package rust;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 public class TaskWait {
- AtomicInteger ato;
+ LongAdder ato;
  volatile Throwable err;
- Vector<Future> ar;
+ ArrayList<Future> ar;
  volatile boolean end;
  ui back;
  public static final InterruptedException cancel=new InterruptedException();
  TaskWait(ui ui) {
-  ato = new AtomicInteger();
-  ar = new Vector();
+  ato = new LongAdder();
+  ar = new ArrayList();
   back = ui;
   if (ui != null)addN(ui);
  }
- void addN(Object o) {
+ Future addN(Object o) {
   Future fu;
   ExecutorService pool=ui.pool;
   if (o instanceof Runnable) {
@@ -27,31 +27,33 @@ public class TaskWait {
    fu = pool.submit((Callable)o);
   }
   ar.add(fu);
+  return fu;
  }
  void add(Object o) throws Throwable {
   Throwable er=err;
   if (er != null)throw er;
-  ato.incrementAndGet();
-  addN(o);
+  ato.increment();
+  Future fu=addN(o);
   er=err;
-  if(er!=null)down(er);
+  if (er != null){
+   fu.cancel(true);
+   throw er;
+  }
  }
  public void down(Throwable e) {
-  Throwable e2=err;
+  if (err != null)return;
   if (e != null) {
-   err=e;
-   Vector<Future> arr=ar;
-   do{
-   for (Future fu:arr)fu.cancel(true);
+   err = e;
+   ArrayList<Future> arr=ar;
+   int s=arr.size();
+   while(--s>=0)arr.get(s).cancel(true);
    arr.clear();
-   }while(arr.size()>0);
   }
-  if (e2 != null)return;
   ui ui=back;
-  AtomicInteger at=ato;
   if (e == null) {
-   int i=at.decrementAndGet();
-   if (i > 0 || !end)ui = null;
+   LongAdder at=ato;
+   at.decrement();
+   if (at.sum() > 0l || !end)ui = null;
   }
   if (ui != null) {
    end = false;
@@ -59,8 +61,7 @@ public class TaskWait {
   }
  }
  void end() {
-  AtomicInteger at=ato;
-  if (at.get() <= 0) {
+  if (ato.sum() <= 0l) {
    back.end(null);
   } else end = true;
  }
