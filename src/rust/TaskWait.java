@@ -53,7 +53,7 @@ public class TaskWait {
   if (e == null) {
    LongAdder at=ato;
    at.decrement();
-   if (at.sum() > 0l || !end)ui = null;
+   if (!end||at.sum() > 0l)ui = null;
   }
   if (ui != null) {
    end = false;
