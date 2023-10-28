@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TaskWait {
  AtomicInteger ato;
- Throwable err;
+ volatile Throwable err;
  ArrayList<Future> ar;
  volatile boolean end;
  ui back;
@@ -29,11 +29,11 @@ public class TaskWait {
   ar.add(fu);
  }
  void add(Object o) throws Throwable {
-  synchronized (this) {
-   Throwable er=err;
-   if (er != null)throw er;
-   ato.incrementAndGet();
-   if (o != null) {
+  Throwable er=err;
+  if (er != null)throw er;
+  ato.incrementAndGet();
+  if (o != null) {
+   synchronized (this) {
     addN(o);
    }
   }

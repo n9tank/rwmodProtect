@@ -28,8 +28,8 @@ class loder implements Callable {
     String str;
     HashMap list=null;
     HashMap table=new LinkedHashMap();
-    table.put("", global);
     ini = table;
+    table.put("", global);
     wh:
     while ((str = buff.readLine()) != null) {
      str = str.trim();
@@ -102,7 +102,7 @@ class loder implements Callable {
       istm &= !("1".equals(str) || "true".equalsIgnoreCase(str));
      }
     }
-    isini =istm;
+    isini = istm;
    } finally {
     if (red != null)buff.close();
    }
@@ -123,8 +123,12 @@ class loder implements Callable {
  InputStreamSupplier wi;
  TaskWait task;
  boolean isini;
- loder(Reader inp) {read = inp;}
- loder(InputStreamSupplier will) {wi = will;}
+ loder(Reader inp) {
+  read = inp;
+ }
+ loder(InputStreamSupplier will) {
+  wi = will;
+ }
  static void writeKeys(HashMap map, BufferedWriter out)throws IOException {
   Iterator<Map.Entry> ite=map.entrySet().iterator();
   boolean nx=ite.hasNext();
