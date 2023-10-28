@@ -60,12 +60,14 @@ public class TaskWait {
    ui.end(e);
   }
  }
- void end() throws Throwable {
+ void end() {
   Throwable e=err;
-  if (e != null)throw e;
-  AtomicInteger at=ato;
-  if (at.get() <= 0) {
-   back.end(null);
-  } else end = true;
+  if (e != null)down(e);
+  else {
+   AtomicInteger at=ato;
+   if (at.get() <= 0) {
+    back.end(null);
+   } else end = true;
+  }
  }
 }
