@@ -529,7 +529,7 @@ public class rwmodProtect implements Runnable,ui {
   if (e != null) {
    if (add != null)e.addSuppressed(add);
   } else e = add;
-  Ui.end(e);
+  if(!(e instanceof InterruptedException))Ui.end(e);
  }
  Throwable close(Throwable v) {
   Throwable err=null;

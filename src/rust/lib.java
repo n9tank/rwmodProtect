@@ -106,7 +106,9 @@ public class lib implements Runnable,ui {
    }
    libMap = inimap;
   }
-  Ui.end(e);
+  if (!(e instanceof InterruptedException)) {
+   Ui.end(e);
+  }
  }
  public void run() {
   HashMap inimap=new HashMap();
