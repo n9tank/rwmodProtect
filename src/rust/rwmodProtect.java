@@ -255,7 +255,7 @@ public class rwmodProtect implements Runnable,ui {
       lod = (loder)libs.get(str);
      }
      if (lod != null) {
-      ini.putAnd(put, lod.put, cou, !s ?null: loder.getSuperPath(str));
+      ini.putAnd(put, lod.put, cou, !s ?null: str);
       loder tk=lod.all;
       if (tk != null) {
        if (alls != tk) {
@@ -293,9 +293,10 @@ public class rwmodProtect implements Runnable,ui {
   String cput=null;
   buff.setLength(0);
   HashMap core=(HashMap)map.get("core");
+  int index=ini.allindex;
+  boolean ws=index == -2 || index > 0;
   if (core != null) {
    Object[] orr=ini.copy;
-   int index=ini.allindex;
    int st=0;
    if (all != null) {
     if (index >= 0) {
@@ -305,7 +306,6 @@ public class rwmodProtect implements Runnable,ui {
      buff.append(',');
     }
    }
-   boolean ws=index == -2 || index > 0;
    add(orr, ws, buff);
    if (buff.length() > 0)core.put("copyFrom", cput = buff.toString());
    if (index == -2)buff.insert(0, all.str.concat(","));
@@ -384,7 +384,21 @@ public class rwmodProtect implements Runnable,ui {
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
     String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
-    String path=re == null ?null: (String)re.get(key);
+    boolean lastRoot;
+    String pathRel,path;
+    if (re == null||(pathRel = (String)re.get(key))==null) {
+     pathRel = null;
+     path = null;
+     lastRoot = false;
+    } else {
+      HashMap where;
+      if (getType(pathRel) == 3) {
+       where = iniMap;
+      } else where = iniHide;
+      loder ty=(loder)where.get(pathRel);
+      path = loder.getSuperPath(pathRel);
+      lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
+    }
     if (list2 != null) {
      str = (String)list2.get(key);
      if (str != null)ov = loder.get(str, ac, coe, list2, buff);
@@ -413,16 +427,16 @@ public class rwmodProtect implements Runnable,ui {
         String add;
         if (st >= 0)add = str.substring(0, st);
         else add = str;
-        replaceR(add, file, buff, img, post);
+        replaceR(add, file, buff, img, post, ws);
         if (st >= 0)buff.append(str, st, str.length());
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
-      } else replaceR(vll[0], file, buff, true, post);
+      } else replaceR(vll[0], file, buff, true, post, ws);
       v = buff.toString();
      }
      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-     if (path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl))) {
+     if (path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)) || lastRoot) {
       if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
@@ -510,9 +524,10 @@ public class rwmodProtect implements Runnable,ui {
   if (!ru)list = null;
   return list;
  }
- void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post) throws IOException {
+ void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post, boolean ws) throws IOException {
   int st=ResTry(str, isimg, buff);
   if (st >= 0) {
+   if (ws)buff.append("ROOT:");
    if (st > 0)str = str.substring(st);
    ZipArchiveEntry en = toPath(str);
    if (en != null) {
