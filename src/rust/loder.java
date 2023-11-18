@@ -115,14 +115,20 @@ class loder implements Callable {
   if (ex != null)throw ex;
   return null;
  }
+ HashMap cou;
  HashMap ini;
  HashMap put;
- HashMap all;
+ String srcsu;
+ loder all;
  String str;
+ String allD;
+ int allindex;
  Reader read;
  InputStreamSupplier wi;
  TaskWait task;
  boolean isini;
+ boolean use;
+ Object copy[];
  loder(Reader inp) {
   read = inp;
  }
@@ -175,7 +181,7 @@ class loder implements Callable {
    }
   }
  }
- static void putAnd(HashMap map, HashMap map2, HashMap cou, Object path) {
+ static void putAnd(HashMap map, HashMap map2, HashMap cou, String path) {
   Iterator ite=map2.entrySet().iterator();
   HashMap<String, HashMap> res=rwmodProtect.Res;
   while (ite.hasNext()) {
@@ -240,19 +246,12 @@ class loder implements Callable {
     if (o != null) {
      HashMap fid=(HashMap)o;
      o = cou.get(key);
-     cpy = null;
-     HashMap put;
+     HashMap now;
      if (o == null) {
-      put = new HashMap();
-      cou.put(key, put);
-     } else if (o instanceof HashMap) {
-      put = (HashMap)o;
-     } else {
-      cpy = (cpys)o;
-      put = cpy.m;
-     }
+      now = new HashMap();
+      cou.put(key, now);
+     } else now = (HashMap)o;
      Iterator ite2=hash.entrySet().iterator();
-     HashMap now=new HashMap();
      while (ite2.hasNext()) {
       en = (Map.Entry)ite2.next();
       key = (String)en.getKey();
@@ -260,19 +259,6 @@ class loder implements Callable {
        now.put(key, path);
       }
      }
-     put.putAll(now);
-     if (si) {
-      if (cpy == null) {
-       cpy = new cpys();
-       cou.put(key, cpy);
-      }
-      cpy.skip = now;
-     } else {
-      if (cpy != null) {
-       cpy.skip.putAll(now);
-      }
-     }
-     if (str != null && cpy != null)cpy.is = si;
     }
    }
   }

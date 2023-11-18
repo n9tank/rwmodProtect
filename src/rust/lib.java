@@ -46,8 +46,8 @@ public class lib implements Runnable,ui {
   str = str.toLowerCase();
   Object o=iniMap.get(str);
   loder lod=(loder)o;
-  if (lod.str == null) {
-   lod.str = "";
+  if (!lod.use) {
+   lod.use=true;
    lodAllCopy(lod, str);
   }
   return lod;
@@ -99,8 +99,8 @@ public class lib implements Runnable,ui {
     Map.Entry en=(Map.Entry)ite.next();
     String key=(String)en.getKey();
     loder lod=(loder)en.getValue();
-    if (lod.str == null) {
-     lod.str = "";
+    if (!lod.use) {
+     lod.use=true;
      lodAllCopy(lod, key);
     }
    }
