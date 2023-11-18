@@ -93,18 +93,23 @@ public class lib implements Runnable,ui {
    File ou=Ou;
    if (ou != null)ou.delete();
   } else {
-   HashMap inimap=iniMap;
-   Iterator ite=inimap.entrySet().iterator();
-   while (ite.hasNext()) {
-    Map.Entry en=(Map.Entry)ite.next();
-    String key=(String)en.getKey();
-    loder lod=(loder)en.getValue();
-    if (!lod.use) {
-     lod.use = true;
-     lodAllCopy(lod, loder.getSuperPath(key));
+   try {
+    HashMap inimap=iniMap;
+    Iterator ite=inimap.entrySet().iterator();
+    while (ite.hasNext()) {
+     Map.Entry en=(Map.Entry)ite.next();
+     String key=(String)en.getKey();
+     loder lod=(loder)en.getValue();
+     if (!lod.use) {
+      lod.use = true;
+      lodAllCopy(lod, loder.getSuperPath(key));
+     }
     }
+    libMap = inimap;
+   } catch (Throwable e2) {
+    if (e == null)e = e2;
+    else e.addSuppressed(e2);
    }
-   libMap = inimap;
   }
   if (!(e instanceof InterruptedException))Ui.end(e);
  }
