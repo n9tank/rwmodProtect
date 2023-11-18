@@ -148,7 +148,7 @@ public class rwmodProtect implements Runnable,ui {
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
-  //if (ini < 2)buff.append('/');
+  if (ini < 2)buff.append('/');
   return buff.toString();
  }
  String alltmpName(loder lod) {
@@ -162,12 +162,12 @@ public class rwmodProtect implements Runnable,ui {
    appendName(++alltmp);
    buff.append('/');
    all.allD = file = buff.toString();
-   buff.append("all-units.template");
+   buff.append("all-units.template/");
    all.str = buff.toString();
-   buff.setLength(buff.length() - 18);
+   buff.setLength(buff.length() - 19);
   } else buff.append(file);
   appendName(i);
-  buff.append(".ini");
+  buff.append(".ini/");
   return buff.toString();
  }
  loder replace(ZipArchiveEntry en, String str) throws Exception {
