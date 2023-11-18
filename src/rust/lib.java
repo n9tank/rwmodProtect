@@ -42,18 +42,17 @@ public class lib implements Runnable,ui {
   lib.In = in;
   close.addN(lib);
  }
- loder getlod(String str) {
+ loder getlod(String str, String su) {
   str = str.toLowerCase();
   Object o=iniMap.get(str);
   loder lod=(loder)o;
   if (!lod.use) {
    lod.use = true;
-   lodAllCopy(lod, str);
+   lodAllCopy(lod, su);
   }
   return lod;
  }
  void lodAllCopy(loder lod, String file) {
-  file = loder.getSuperPath(file);
   HashMap ini=lod.ini;
   Object o=ini.get("core");
   HashMap put=null;
@@ -67,7 +66,7 @@ public class lib implements Runnable,ui {
     int i=0,l=list.length;
     do{
      str = list[i];
-     loder loder=getlod(file.concat(str));
+     loder loder=getlod(file.concat(str), file);
      loder.putAnd(put, loder.put, null, null);
     }while(++i < l);
    }
@@ -90,8 +89,10 @@ public class lib implements Runnable,ui {
     zip.close();
    } catch (IOException e2) {}
   }
-  if (e != null)Ou.delete();
-  else {
+  if (e != null) {
+   File ou=Ou;
+   if (ou != null)ou.delete();
+  } else {
    HashMap inimap=iniMap;
    Iterator ite=inimap.entrySet().iterator();
    while (ite.hasNext()) {
@@ -100,14 +101,12 @@ public class lib implements Runnable,ui {
     loder lod=(loder)en.getValue();
     if (!lod.use) {
      lod.use = true;
-     lodAllCopy(lod, key);
+     lodAllCopy(lod, loder.getSuperPath(key));
     }
    }
    libMap = inimap;
   }
-  if (!(e instanceof InterruptedException)) {
-   Ui.end(e);
-  }
+  if (!(e instanceof InterruptedException))Ui.end(e);
  }
  public void run() {
   HashMap inimap=new HashMap();
@@ -118,7 +117,7 @@ public class lib implements Runnable,ui {
   try {
    File red;
    InputStream in=inp;
-   ou.getParentFile().mkdirs();
+   if (ou != null)ou.getParentFile().mkdirs();
    if (in != null) {
     red = ou;
     FileChannel ch=new FileOutputStream(ou).getChannel();
@@ -162,7 +161,7 @@ public class lib implements Runnable,ui {
      String name=zipe.getName();
      loder loder=new loder(new inputsu(zip, zipe));
      loder.task = task;
-     name = name.substring(13).toLowerCase();
+     name = name.toLowerCase();
      inimap.put(name, loder);
      task.add(loder);
     }
