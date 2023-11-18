@@ -118,7 +118,8 @@ class loder implements Callable {
  HashMap cou;
  HashMap ini;
  HashMap put;
- String srcsu;
+ HashMap old;
+ String src;
  loder all;
  String str;
  String allD;
@@ -412,7 +413,12 @@ class loder implements Callable {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String key=(String)en.getKey();
-   asFor(map, en.getValue(), key);
+   Object o=en.getValue();
+   if (o instanceof cpys) {
+    cpys cpy=(cpys)o;
+    en.setValue(o = (cpy.is ?cpy.skip: cpy.m).clone());
+   }
+   asFor(map, o , key);
   }
  }
  static final HashSet set;
