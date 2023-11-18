@@ -47,7 +47,7 @@ public class lib implements Runnable,ui {
   Object o=iniMap.get(str);
   loder lod=(loder)o;
   if (!lod.use) {
-   lod.use=true;
+   lod.use = true;
    lodAllCopy(lod, str);
   }
   return lod;
@@ -90,9 +90,8 @@ public class lib implements Runnable,ui {
     zip.close();
    } catch (IOException e2) {}
   }
-  if (e != null) {
-   File ou=Ou;
-   if (ou != null)ou.delete();
+  if (e != null)Ou.delete();
+  else {
    HashMap inimap=iniMap;
    Iterator ite=inimap.entrySet().iterator();
    while (ite.hasNext()) {
@@ -100,7 +99,7 @@ public class lib implements Runnable,ui {
     String key=(String)en.getKey();
     loder lod=(loder)en.getValue();
     if (!lod.use) {
-     lod.use=true;
+     lod.use = true;
      lodAllCopy(lod, key);
     }
    }
@@ -119,11 +118,11 @@ public class lib implements Runnable,ui {
   try {
    File red;
    InputStream in=inp;
-   if (ou != null)ou.getParentFile().mkdirs();
+   ou.getParentFile().mkdirs();
    if (in != null) {
     red = ou;
     FileChannel ch=new FileOutputStream(ou).getChannel();
-    Ou = ou = null;
+    ou = null;
     try {
      ch.transferFrom(Channels.newChannel(in), 0L, Long.MAX_VALUE);
     } finally {
