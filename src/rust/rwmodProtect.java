@@ -334,7 +334,7 @@ public class rwmodProtect implements Runnable,ui {
   loder.putAnd(as, put, null, null);
   loder.as(as);
   Object o;
-  if (cput.length() ==0)o = cput = null;
+  if (cput!=null&&cput.length() ==0)o = cput = null;
   else o = cache.get(cput);
   if (o == null) {
    loder.as(coe = ini.old);
@@ -638,7 +638,6 @@ public class rwmodProtect implements Runnable,ui {
   Throwable add=null;
   ZipArchiveOutputStream zipout=out;
   if (zipout != null) {
-   if (e != null)Ou.delete();
    try {
     cre.writeTo(e != null ?null: zipout);
    } catch (Throwable e2) {
@@ -659,6 +658,7 @@ public class rwmodProtect implements Runnable,ui {
   if (e != null) {
    if (add != null)e.addSuppressed(add);
   } else e = add;
+  if (e != null)Ou.delete();
   if (!(e instanceof InterruptedException))Ui.end(e);
  }
  public void run() {
