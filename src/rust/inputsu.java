@@ -33,33 +33,34 @@ class inputsu implements InputStreamSupplier {
     if (lod.ini == null)lod.call();
     try {
      HashMap map=lod.ini;
-     HashMap gloab=(HashMap)map.remove("");
      Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-     boolean wt=false;
      if (ite.hasNext()) {
-      Map.Entry<String,HashMap> en = ite.next();
-      map = en.getValue();
+      Map.Entry en = ite.next();
+      map = (HashMap)en.getValue();
       boolean size=map.size() > 0;
       while (true) {
        if (size) {
-        String key=en.getKey();
-        wt = true;
+        String key=(String)en.getKey();
         out.write('[');
         out.write(key);
         out.write("]\n");
-        loder.writeKeys(map, out);
+        Iterator<Map.Entry> ite2=map.entrySet().iterator();
+        boolean nx=ite2.hasNext();
+        while (nx) {
+         en = ite2.next();
+         out.write((String)en.getKey());
+         out.write(':');
+         out.write((String)en.getValue());
+         nx = ite2.hasNext();
+         if (nx)out.write('\n');
+        }
        }
        if (!ite.hasNext())break;
        en = ite.next();
-       map = en.getValue();
+       map = (HashMap)en.getValue();
        size = map.size() > 0;
        if (size)out.write('\n');
       }
-     }
-     if (gloab.size() > 0) {
-      if (!wt)out.write("[core]");
-      out.write('\n');
-      loder.writeKeys(gloab, out);
      }
      out.flush();
      return new ByteArrayInputStream(rus.toByteArray());

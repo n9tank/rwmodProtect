@@ -24,12 +24,12 @@ class loder implements Callable {
   Exception ex=null;
   try {
    try {
-    HashMap global=new HashMap();
+    HashMap core=new HashMap();
     String str;
     HashMap list=null;
     HashMap table=new LinkedHashMap();
     ini = table;
-    table.put("", global);
+    table.put("core",core);
     wh:
     while ((str = buff.readLine()) != null) {
      str = str.trim();
@@ -64,7 +64,7 @@ class loder implements Callable {
        String key=value[0].trim();
        String set=value[1].trim();
        if (key.startsWith("@global ")) {
-        global.put(key, set);
+        core.put(key, set);
        } else {
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
          bf.setLength(0);
@@ -134,18 +134,6 @@ class loder implements Callable {
  }
  loder(InputStreamSupplier will) {
   wi = will;
- }
- static void writeKeys(HashMap map, BufferedWriter out)throws IOException {
-  Iterator<Map.Entry> ite=map.entrySet().iterator();
-  boolean nx=ite.hasNext();
-  while (nx) {
-   Map.Entry en = ite.next();
-   out.write((String)en.getKey());
-   out.write(':');
-   out.write((String)en.getValue());
-   nx = ite.hasNext();
-   if (nx)out.write('\n');
-  }
  }
  static Object wh(String str, HashMap map, int m) {
   int i=0;
@@ -284,7 +272,7 @@ class loder implements Callable {
  static String get(String str, String eqz, HashMap map, HashMap loc, StringBuilder buff) {
   int i=0,j=0;
   buff.setLength(0);
-  HashMap gl=(HashMap)map.get("");
+  HashMap gl=(HashMap)map.get("core");
   Pattern find0=find;
   Pattern find1=find2;
   do{
