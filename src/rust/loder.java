@@ -1,8 +1,6 @@
 package rust;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.Reader;
@@ -29,7 +27,7 @@ class loder implements Callable {
     HashMap list=null;
     HashMap table=new LinkedHashMap();
     ini = table;
-    table.put("core",core);
+    table.put("core", core);
     wh:
     while ((str = buff.readLine()) != null) {
      str = str.trim();
@@ -92,14 +90,10 @@ class loder implements Callable {
      }
     }
     boolean istm=isini;
-    Object o=table.get("core");
+    Object o = core.remove("dont_load");
     if (o != null) {
-     HashMap map=(HashMap)o;
-     o = map.remove("dont_load");
-     if (o != null) {
-      str = (String)o;
-      istm &= !("1".equals(str) || "true".equalsIgnoreCase(str));
-     }
+     str = (String)o;
+     istm &= !("1".equals(str) || "true".equalsIgnoreCase(str));
     }
     isini = istm;
    } finally {
