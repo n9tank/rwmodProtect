@@ -420,9 +420,9 @@ public class rwmodProtect implements Runnable,ui {
     if (vl != null && img) {
      type = (int)o;
      String vll[]=vl == null ?null: AllPath(vl, key, file, type);
+     tag:
      if (vll != null) {
       buff.setLength(0);
-      tag:
       if (type >= 0) {
        int l=0,size=vll.length;
        char to;
