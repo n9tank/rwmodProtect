@@ -272,15 +272,24 @@ public class rwmodProtect implements Runnable,ui {
   ini.putAnd(put, ini.ini, cou, null);
   ini.cou = cou;
  }
- void add(Object orr[], boolean ws, StringBuilder buff) {
+ void add(Object orr[], loder ini, boolean ws, StringBuilder buff) {
   if (orr != null) {
    int i=0,len=orr.length;
    while (i < len) {
     Object o=orr[i++];
     if (o instanceof String) buff.append((String)o);
     else {
-     if (ws)buff.append("ROOT:");
-     buff.append(((loder)o).str);
+     loder obj=(loder)o;
+     String str=obj.str;
+     int st=0;
+     if (ws) {
+      loder all=ini.all;
+      if (all == null)all = ini;
+      if (obj.all == all && obj.allD == ini.allD) {
+       st = str.indexOf('/') + 1;
+      } else buff.append("ROOT:");
+     }
+     buff.append(str, st, str.length());
     }
     buff.append(',');
     i++;
@@ -302,19 +311,19 @@ public class rwmodProtect implements Runnable,ui {
    Object[] orr=ini.copy;
    int st=0;
    if (all != null) {
-    if (index >= 0) {
+    if (index == 0) {
      String str=all.str;
      st = str.length() + 1;
      buff.append(str);
      buff.append(',');
     }
    }
-   add(orr, ws, buff);
+   add(orr, ini, ws, buff);
    if (buff.length() > 0)core.put("copyFrom", cput = buff.toString());
    if (index == -2)buff.insert(0, all.str.concat(","));
    if (ws) {
     buff.setLength(st);
-    add(orr, !ws, buff);
+    add(orr, ini, false, buff);
     cput = buff.toString();
    }
   }
@@ -334,7 +343,7 @@ public class rwmodProtect implements Runnable,ui {
   loder.putAnd(as, put, null, null);
   loder.as(as);
   Object o;
-  if (cput!=null&&cput.length() ==0)o = cput = null;
+  if (cput != null && cput.length() == 0)o = cput = null;
   else o = cache.get(cput);
   if (o == null) {
    loder.as(coe = ini.old);
@@ -413,6 +422,7 @@ public class rwmodProtect implements Runnable,ui {
      String vll[]=vl == null ?null: AllPath(vl, key, file, type);
      if (vll != null) {
       buff.setLength(0);
+      tag:
       if (type >= 0) {
        int l=0,size=vll.length;
        char to;
@@ -427,16 +437,24 @@ public class rwmodProtect implements Runnable,ui {
         String add;
         if (st >= 0)add = str.substring(0, st);
         else add = str;
-        replaceR(add, file, buff, img, post, ws);
+        if (!replaceR(add, file, buff, img, post, ws)) {
+         v = null;
+         break tag;
+        }
         if (st >= 0)buff.append(str, st, str.length());
         buff.append(",");
        }while(++l < size);
        buff.setLength(buff.length() - 1);
-      } else replaceR(vll[0], file, buff, true, post, ws);
+      } else {
+       if (!replaceR(vll[0], file, buff, true, post, ws)) {
+        v = null;
+        break tag;
+       }
+      }
       v = buff.toString();
      }
      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-     if (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl))) {
+     if (v!=null&&(lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
       if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
@@ -446,7 +464,7 @@ public class rwmodProtect implements Runnable,ui {
       }
      }
     }
-    if (list3 != null && !sikp && (eq || (same && !skp.contains(key)))) {
+    if (list3 != null && !sikp && (v == null || eq || (same && !skp.contains(key)))) {
      list3.remove(key);
     }
    }
@@ -524,7 +542,7 @@ public class rwmodProtect implements Runnable,ui {
   if (!ru)list = null;
   return list;
  }
- void replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post, boolean ws) throws IOException {
+ boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post, boolean ws) throws IOException {
   int st=ResTry(str, isimg, buff);
   if (st >= 0) {
    if (ws)buff.append("ROOT:");
@@ -548,9 +566,10 @@ public class rwmodProtect implements Runnable,ui {
      res.close = true;
      cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, en));
     }
-   }
+   } else return false;
   }
   buff.append(str);
+  return true;
  }
  ZipArchiveEntry toPath(String str) {
   HashMap<String,ZipArchiveEntry> lowm=low;
