@@ -64,7 +64,6 @@ class loder implements Callable {
        String key=value[0].trim();
        String set=value[1].trim();
        if (key.startsWith("@global ")) {
-        if (value.equals("IGNORE"))continue;
         global.put(key, set);
        } else {
         if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {

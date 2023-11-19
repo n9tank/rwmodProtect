@@ -57,7 +57,7 @@ class inputsu implements InputStreamSupplier {
       }
      }
      if (gloab.size() > 0) {
-      if (!wt)out.write("[]");
+      if (!wt)out.write("[core]");
       out.write('\n');
       loder.writeKeys(gloab, out);
      }
