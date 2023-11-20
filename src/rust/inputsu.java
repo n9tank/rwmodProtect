@@ -34,34 +34,26 @@ class inputsu implements InputStreamSupplier {
     try {
      HashMap map=lod.ini;
      Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
-     if (ite.hasNext()) {
+     boolean st=false;
+     while (ite.hasNext()) {
       Map.Entry en = ite.next();
       map = (HashMap)en.getValue();
-      boolean size=map.size() > 0;
-      while (true) {
-       if (size) {
-        String key=(String)en.getKey();
-        out.write('[');
-        out.write(key);
-        out.write("]\n");
-        Iterator<Map.Entry> ite2=map.entrySet().iterator();
-        boolean nx=ite2.hasNext();
-        while (nx) {
-         en = ite2.next();
-         out.write((String)en.getKey());
-         out.write(':');
-         out.write((String)en.getValue());
-         nx = ite2.hasNext();
-         if (nx)out.write('\n');
-        }
-       }
-       if (!ite.hasNext())break;
-       en = ite.next();
-       map = (HashMap)en.getValue();
-       boolean nx=map.size() > 0;
-       if (nx) {
-        if (size)out.write('\n');
-        size = nx;
+      if (map.size() > 0) {
+       if (!st)out.write('\n');
+       st = true;
+       String key=(String)en.getKey();
+       out.write('[');
+       out.write(key);
+       out.write("]\n");
+       Iterator<Map.Entry> ite2=map.entrySet().iterator();
+       boolean nx=false;
+       while (ite2.hasNext()) {
+        en = ite2.next();
+        out.write((String)en.getKey());
+        out.write(':');
+        out.write((String)en.getValue());
+        nx = ite2.hasNext();
+        if (nx)out.write('\n');
        }
       }
      }
