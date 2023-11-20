@@ -46,7 +46,7 @@ class inputsu implements InputStreamSupplier {
        out.write(key);
        out.write("]\n");
        Iterator<Map.Entry> ite2=map.entrySet().iterator();
-       boolean nx=ite.hasNext();
+       boolean nx=ite2.hasNext();
        while (nx) {
         en = ite2.next();
         out.write((String)en.getKey());
