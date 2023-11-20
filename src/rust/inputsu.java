@@ -39,7 +39,7 @@ class inputsu implements InputStreamSupplier {
       Map.Entry en = ite.next();
       map = (HashMap)en.getValue();
       if (map.size() > 0) {
-       if (!st)out.write('\n');
+       if (st)out.write('\n');
        st = true;
        String key=(String)en.getKey();
        out.write('[');
