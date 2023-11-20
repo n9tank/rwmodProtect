@@ -292,7 +292,6 @@ public class rwmodProtect implements Runnable,ui {
      buff.append(str, st, str.length());
     }
     buff.append(',');
-    i++;
    }
   }
   int i=buff.length();
