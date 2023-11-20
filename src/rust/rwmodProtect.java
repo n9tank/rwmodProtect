@@ -453,7 +453,7 @@ public class rwmodProtect implements Runnable,ui {
       v = buff.toString();
      }
      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-     if (v!=null&&(lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
+     if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
       if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
        same = false;
       }
@@ -556,7 +556,7 @@ public class rwmodProtect implements Runnable,ui {
     if (o == null) {
      res = new res();
      map.put(str, res);
-     res.str = str = FileName(getType(str));
+     res.str = str = FileName(isimg ?0: getType(str));
     } else {
      res = (res)o;
      str = res.str;
