@@ -58,8 +58,11 @@ class inputsu implements InputStreamSupplier {
        if (!ite.hasNext())break;
        en = ite.next();
        map = (HashMap)en.getValue();
-       size = map.size() > 0;
-       if (size)out.write('\n');
+       boolean nx=map.size() > 0;
+       if (nx) {
+        if (size)out.write('\n');
+        size = nx;
+       }
       }
      }
      out.flush();

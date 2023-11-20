@@ -166,7 +166,6 @@ public class lib implements Runnable,ui {
      String name=zipe.getName();
      loder loder=new loder(new inputsu(zip, zipe));
      loder.task = task;
-     name = name.toLowerCase();
      inimap.put(name, loder);
      task.add(loder);
     }
