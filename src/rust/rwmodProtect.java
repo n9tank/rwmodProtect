@@ -123,7 +123,6 @@ public class rwmodProtect implements Runnable,ui {
    file = set.get("file");
    int i=0,len=file.length();
    int irr[]= new int[len];
-   cr = irr;
    int cou=0;
    do{
     irr[cou] = file.codePointAt(i);
@@ -131,6 +130,7 @@ public class rwmodProtect implements Runnable,ui {
     ++cou;
    }while(i < len);
    if (cou < len)irr = Arrays.copyOf(irr, cou);
+   cr=irr;
   }
   cust = set.get("cust").split(",");
   HashSet put=new HashSet();
