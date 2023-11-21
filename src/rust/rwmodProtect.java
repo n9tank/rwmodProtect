@@ -42,7 +42,6 @@ public class rwmodProtect implements Runnable,ui {
  static HashSet skip;
  static int max;
  static int[] cr;
- static int crl;
  static ArrayList<String> ds;
  static HashMap<String,HashMap> Res;
  public static TaskWait exec(File in, File ou, ui ui) {
@@ -125,11 +124,13 @@ public class rwmodProtect implements Runnable,ui {
    int i=0,len=file.length();
    int irr[]= new int[len];
    cr = irr;
+   int cou=0;
    do{
-    irr[i] = file.codePointAt(i);
+    irr[cou] = file.codePointAt(i);
     i = file.offsetByCodePoints(i, 1);
+    ++cou;
    }while(i < len);
-   crl = i;
+   if (cou < len)irr = Arrays.copyOf(irr, cou);
   }
   cust = set.get("cust").split(",");
   HashSet put=new HashSet();
@@ -158,7 +159,7 @@ public class rwmodProtect implements Runnable,ui {
    StringBuilder buff=Buff;
    if (srr == null) {
     int[] irr=cr;
-    int l=crl;
+    int l=irr.length;
     do{
      int u=i % l;
      i /= l;
