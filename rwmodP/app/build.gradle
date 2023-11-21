@@ -14,12 +14,15 @@ android {
 
     buildTypes {
         release {
-        minifyEnabled false
+        //shrinkResources true
+        minifyEnabled true
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
     }
 }
 
 dependencies {
+//implementation "org.apache.commons:commons-compress:1.25.0"
+implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.25.0/commons-compress-1.25.0.jar")
 implementation fileTree(dir: "libs", include: ["*.jar"])
 }
