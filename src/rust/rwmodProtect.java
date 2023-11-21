@@ -1,10 +1,12 @@
 package rust;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,7 +41,8 @@ public class rwmodProtect implements Runnable,ui {
  static String cust[];
  static HashSet skip;
  static int max;
- static String fileD;
+ static ArrayList<Integer> cr;
+ static ArrayList<String> ds;
  static HashMap<String,HashMap> Res;
  public static TaskWait exec(File in, File ou, ui ui) {
   rwmodProtect rw=new rwmodProtect();
@@ -96,6 +99,19 @@ public class rwmodProtect implements Runnable,ui {
   }
   return map;
  }
+ public static void dictionary(Reader io) throws IOException {
+  BufferedReader buff= new BufferedReader(io);
+  try {
+   ArrayList srr=new ArrayList();
+   ds = srr;
+   String str;
+   while ((str = buff.readLine()) != null) {
+    srr.add(str);
+   }
+  } finally {
+   buff.close();
+  }
+ }
  public static void init(Reader io)throws Exception {
   loder lod=new loder(io);
   lod.call();
@@ -103,7 +119,14 @@ public class rwmodProtect implements Runnable,ui {
   HashMap<String,String> set=map.get("set");
   max = Integer.valueOf(set.get("cou"));
   String file= set.get("file");
-  fileD = file;
+  if (file != null) {
+   ArrayList irr= new ArrayList();
+   int i=0,len=file.length();
+   do{
+    irr.add(file.codePointAt(i));
+    i = file.offsetByCodePoints(i, 1);
+   }while(i < len);
+  }
   cust = set.get("cust").split(",");
   HashSet put=new HashSet();
   skip = put;
@@ -127,14 +150,19 @@ public class rwmodProtect implements Runnable,ui {
  }
  void appendName(int i) {
   if (i >= 0) {
-   String d=fileD;
-   int l=d.length();
+   ArrayList srr=ds;
    StringBuilder buff=Buff;
-   do{
-    int u=i % l;
-    i /= l;
-    buff.append(d.charAt(u));
-   }while(i > 0);
+   if (srr == null) {
+    srr = cr;
+    int l=cr.size();
+    do{
+     int u=i % l;
+     i /= l;
+     buff.appendCodePoint(srr.get(u));
+    }while(i > 0);
+   } else {
+    buff.append(srr.get(i));
+   }
   }
  }
  String FileName(int ini) {

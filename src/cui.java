@@ -14,17 +14,6 @@ public class cui implements ui {
   show = s;
   g = System.currentTimeMillis();
  }
- /*
-  public void poss(int i) {
-  PrintStream out=System.out;
-  int last=len;
-  while (--last >= 0) {
-  out.print('\b');
-  }
-  String str=String.valueOf(i);
-  len = str.length();
-  out.print(str);
-  }*/
  public void end(Throwable e) {
   if (e != null)e.printStackTrace();
   else {
@@ -44,6 +33,8 @@ public class cui implements ui {
   }
   try {
    rwmodProtect.init(new FileReader(new File(dir, ".ini")));
+   File f=new File(dir, ".txt");
+   if (f.length() != 0)rwmodProtect.dictionary(new FileReader(f));
    File in=new File(dir, "lib.zip");
    if (in.length() > 0)lib.exec(in, null, new cui("lib"));
    PrintStream out=System.out;
