@@ -122,6 +122,7 @@ public class rwmodProtect implements Runnable,ui {
   if (ds == null) {
    file = set.get("file");
    ArrayList irr= new ArrayList();
+   cr=irr;
    int i=0,len=file.length();
    do{
     irr.add(file.codePointAt(i));
