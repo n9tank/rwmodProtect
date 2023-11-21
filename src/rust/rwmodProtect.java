@@ -118,8 +118,9 @@ public class rwmodProtect implements Runnable,ui {
   HashMap<String,HashMap> map=lod.ini;
   HashMap<String,String> set=map.get("set");
   max = Integer.valueOf(set.get("cou"));
-  String file= set.get("file");
-  if (file != null) {
+  String file;
+  if (ds == null) {
+   file = set.get("file");
    ArrayList irr= new ArrayList();
    int i=0,len=file.length();
    do{
