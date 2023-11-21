@@ -103,15 +103,14 @@ public class Main extends Activity {
   } else lib.exec(li, null, ui);
  }
  public void init() {
-  File ini=new File("sdcard/rustedWarfare/rwmod/.ini");
-  Reader io;
   if (init)lib();
   try {
-   if (ini.exists()) {
-    io = new FileReader(ini);
-   } else {
-    io = new InputStreamReader(getResources().openRawResource(R.raw.def));
-   }
+   File ini=new File("sdcard/rustedWarfare/rwmod/.txt");
+   if (ini.exists())rwmodProtect.dictionary(new FileReader(ini));
+   Reader io;
+   ini = new File("sdcard/rustedWarfare/rwmod/.ini");
+   if (ini.exists())io = new FileReader(ini);
+   else io = new InputStreamReader(getResources().openRawResource(R.raw.def));
    rwmodProtect.init(io);
   } catch (Throwable e) {
    error(e, "init", this);
