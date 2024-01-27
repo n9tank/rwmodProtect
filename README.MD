@@ -1,31 +1,30 @@
-铁锈战争 rustedWarfare rwmod混淆器
-一种低性能耗损的混淆器，不过它的处理速度很慢。
-从rwmod进行混淆，将所有文件提取到一级伪装为文件夹，并使用难以阅读的字典（默认使用Android的字库）进行重命名。
-纯在很多bug和兼容性问题。
-.ini配置不正确（待修正）
 
-已编译的测试程序：https://cra.lanzouj.com/b0agtlmih 密码:00
+# rwmodProtect
+[![GitHub stars](https://img.shields.io/github/stars/n9tank/rwmodProtect)](https://githubfast.com/n9tank/rwmodProtect/stargazers) [![GitHub forks](https://img.shields.io/github/forks/n9tank/rwmodProtect)](https://githubfast.com/n9tank/rwmodProtect/network) [![GitHub issues](https://img.shields.io/github/issues/n9tank/rwmodProtect)](https://githubfast.com/n9tank/rwmodProtect/issues)
 
-已尝试完全兼容all-units.template，不保证可用。
++ rwmodProtect 是一个专为Rusted Warfare（铁锈战争）设计的mod混淆器。它以较低的性能代价提供较好的防护效果和兼容性。
 
-不要使用 [\\/]+ 作为根路径，这会导致游戏的一些bug，且抛错。
-不要使用不同字符，相同路径来绕过重复检查器，这会让它不工作，而出错。
-如：a/b a\b
+## 功能
+- [x] 伪造文件夹<br>将文件伪装为文件夹（这不能对音乐文件使用），使常规程序，无法正常浏览文件。如果仅剔除伪文件夹，依然需要封包或修正。
+- [x] 重构文件树<br>移除明显的关系树，并使用特殊字符干扰阅读，这可能对性能有所改善。
+- [x] 精简文件<br>移除无用文件和代码，并使用最大压缩，这将改善占用和性能，不过由于混淆的屎山实现，这可能生成一些可以避免的代码。
+- [ ] 更多暂不支持
 
-考虑到开发规范，一些特殊处理没有必要性，所以。
-tmx的名称不能相同，这将抛错。
-ini使用的资源不能为（不区分大小）mod-info.txt，*_map.png，*.tmx，${music.sourceFolder}/*.ogg。
+## 兼容性
+- [x] 解析兼容<br>已完成对ini解析的主要兼容。
+- [x] 宏支持<br>已完成对宏的主要兼容与运算。
+- [x] copyFrom<br>已完成对copyFrom的主要兼容。
+- [x] 路径兼容<br>兼容多个名称转小写相同，以及伪文件夹。
+- [x] all-units.template<br>all-units.template优先于copyFrom。使用copyFrom复制ini，不会被追加ini持有的all-units.template。
+- [x] @copyFrom_skipThisSection<br>@copyFrom_skipThisSection定义为false或0时拿回之前的所有键，反之丢弃。
+- [ ] 不规范的持有文件<br>持有mod-info.txt，背景音乐，地图以及地图图像，使打包出错或造成多次复制。
+- [ ] 非法路径<br>使用"/"或"\\"作为路径头，这导致游戏加载出现bug，使加载结果不一致。
+- [ ] 不规范的持有<br>使用${core.dont_load}等被移除的变量作为访问，使宏解析失败。
+- [ ] 错误的宏<br>@global不在所定义的可继承节中，引起游戏bug，导致解析结果不一致，诺要避免请仅放在core节。
+- [ ] 重排序<br>由于屎山代码，对宏进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
 
-不要使用${a.b}的格式引用资源，该内容的追踪器尚未实现，这可能引起一些错误。
-
-已添加多线程支持，对于非注册的加载对象是单线程的，你可以在配置文件中[set]cust中定义添加自定义加载对象，以支持多线程。
-
-由于luke的global存在bug，因此请所有的global放在[core]下，避免兼容问题。
-
-文件：user.dir/
-.ini 配置
-lib.zip 加载依赖，用于copyFrom:CORE:
-
-命令：
-<rwmod> 默认rwmod混淆(*_r.rwmod)
-lib <apk> 制作依赖在当前目录(${user.dir}/.zip)
+## 配置
+Android的路径是sdcard/rustedWarfare/rwmod
+* .ini<br>默认的加载配置，这将覆盖安装包内的加载配置。
+* .txt<br>默认的加载字典，每行一项，这将覆盖默认的字符计算。
+* lib.zip<br>默认的加载依赖，用于copyFrom:CORE:实现。
