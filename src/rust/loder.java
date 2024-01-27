@@ -398,7 +398,7 @@ class loder implements Callable {
    Object o=en.getValue();
    if (o instanceof cpys) {
     cpys cpy=(cpys)o;
-    en.setValue(o = (cpy.is ?cpy.skip: cpy.m).clone());
+    en.setValue((cpy.is ?cpy.skip: cpy.m).clone());
    }
   }
   ite = map.entrySet().iterator();
