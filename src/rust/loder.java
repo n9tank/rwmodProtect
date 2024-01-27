@@ -295,8 +295,10 @@ class loder implements Callable {
          HashMap locv;
          if (keyv.equals("section") || keyv.equals(eqz))locv = loc;
          else {
-          locv = (HashMap)map.get(keyv);
-          if (locv == null)return null;
+          o = map.get(keyv);
+          if (o == null)return null;
+          else if (o instanceof cpys)locv = ((cpys)o).m;
+          else locv = (HashMap)o;
          }
          group = (String)locv.get(list[1]);
         } else {
@@ -393,13 +395,16 @@ class loder implements Callable {
   Iterator ite = map.entrySet().iterator();
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
-   String key=(String)en.getKey();
    Object o=en.getValue();
    if (o instanceof cpys) {
     cpys cpy=(cpys)o;
     en.setValue(o = (cpy.is ?cpy.skip: cpy.m).clone());
    }
-   asFor(map, o , key);
+  }
+  ite = map.entrySet().iterator();
+  while (ite.hasNext()) {
+   Map.Entry en=(Map.Entry)ite.next();
+   asFor(map, en.getValue(), (String)en.getKey());
   }
  }
  static final HashSet set;
