@@ -129,8 +129,8 @@ class loder implements Callable {
  loder(InputStreamSupplier will) {
   wi = will;
  }
- static Object wh(String str, HashMap map, int m) {
-  int i=0;
+ static Object wh(String str, HashMap map) {
+  int i=0,m=1;
   String vl=str;
   do{
    Object o=map.get(vl);
@@ -224,7 +224,7 @@ class loder implements Callable {
     if (str != null && cpy != null)cpy.is = si;
    }
    if (cou != null) {
-    o = wh(key, res, rwmodProtect.max);
+    o = wh(key, res);
     if (o != null) {
      HashMap fid=(HashMap)o;
      o = cou.get(key);

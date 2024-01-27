@@ -50,12 +50,13 @@ public class TaskWait {
    arr.clear();
   }
   ui ui=back;
+  LongAdder at=ato;
   if (e == null) {
-   LongAdder at=ato;
    at.decrement();
    if (!end||at.sum() > 0l)ui = null;
   }
   if (ui != null) {
+   at.reset();
    end = false;
    ui.end(e);
   }

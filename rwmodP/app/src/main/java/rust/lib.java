@@ -136,12 +136,10 @@ public class lib implements Runnable,ui {
    zip = new ZipFile(red);
    Enumeration<? extends ZipArchiveEntry> ens=zip.getEntries();
    if (ou != null) {
-    ParallelScatterZipCreator cre=null;
-    ZipArchiveOutputStream out=null;
+    ZipArchiveOutputStream out= new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
+    out.setLevel(9);
+    ParallelScatterZipCreator cre = new ParallelScatterZipCreator();
     try {
-     out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
-     out.setLevel(9);
-     cre = new ParallelScatterZipCreator();
      while (ens.hasMoreElements()) {
       ZipArchiveEntry zipe=ens.nextElement();
       String name;
@@ -154,10 +152,8 @@ public class lib implements Runnable,ui {
       }
      }
     } finally {
-     if (out != null) {
-      cre.writeTo(out);
-      out.close();
-     }
+     cre.writeTo(out);
+     out.close();
     }
     end(null);
    } else {

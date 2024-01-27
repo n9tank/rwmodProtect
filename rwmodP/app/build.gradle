@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 31
+    signingConfigs {
+        sign {
+            keyAlias '0'
+            keyPassword '0'
+            storeFile file('/sdcard/AppProjects/.jks')
+            storePassword '0'
+            }
+        }
+    defaultConfig {
+        applicationId "rust.rwp"
+        minSdkVersion 21
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        versionCode 1
+        versionName "0.4.7"
+    }
+
+    buildTypes {
+        release {
+        signingConfig signingConfigs.sign
+        //shrinkResources true
+        minifyEnabled true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+		}
+        debug {
+        signingConfig signingConfigs.sign
+        }
+    }
+}
+
+dependencies {
+//implementation "org.apache.commons:commons-compress:1.25.0"
+implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.25.0/commons-compress-1.25.0.jar")
+implementation fileTree(dir: "libs", include: ["*.jar"])
+}
