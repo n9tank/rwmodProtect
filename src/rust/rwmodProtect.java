@@ -40,7 +40,6 @@ public class rwmodProtect implements Runnable,ui {
  String rootPath;
  static String cust[];
  static HashSet skip;
- static int max;
  static int[] cr;
  static ArrayList<String> ds;
  static HashMap<String,HashMap> Res;
@@ -117,7 +116,6 @@ public class rwmodProtect implements Runnable,ui {
   lod.call();
   HashMap<String,HashMap> map=lod.ini;
   HashMap<String,String> set=map.get("set");
-  max = Integer.valueOf(set.get("cou"));
   String file;
   if (ds == null) {
    file = set.get("file");
@@ -130,7 +128,7 @@ public class rwmodProtect implements Runnable,ui {
     ++cou;
    }while(i < len);
    if (cou < len)irr = Arrays.copyOf(irr, cou);
-   cr=irr;
+   cr = irr;
   }
   cust = set.get("cust").split(",");
   HashSet put=new HashSet();
@@ -157,17 +155,16 @@ public class rwmodProtect implements Runnable,ui {
   if (i >= 0) {
    ArrayList srr=ds;
    StringBuilder buff=Buff;
-   if (srr == null) {
-    int[] irr=cr;
-    int l=irr.length;
-    do{
-     int u=i % l;
-     i /= l;
-     buff.appendCodePoint(irr[u]);
-    }while(i > 0);
-   } else {
-    buff.append(srr.get(i));
-   }
+   int l;
+   int[] irr=cr;
+   if (srr == null)l = irr.length;
+   else l = srr.size();
+   do{
+    int u=i % l;
+    i /= l;
+    if (srr == null)buff.appendCodePoint(irr[u]);
+    else buff.append(srr.get(u));
+   }while(i > 0);
   }
  }
  String FileName(int ini) {
@@ -387,7 +384,7 @@ public class rwmodProtect implements Runnable,ui {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
-   HashMap tr=(HashMap)loder.wh(ac, reu, rwmodProtect.max);
+   HashMap tr=(HashMap)loder.wh(ac, reu);
    o = en.getValue();
    HashMap put2=null;
    HashMap list;
