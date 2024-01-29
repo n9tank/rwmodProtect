@@ -274,7 +274,7 @@ public class rwmodProtect implements Runnable,ui {
         loder allt=lod.all;
         String fn=allt.allD;
         if (fn == null) {
-         appendName(arr[7]++);
+         appendName(arr[6]++);
          buf.append('/');
          allt.allD = fn = buf.toString();
          buf.append("all-units.template/");
@@ -416,75 +416,77 @@ public class rwmodProtect implements Runnable,ui {
    boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o) || "true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
     en = (Map.Entry) ite2.next();
-    String key=(String)en.getKey(),v=(String)en.getValue(),ov=null;
-    boolean lastRoot;
-    String pathRel,path;
-    if (re == null || (pathRel = (String)re.get(key)) == null) {
-     pathRel = null;
-     path = null;
-     lastRoot = false;
-    } else {
-     HashMap where;
-     if (getType(pathRel) == 3) {
-      where = iniMap;
-     } else where = iniHide;
-     loder ty=(loder)where.get(pathRel);
-     path = loder.getSuperPath(pathRel);
-     lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
-    }
-    if (list2 != null) {
-     str = (String)list2.get(key);
-     if (str != null)ov = loder.get(str, ac, coe, list2, buff);
-    } else str = null;
+    String key=(String)en.getKey(),v=(String)en.getValue();
+    String ov;
+    if (list2 != null)ov = (String)list2.get(key);
+    else ov = null;
+    boolean eq=v.equals(ov);
+    boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(ov);
     boolean img=tr != null && (o = tr.get(key)) != null;
-    String vl =loder.get(v, ac, as, list, buff);
-    boolean eq=v.equals(str);
-    boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
-    int type;
-    if (vl != null && img) {
-     type = (int)o;
-     String vll[]=vl == null ?null: AllPath(vl, key, file, type);
-     tag:
-     if (vll != null) {
-      buff.setLength(0);
-      if (type >= 0) {
-       int l=0,size=vll.length;
-       char to;
-       if (img = type == 0) to = '*';
-       else to = ':';
-       do {
-        str = vll[l].trim(); 
-        int st;
-        if (str.startsWith("ROOT:"))st = 5;
-        else st = 0;
-        st = str.indexOf(to, st);
-        String add;
-        if (st >= 0)add = str.substring(0, st);
-        else add = str;
-        if (!replaceR(add, file, buff, img, post, ws)) {
+    if (img) {
+     boolean lastRoot;
+     String pathRel,path;
+     if (re == null || (pathRel = (String)re.get(key)) == null) {
+      path = null;
+      lastRoot = false;
+     } else {
+      HashMap where;
+      if (getType(pathRel) == 3) {
+       where = iniMap;
+      } else where = iniHide;
+      loder ty=(loder)where.get(pathRel);
+      path = loder.getSuperPath(pathRel);
+      lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
+     }
+     int type;
+     String vl=loder.get(v, ac, as, list, buff);
+     if (vl != null) {
+      if (ov != null)ov = loder.get(ov, ac, coe, list2, buff);
+      type = (int)o;
+      String vll[]=vl == null ?null: AllPath(vl, key, file, type);
+      tag:
+      if (vll != null) {
+       buff.setLength(0);
+       if (type >= 0) {
+        int l=0,size=vll.length;
+        char to;
+        if (img = type == 0) to = '*';
+        else to = ':';
+        do {
+         str = vll[l]; 
+         int st;
+         if (str.startsWith("ROOT:"))st = 5;
+         else st = 0;
+         st = str.indexOf(to, st);
+         String add;
+         if (st >= 0)add = str.substring(0, st);
+         else add = str;
+         if (!replaceR(add, file, buff, img, post, ws)) {
+          v = null;
+          break tag;
+         }
+         if (st >= 0)buff.append(str, st, str.length());
+         buff.append(",");
+        }while(++l < size);
+        buff.setLength(buff.length() - 1);
+       } else {
+        if (!replaceR(vll[0], file, buff, true, post, ws)) {
          v = null;
          break tag;
         }
-        if (st >= 0)buff.append(str, st, str.length());
-        buff.append(",");
-       }while(++l < size);
-       buff.setLength(buff.length() - 1);
-      } else {
-       if (!replaceR(vll[0], file, buff, true, post, ws)) {
-        v = null;
-        break tag;
        }
+       v = buff.toString();
       }
-      v = buff.toString();
-     }
-     String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-     if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
-      if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
-       same = false;
-      }
-      if (!same && (ovl != null || vll != null || !eq)) {
-       eq = false;
-       listv.put(key, v);
+      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
+      if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
+       str = null;
+       if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
+        same = false;
+       }
+       if (!same && (ovl != null || vll != null || !eq)) {
+        eq = false;
+        listv.put(key, v);
+       }
       }
      }
     }
@@ -504,7 +506,12 @@ public class rwmodProtect implements Runnable,ui {
    if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
     st = -1;
   } else {
-   int i=file.length() - 4;
+   int i;
+   if (file.startsWith("ROOT:"))i = 5;
+   else i = 0;
+   i = file.indexOf(':', i);
+   if (i < 0)i = file.length();
+   i -= 4;
    if (!(file.regionMatches(true, i, ".ogg", 0, 4) || file.regionMatches(true, i, ".wav", 0, 4)))st = -1;
   }
   if (buff != null && st > 0) {
@@ -544,21 +551,11 @@ public class rwmodProtect implements Runnable,ui {
   if (type >= 0) {
    list = str.split(",");
    int l=list.length,m=0;
-   char to;
-   boolean isimg;
-   if (isimg = type == 0) to = '*';
-   else  to = ':';
+   boolean isimg=type == 0;
    do {
+    buff.setLength(0);
     str = list[m].trim();
-    int st;
-    if (str.startsWith("ROOT:"))st = 5;
-    else st = 0;
-    st = str.indexOf(to, st);
-    String add;
-    if (st >= 0)add = str.substring(0, st);
-    else add = str;
-    ru = ru || addResPath(add, path, isimg, buff);
-    if (st >= 0)buff.append(str, st, str.length());
+    ru = addResPath(str, path, isimg, buff) || ru;
     list[m] = buff.toString();
    }while(++m < l);
   } else {
@@ -621,7 +618,7 @@ public class rwmodProtect implements Runnable,ui {
   if (file.endsWith("/"))--ed;
   if (file.regionMatches(true, ed, ".ini", 0, 4)) {
    return 3;
-  } else if (file.regionMatches(true, ed, ".tmx", 0, 4)) {
+  } else if (file.regionMatches(true, ed, ".tmx", 0, 4) || file.regionMatches(true, ed - 4, "_map.png", 0, 8)) {
    return 1;
   } else {
    String[] srr=cust;
@@ -739,7 +736,7 @@ public class rwmodProtect implements Runnable,ui {
     fileName = fileName.toLowerCase();
     if (!lows.containsKey(fileName))lows.put(fileName, zipEntry);
    }while(zipEntrys.hasMoreElements());
-   if (name == null)name = ""; //仅单个ini的rwmod
+   //if (name == null)name = ""; 仅单个ini的rwmod
    rootPath = name;
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
    zipout = new ZipArchiveOutputStream(Ou);
@@ -765,7 +762,6 @@ public class rwmodProtect implements Runnable,ui {
     cre.addArchiveEntry(lib.getArc("mod-info.txt/"), new inputsu(ini));
    }
    zipEntrys = zip.getEntries();
-   StringBuilder buff=new StringBuilder();
    do{
     ZipArchiveEntry zipEntry=zipEntrys.nextElement();
     if (zipEntry.getSize() != 0l) { 
@@ -783,19 +779,7 @@ public class rwmodProtect implements Runnable,ui {
       tas.add(lod);
       map.put(name, lod);
      } else if (type == 1) {
-      String loc = loder.getName(name);
-      int i=name.length();
-      if (name.endsWith("/"))--i;
-      i -= 4;
-      cr.addArchiveEntry(lib.getArc(loc.concat("/")), new inputsu(zip, zipEntry));
-      buff.setLength(0);
-      buff.append(name, 0, i);
-      buff.append("_map.png");
-      zipEntry = toPath(buff.toString());
-      if (zipEntry != null) {
-       name = loder.getName(zipEntry.getName());
-       cr.addArchiveEntry(lib.getArc(name.concat("/")), new inputsu(zip, zipEntry));
-      }
+      cr.addArchiveEntry(lib.getArc(loder.getName(name).concat("/")), new inputsu(zip, zipEntry));
      } else if (type == 6) {
       cr.addArchiveEntry(lib.getArc(FileName(type)), new inputsu(zip, zipEntry));
      }
