@@ -14,14 +14,15 @@
 - [x] 解析兼容<br>已完成对ini解析的主要兼容。
 - [x] 宏支持<br>已完成对宏的主要兼容与运算。
 - [x] copyFrom<br>已完成对copyFrom的主要兼容。
-- [x] 路径兼容<br>兼容多个名称转小写相同，以及伪文件夹。
+- [x] 路径兼容<br>已完成对路径的主要兼容。
+- [x] 地图与音乐文件<br>已完成对外部文件的主要兼容
 - [x] all-units.template<br>all-units.template优先于copyFrom。使用copyFrom复制ini，不会被追加ini持有的all-units.template。
 - [x] @copyFrom_skipThisSection<br>@copyFrom_skipThisSection定义为false或0时拿回之前的所有键，反之丢弃。
 - [ ] 不规范的持有文件<br>持有mod-info.txt，背景音乐，地图以及地图图像，使打包出错或造成多次复制。
 - [ ] 非法路径<br>使用"/"或"\\"作为路径头，这导致游戏加载出现bug，使加载结果不一致。
 - [ ] 不规范的持有<br>使用${core.dont_load}等被移除的变量作为访问，使宏解析失败。
 - [ ] 错误的宏<br>@global不在所定义的可继承节中，引起游戏bug，导致解析结果不一致，诺要避免请仅放在core节。
-- [ ] 重排序<br>由于屎山代码，对宏进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
+- [ ] 重排序<br>由于屎山代码，对多态值进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
 
 ## 配置
 Android的路径是sdcard/rustedWarfare/rwmod

@@ -246,21 +246,14 @@ class loder implements Callable {
   }
  }
  static String getName(String file) {
-  int i=file.length();
-  if (file.endsWith("/")) {
-   file = file.substring(0, --i);
-  }
-  i = file.lastIndexOf("/", --i);
-  if (i > 0)file = file.substring(++i);
-  return file;
+  int len=file.length();
+  if(file.endsWith("/"))--len;
+  int i=file.lastIndexOf("/",len-1);
+  return file.substring(++i,len);
  }
  static String getSuperPath(String str) {
-  int i=str.length();
-  if (str.endsWith("/"))--i;
-  i = str.lastIndexOf("/", --i);
-  if (i > 0) {
-   return str.substring(0, ++i);
-  }
+  int i=str.lastIndexOf('/', str.length() - 2);
+  if (i > 0)return str.substring(0, i + 1);
   return "";
  }
  static String get(String str, String eqz, HashMap map, HashMap loc, StringBuilder buff) {
@@ -418,8 +411,4 @@ class loder implements Callable {
  }
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
- public static boolean ismusic(String str) {
-  int i=str.length() - 4;
-  return i >= 0 && (str.regionMatches(true, i, ".ogg", 0, 4) || str.regionMatches(true, i, ".wav", 0, 4));
- }
 }

@@ -29,7 +29,6 @@ public class rwmodProtect implements Runnable,ui {
  HashMap iniMap;
  HashMap iniHide;
  int arr[];
- int alltmp;
  HashMap low;
  HashMap coeMap;
  HashMap Filemap;
@@ -173,31 +172,13 @@ public class rwmodProtect implements Runnable,ui {
   ini -= 2;
   if (ini < 0)ini = 0;
   int i=++arr[ini] - 2;
-  if (ini == 4)buff.append("￸/");
+  if (ini > 4)buff.append("￸/");
+  if (ini == 5)buff.append("[noloop]");
   appendName(i);
   if (ini == 1)buff.append(".ini");
   else if (ini > 2)buff.append(".ogg");
   else if (ini == 2)buff.append(".wav");
   if (ini < 2)buff.append('/');
-  return buff.toString();
- }
- String alltmpName(loder lod) {
-  StringBuilder buff=Buff;
-  buff.setLength(0);
-  int i;
-  loder all=lod.all;
-  String file=all.allD;
-  i = ++all.allindex - 2;
-  if (file == null) {
-   appendName(++alltmp);
-   buff.append('/');
-   all.allD = file = buff.toString();
-   buff.append("all-units.template/");
-   all.str = buff.toString();
-   buff.setLength(buff.length() - 19);
-  } else buff.append(file);
-  appendName(i);
-  buff.append(".ini/");
   return buff.toString();
  }
  loder replace(ZipArchiveEntry en, String str) throws Exception {
@@ -254,6 +235,7 @@ public class rwmodProtect implements Runnable,ui {
    o = core.get("copyFrom");
    String str;
    if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
+    StringBuilder buf=Buff;
     str = str.replace('\\', '/');
     String list[]=str.split(",");
     int i=0,n=list.length;
@@ -288,7 +270,20 @@ public class rwmodProtect implements Runnable,ui {
       if (tk != null) {
        if (alls != tk) {
         lod.allindex = -2;
-        lod.str = alltmpName(lod);
+        buf.setLength(0);
+        loder allt=lod.all;
+        String fn=allt.allD;
+        if (fn == null) {
+         appendName(arr[7]++);
+         buf.append('/');
+         allt.allD = fn = buf.toString();
+         buf.append("all-units.template/");
+         allt.str = buf.toString();
+         buf.setLength(buf.length() - 19);
+        } else buf.append(fn);
+        appendName(++allt.allindex - 2);
+        buf.append(".ini/");
+        lod.str = buf.toString();
        } else ini.allindex = -1;
       }
      }
@@ -508,7 +503,10 @@ public class rwmodProtect implements Runnable,ui {
    }
    if (file.startsWith("CORE:", st) || file.startsWith("SHARED:", st))
     st = -1;
-  } else if (!loder.ismusic(file))st = -1;
+  } else {
+   int i=file.length() - 4;
+   if (!(file.regionMatches(true, i, ".ogg", 0, 4) || file.regionMatches(true, i, ".wav", 0, 4)))st = -1;
+  }
   if (buff != null && st > 0) {
    buff.append("SHADOW:");
   }
@@ -638,7 +636,8 @@ public class rwmodProtect implements Runnable,ui {
   String path=musicPath;
   if (file.regionMatches(true, i, ".ogg", 0, 4)) {
    if (path != null && file.startsWith(path)) {
-    return 6;
+    if (file.indexOf("[noloop]", path.length()) < 0)return 6;
+    return 7;
    } else {
     return 5;
    }
@@ -710,9 +709,8 @@ public class rwmodProtect implements Runnable,ui {
   if (!(e instanceof InterruptedException))Ui.end(e);
  }
  public void run() {
-  arr = new int[5];
+  arr = new int[7];
   arr[0] = 1;
-  alltmp = -1;
   HashMap filemap = new HashMap();
   Filemap = filemap;
   HashMap inimap = new HashMap();
@@ -730,26 +728,18 @@ public class rwmodProtect implements Runnable,ui {
   try {
    ZipFile zip=new ZipFile(In);
    Zip = zip;
-   String name = null;
+   String name=null;
+   HashSet rset=new HashSet();
    Enumeration<? extends ZipArchiveEntry> zipEntrys=zip.getEntries();
    do{
     ZipArchiveEntry zipEntry=zipEntrys.nextElement();
     String fileName=zipEntry.getName();
-    String root;
-    int i=fileName.indexOf("/");
-    if (i >= 0) {
-     root = fileName.substring(0, ++i);
-    } else root = "";
+    String root=loder.getSuperPath(fileName);
+    if (!rset.add(root) && (name == null || root.length() < name.length()))name = root;
     fileName = fileName.toLowerCase();
     if (!lows.containsKey(fileName))lows.put(fileName, zipEntry);
-    if (name == null) {
-     name = root;
-    } else if (name.length() == 0) {
-     continue;
-    } else if (!name.equals(root)) {
-     name = "";
-    }
    }while(zipEntrys.hasMoreElements());
+   if (name == null)name = ""; //仅单个ini的rwmod
    rootPath = name;
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
    zipout = new ZipArchiveOutputStream(Ou);
