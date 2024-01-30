@@ -23,6 +23,7 @@
 - [ ] 不规范的持有<br>使用${core.dont_load}等被移除的变量作为访问，使宏解析失败。
 - [ ] 错误的宏<br>@global不在所定义的可继承节中，引起游戏bug，导致解析结果不一致，诺要避免请仅放在core节。
 - [ ] 重排序<br>由于屎山代码，对多态值进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
+- [ ] 序列化的copyFrom<br>在一些旧的节中，copyFrom使用宏访问序列化对的目标进行操作，这使得键为私有变量。
 
 ## 配置
 Android的路径是sdcard/rustedWarfare/rwmod

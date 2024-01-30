@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,19 +130,6 @@ class loder implements Callable {
  loder(InputStreamSupplier will) {
   wi = will;
  }
- static Object wh(String str, HashMap map) {
-  int i=0,m=1;
-  String vl=str;
-  do{
-   Object o=map.get(vl);
-   if (o != null)return o;
-   i = str.indexOf("_", ++i);
-   if (i > 0) {
-    vl = str.substring(0, i + 1);
-   } else break;
-  }while(--m >= 0 && i > 0);
-  return null;
- }
  static void put(HashMap map, HashMap map2) {
   Iterator ite=map2.entrySet().iterator();
   while (ite.hasNext()) {
@@ -224,22 +212,18 @@ class loder implements Callable {
     if (str != null && cpy != null)cpy.is = si;
    }
    if (cou != null) {
-    o = wh(key, res);
-    if (o != null) {
-     HashMap fid=(HashMap)o;
-     o = cou.get(key);
-     HashMap now;
-     if (o == null) {
-      now = new HashMap();
-      cou.put(key, now);
-     } else now = (HashMap)o;
-     Iterator ite2=hash.entrySet().iterator();
-     while (ite2.hasNext()) {
-      en = (Map.Entry)ite2.next();
-      key = (String)en.getKey();
-      if (fid.containsKey(key)) {
-       now.put(key, path);
-      }
+    o = cou.get(key);
+    HashMap now;
+    if (o == null) {
+     now = new HashMap();
+     cou.put(key, now);
+    } else now = (HashMap)o;
+    Iterator ite2=hash.entrySet().iterator();
+    while (ite2.hasNext()) {
+     en = (Map.Entry)ite2.next();
+     key = (String)en.getKey();
+     if (res.containsKey(key)) {
+      now.put(key, path);
      }
     }
    }
@@ -247,9 +231,9 @@ class loder implements Callable {
  }
  static String getName(String file) {
   int len=file.length();
-  if(file.endsWith("/"))--len;
-  int i=file.lastIndexOf("/",len-1);
-  return file.substring(++i,len);
+  if (file.endsWith("/"))--len;
+  int i=file.lastIndexOf("/", len - 1);
+  return file.substring(++i, len);
  }
  static String getSuperPath(String str) {
   int i=str.lastIndexOf('/', str.length() - 2);
@@ -314,12 +298,8 @@ class loder implements Callable {
        cVar.a();
        double b = cVar.b();
        int intd=(int)b;
-       if (intd == b) {
-        key = String.valueOf(intd);
-       } else {
-        key = String.valueOf(b);
-       }
-       buff.append(key);
+       if (intd == b) buff.append(intd);
+       else buff.append(b);
       }
      }
      j = i = ++n;
@@ -335,9 +315,30 @@ class loder implements Callable {
    HashMap mapput=new HashMap();
    hash = (HashMap)o;
    cpys cpy=new cpys();
+   if (!key.startsWith("te")) {
+    int i=key.indexOf("_");
+    if (i > 0) {
+     o = hash.remove("copyFrom");
+     //暂不支持宏
+     if (o != null && !o.equals("IGNORE")) {
+      map.put(key, cpy);
+      String vl=key.substring(0, ++i).concat((String)o);
+      Object set=map.get(vl);
+      HashMap as;
+      if (set != null && (as = asFor(map, set, vl)) != null) {
+       //copyFrom私有变量，兼容仅图像
+       HashMap res=rwmodProtect.Res;
+       for (Map.Entry<String,String> en:(Set<Map.Entry>)as.entrySet()) {
+        String ac=en.getKey();
+        if (res.containsKey(ac))mapput.put(ac, en.getValue());
+       }
+      }
+     }
+    }
+   }
    o = hash.remove("@copyFromSection");
    if (o != null && !o.equals("IGNORE")) {
-    map.put(key, cpy);
+    if (mapput.size() == 0)map.put(key, cpy);
     key = (String)o;
     String list[]=key.split(",");
     int i = 0;
@@ -351,31 +352,11 @@ class loder implements Callable {
      }
     }
    }
-   HashMap put2=null;
-   if (!key.startsWith("te")) {
-    int i=key.indexOf("_");
-    if (i > 0) {
-     o = hash.get("copyFrom");
-     if (o == null)o = mapput.get("copyFrom");
-     if (o != null && !o.equals("IGNORE")) {
-      if (mapput.size() == 0)map.put(key, cpy);
-      String vl=key.substring(0, ++i).concat((String)o);
-      Object set=map.get(vl);
-      HashMap as;
-      if (set != null && (as = asFor(map, set, vl)) != null) {
-       put2 = new HashMap();
-       put2.putAll(as);
-       put2.putAll(mapput);
-      }
-     }
-    }
-   }
    cpy.hash = hash;
-   if (put2 == null)put2 = mapput;
-   if (put2.size() > 0) {
-    cpy.skip = (HashMap)put2.clone();
-    put2.putAll(hash);
-    hash = put2;
+   if (mapput.size() > 0) {
+    cpy.skip = (HashMap)mapput.clone();
+    mapput.putAll(hash);
+    hash = mapput;
    }
    cpy.m = hash;
   } else {

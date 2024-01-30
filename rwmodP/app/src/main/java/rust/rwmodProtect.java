@@ -57,46 +57,6 @@ public class rwmodProtect implements Runnable,ui {
   }
   return name.concat("_r.rwmod");
  }
- static HashMap set(Object o, int is) {
-  HashMap map=(HashMap)o;
-  Iterator ite=map.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   o = en.getValue();
-   String value,key;
-   if (o instanceof String) {
-    value = (String)o;
-    if (value.charAt(0) == '$') {
-     key = value.substring(1);
-     o = map.get(key);
-     if (o instanceof String) {
-      value = (String)o;
-     } else {
-      en.setValue(o);
-      value = null;
-     }
-    } else key = null;
-    if (value != null) {
-     String list[]=value.split(",");
-     HashMap vmap=new HashMap();
-     o = vmap;
-     int size=list.length;
-     while (--size >= 0) {
-      String str=list[size];
-      int n=is;
-      if (str.endsWith("_")) {
-       str = str.substring(0, str.length() - 1);
-       ++n;
-      }
-      vmap.put(str, n);
-     }
-     en.setValue(o);
-     if (key != null)map.put(key, o);
-    }
-   }
-  }
-  return map;
- }
  public static void dictionary(Reader io) throws IOException {
   BufferedReader buff= new BufferedReader(io);
   try {
@@ -133,22 +93,20 @@ public class rwmodProtect implements Runnable,ui {
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.get("skip").split(","));
-  HashMap image=set(map.get("image"), -1);
-  Iterator ite=image.values().iterator();
-  HashMap tm=new HashMap();
-  while (ite.hasNext()) {
-   HashMap en=(HashMap)ite.next();
-   tm.putAll(en);
+  HashMap res=new HashMap();
+  Res=res;
+  String[] list=set.get("image").split(",");
+  for(String str:list){
+   res.put(str,-1);
   }
-  HashMap music=set(map.get("music"), 1);
-  loder.put(image, music);
-  ite = music.values().iterator();
-  while (ite.hasNext()) {
-   HashMap en=(HashMap)ite.next();
-   tm.putAll(en);
+  list=set.get("images").split(",");
+  for(String str:list){
+   res.put(str,0);
   }
-  image.put("template_", tm);
-  Res = image;
+  list=set.get("music").split(",");
+  for(String str:list){
+   res.put(str,1);
+  }
  }
  void appendName(int i) {
   if (i >= 0) {
@@ -379,7 +337,6 @@ public class rwmodProtect implements Runnable,ui {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
-   HashMap tr=(HashMap)loder.wh(ac, reu);
    o = en.getValue();
    HashMap put2=null;
    HashMap list;
@@ -422,7 +379,7 @@ public class rwmodProtect implements Runnable,ui {
     else ov = null;
     boolean eq=v.equals(ov);
     boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(ov);
-    boolean img=tr != null && (o = tr.get(key)) != null;
+    boolean img=(o = reu.get(key)) != null;
     if (img) {
      boolean lastRoot;
      String pathRel,path;
