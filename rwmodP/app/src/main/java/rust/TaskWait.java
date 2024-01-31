@@ -9,7 +9,7 @@ public class TaskWait {
  LongAdder ato;
  volatile Throwable err;
  ArrayList<Future> ar;
- volatile boolean end;
+ //volatile boolean end;
  ui back;
  public static final InterruptedException cancel=new InterruptedException();
  TaskWait(ui ui) {
@@ -53,17 +53,17 @@ public class TaskWait {
   LongAdder at=ato;
   if (e == null) {
    at.decrement();
-   if (!end||at.sum() > 0l)ui = null;
+   if (/*!end||*/at.sum() > 0l)ui = null;
   }
   if (ui != null) {
    at.reset();
-   end = false;
+  // end = false;
    ui.end(e);
   }
  }
- void end() {
+ /*void end() {
   if (ato.sum() <= 0l) {
    back.end(null);
   } else end = true;
- }
+ }*/
 }

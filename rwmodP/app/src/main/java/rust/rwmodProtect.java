@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -71,13 +71,11 @@ public class rwmodProtect implements Runnable,ui {
   }
  }
  public static void init(Reader io)throws Exception {
-  loder lod=new loder(io);
-  lod.call();
-  HashMap<String,HashMap> map=lod.ini;
-  HashMap<String,String> set=map.get("set");
+  Properties set=new Properties();
+  set.load(io);
   String file;
   if (ds == null) {
-   file = set.get("file");
+   file = set.getProperty("file");
    int i=0,len=file.length();
    int irr[]= new int[len];
    int cou=0;
@@ -89,23 +87,23 @@ public class rwmodProtect implements Runnable,ui {
    if (cou < len)irr = Arrays.copyOf(irr, cou);
    cr = irr;
   }
-  cust = set.get("cust").split(",");
+  cust = set.getProperty("cust").split(",");
   HashSet put=new HashSet();
   skip = put;
-  Collections.addAll(put, set.get("skip").split(","));
+  Collections.addAll(put, set.getProperty("skip").split(","));
   HashMap res=new HashMap();
-  Res=res;
-  String[] list=set.get("image").split(",");
-  for(String str:list){
-   res.put(str,-1);
+  Res = res;
+  String[] list=set.getProperty("image").split(",");
+  for (String str:list) {
+   res.put(str, -1);
   }
-  list=set.get("images").split(",");
-  for(String str:list){
-   res.put(str,0);
+  list = set.getProperty("images").split(",");
+  for (String str:list) {
+   res.put(str, 0);
   }
-  list=set.get("music").split(",");
-  for(String str:list){
-   res.put(str,1);
+  list = set.getProperty("music").split(",");
+  for (String str:list) {
+   res.put(str, 1);
   }
  }
  void appendName(int i) {
@@ -148,7 +146,7 @@ public class rwmodProtect implements Runnable,ui {
   Object o=map.get(str);
   if (o == null) {
    ZipFile zip=Zip;
-   lod = new loder(new InputStreamReader(zip.getInputStream(en)));
+   lod = new loder(zip.getInputStream(en));
    lod.call();
    map.put(str, lod);
   } else lod = (loder)o;
@@ -223,7 +221,7 @@ public class rwmodProtect implements Runnable,ui {
      }
      if (lod != null) {
       String ss=!s ?null: str;
-      ini.putAnd(put, lod.put, cou, ss);
+      ini.putAnd(put, lod.put, cou, ss, map);
       loder tk=lod.all;
       if (tk != null) {
        if (alls != tk) {
@@ -250,9 +248,9 @@ public class rwmodProtect implements Runnable,ui {
   }
   HashMap old=new HashMap();
   ini.old = old;
-  if (alls != null)loder.putAnd(old, alls.put, null, null);
-  loder.putAnd(old, put, null, null);
-  ini.putAnd(put, ini.ini, cou, null);
+  if (alls != null)loder.putAnd(old, alls.put, null, null, null);
+  loder.putAnd(old, put, null, null, null);
+  ini.putAnd(put, map, cou, null, map);
   ini.cou = cou;
  }
  void add(Object orr[], loder ini, boolean ws, StringBuilder buff) {
@@ -318,17 +316,17 @@ public class rwmodProtect implements Runnable,ui {
   if (all != null) {
    String src=all.src;
    HashMap tmp2=new HashMap();
-   loder.putAnd(as, all.put, tmp2, src);
+   loder.putAnd(as, all.put, tmp2, src, ws ?null: ini.ini);
    loder.put(tmp2, cou);
    cou = tmp2;
   }
-  loder.putAnd(as, put, null, null);
-  loder.as(as);
+  loder.putAnd(as, put, null, null, null);
+  loder.as(as, buff);
   Object o;
   if (cput != null && cput.length() == 0)o = cput = null;
   else o = cache.get(cput);
   if (o == null) {
-   loder.as(coe = ini.old);
+   loder.as(coe = ini.old, buff);
    if (cput != null)cache.put(cput, coe);
   } else coe = (HashMap)o;
   cache.put(ini.str, as);
@@ -337,13 +335,13 @@ public class rwmodProtect implements Runnable,ui {
   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
-   o = en.getValue();
+   Object cp = en.getValue();
    HashMap put2=null;
    HashMap list;
-   if (o instanceof HashMap) {
-    list = (HashMap)o;
+   if (cp instanceof HashMap) {
+    list = (HashMap)cp;
    } else {
-    cpys cpy=(cpys)o;
+    cpys cpy=(cpys)cp;
     list = cpy.m;
     put2 = cpy.skip;
    }
@@ -351,12 +349,12 @@ public class rwmodProtect implements Runnable,ui {
    HashMap list2=null;
    HashMap find2=null;
    HashMap find3=null;
-   o = coe.get(ac);
-   if (o != null) {
-    if (o instanceof HashMap) {
-     list2 = (HashMap)o;
+   Object or = coe.get(ac);
+   if (or != null) {
+    if (or instanceof HashMap) {
+     list2 = (HashMap)or;
     } else {
-     cpys cpy=(cpys)o;
+     cpys cpy=(cpys)or;
      list2 = cpy.m;
      find2 = cpy.skip;
      find3 = cpy.hash;
@@ -396,9 +394,9 @@ public class rwmodProtect implements Runnable,ui {
       lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
      }
      int type;
-     String vl=loder.get(v, ac, as, list, buff);
+     String vl=loder.get(v, ac, as, cp, buff);
      if (vl != null) {
-      if (ov != null)ov = loder.get(ov, ac, coe, list2, buff);
+      if (ov != null)ov = loder.get(ov, ac, coe, or, buff);
       type = (int)o;
       String vll[]=vl == null ?null: AllPath(vl, key, file, type);
       tag:
@@ -452,7 +450,7 @@ public class rwmodProtect implements Runnable,ui {
     }
    }
   }
-  cre.addArchiveEntry(lib.getArc(ini.str), new inputsu(ini));
+  cre.addArchiveEntry(lib.getArc(ini.str), ini);
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
   int st=0;
@@ -701,7 +699,7 @@ public class rwmodProtect implements Runnable,ui {
    cr = new ParallelScatterZipCreator();
    cre = cr;
    if (inf != null) {
-    loder ini=new loder(new InputStreamReader(zip.getInputStream(inf)));
+    loder ini=new loder(zip.getInputStream(inf));
     ini.call();
     HashMap info=ini.ini;
     Object o=info.get("music");
@@ -716,7 +714,7 @@ public class rwmodProtect implements Runnable,ui {
       map.put("sourceFolder", "￸");
      }
     }
-    cre.addArchiveEntry(lib.getArc("mod-info.txt/"), new inputsu(ini));
+    cre.addArchiveEntry(lib.getArc("mod-info.txt/"), ini);
    }
    zipEntrys = zip.getEntries();
    do{
@@ -726,7 +724,7 @@ public class rwmodProtect implements Runnable,ui {
      int type=getType(name);
      boolean istm=type == 2;
      if (istm || type == 3) {
-      loder lod=new loder(new inputsu(zip, zipEntry));
+      loder lod=new loder(zip.getInputStream(zipEntry));
       lod.task = tas;
       HashMap map;
       if (!istm) {
@@ -742,7 +740,7 @@ public class rwmodProtect implements Runnable,ui {
      }
     }
    }while(zipEntrys.hasMoreElements());
-   tas.end();
+   // tas.end();
   } catch (Throwable e) {
    tas.down(e);
   }

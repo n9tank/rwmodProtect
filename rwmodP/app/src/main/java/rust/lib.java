@@ -67,12 +67,12 @@ public class lib implements Runnable,ui {
     do{
      str = list[i];
      loder loder=getlod(file.concat(str), file);
-     loder.putAnd(put, loder.put, null, null);
+     loder.putAnd(put, loder.put, null, null, null);
     }while(++i < l);
    }
   }
   if (put != null) {
-   loder.putAnd(put, ini, null, null);
+   loder.putAnd(put, ini, null, null, null);
   } else put = ini;
   lod.put = put;
   lod.ini = null;
@@ -144,11 +144,10 @@ public class lib implements Runnable,ui {
       ZipArchiveEntry zipe=ens.nextElement();
       String name;
       if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
-       loder loder=new loder(new inputsu(zip, zipe));
+       loder loder=new loder(zip.getInputStream(zipe));
        name = name.substring(13).toLowerCase();
        inimap.put(name, loder);
-       inputsu ins=new inputsu(loder);
-       cre.addArchiveEntry(getArc(name), ins);
+       cre.addArchiveEntry(getArc(name), loder);
       }
      }
     } finally {
@@ -160,12 +159,12 @@ public class lib implements Runnable,ui {
     while (ens.hasMoreElements()) {
      ZipArchiveEntry zipe= ens.nextElement();
      String name=zipe.getName();
-     loder loder=new loder(new inputsu(zip, zipe));
+     loder loder=new loder(zip.getInputStream(zipe));
      loder.task = task;
      inimap.put(name, loder);
      task.add(loder);
     }
-    task.end();
+    // task.end();
    }
   } catch (Throwable e) {
    task.down(e);

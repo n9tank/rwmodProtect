@@ -14,21 +14,21 @@ public class lzloder {
  public void forEach(lzloder lz) {
   for (Map.Entry<String,String> en:(Set)ini.entrySet()) {
    String ac=en.getKey();
-   forWith(lz, ac);
+   forEach(lz, ac);
   }
   for (lzloder to:copy) {
    to.forEach(lz);
   }
   if (all != null)all.forEach(lz);
  }
- public void forWith(lzloder lz, String ac) {
+ public void forEach(lzloder lz, String ac) {
   HashMap res=null;
   HashMap tr=(HashMap)res.get(ac);
   HashMap src=lz.out;
   if (tr != null && !src.containsKey(ac)) {
    src.put(ac, null);
    for (Map.Entry<String,String> en2:(Set)tr.entrySet()) {
-    String v=getReal(ac, en2.getKey(), false, true);
+    String v=lz.getReal(ac, en2.getKey(), false, true,false);
     if (v != null) {
 
     }
@@ -46,63 +46,71 @@ public class lzloder {
     Map.Entry < String,String > en2=ite.next();
     String key=en2.getKey();
     if (skip.containsKey(key))continue;
-    if (en2.getValue().equals(getReal(ac, key, false, tr.containsKey(key)))) {
+    if (en2.getValue().equals(getReal(ac, key, false, tr.containsKey(key),false))) {
      ite.remove();
     }
    }
   }
   forEach(this);
  }
- public String getCopy(String key, String value, boolean next) {
-  String str=null;
+ public Object getCopy(String key, String value, boolean next, boolean stack) {
+  Object str=null;
   for (lzloder lz:copy) {
-   if ((str = lz.get(key, value, next)) != null) {
+   if ((str = lz.get(key, value, next, stack)) != null) {
     return str;
    }
   }
-  if (all != null)str = all.get(key, value, next);
+  if (all != null)str = all.get(key, value, next, stack);
   return str;
  }
- public String get(String key, String value, boolean next) {
+ public Object get(String key, String value, boolean next, boolean stack) {
   HashMap mmp=(HashMap)ini.get(key);
-  String str=null;
+  Object str=null;
   if (mmp == null || (str = (String)mmp.get(value)) == null) {
    if (mmp != null && (next || ((str = (String)mmp.get("@copyFrom_skipThisSection")) == null || (next = !("1".equals(str) || "true".equalsIgnoreCase(str))))))
-    str = getCopy(key, value, next);
+    str = getCopy(key, value, next, stack);
+  }
+  if (stack && str != null) {
+   if (str instanceof String) {
+    lzstack lzstack=new lzstack();
+    lzstack.str = (String)str;
+    lzstack.stack = this;
+    return lzstack;
+   }
   }
   return str;
  }
- public String getOr(String key, String value, boolean next, boolean use) {
-  if (use)return getCopy(key, value, next);
-  else return get(key, value, next);
+ public Object getOr(String key, String value, boolean next, boolean use, boolean stack) {
+  if (use)return getCopy(key, value, next, stack);
+  else return get(key, value, next, stack);
  }
- public String getReal(String key, String value, boolean use, boolean img) {
-  String str=getOr(key, "@copyFrom_skipThisSection", false, use);
+ public Object getReal(String key, String value, boolean use, boolean img, boolean stack) {
+  String str=(String)getOr(key, "@copyFrom_skipThisSection", false, use, false);
   boolean skip=!("1".equals(str) || "true".equalsIgnoreCase(str));
-  str = getOr(key, value, skip, use);
+  Object obj = getOr(key, value, skip, use, stack);
   int i;
   if (str == null && (i = key.lastIndexOf('_')) > 0) {
-   String link= getOr(key, "@copyFromSection", skip, use);
+   String link=(String)getOr(key, "@copyFromSection", skip, use, false);
    if (link != null && !link.equals("IGNORE")) {
     for (String next:link.split(",")) {
      next = next.trim();
-     if ((str = getReal(next, value, use, img)) != null)return str;
+     if ((obj = getReal(next, value, use, img, stack)) != null)return str;
     }
    }
    //template_
    HashMap res=null;
    if (img && !key.startsWith("te") && (res = (HashMap)res.get(key)) != null && res.containsKey(value)) {
-    link = getOr(key, "copyFrom", skip, use);
+    link = (String)getOr(key, "copyFrom", skip, use, false);
     if (link != null) {
      StringBuilder buff=new StringBuilder();
      buff.append(key, 0, i);
      buff.append(link);
      str = getDefine(buff.toString(), key, use, buff);
-     if (str != null && !str.equals("IGNORE")) str = getReal(str, value, use, img);
+     if (str != null && !str.equals("IGNORE")) obj = getReal(str, value, use, img, stack);
     }
    }
   }
-  return str;
+  return obj;
  }
  public String getBad(String value, boolean use) {
   String str=null;
@@ -157,12 +165,12 @@ public class lzloder {
         String keyv=list[0];
         if (list.length > 1) {
          if (keyv.equals("section"))keyv = where;
-         group = getReal(keyv, list[1], use, false);
+         group = (String)getReal(keyv, list[1], use, false, false);
         } else {
-         group = getReal(where, "@define ".concat(keyv), use, false);
+         group = (String)getReal(where, "@define ".concat(keyv), use, false, false);
          String gl="@global ".concat(keyv);
          if (group == null)group = getBad(gl, use);
-         if (group == null)group = getReal("core", gl, use, false);
+         if (group == null)group = (String)getReal("core", gl, use, false, false);
         }
        }
        if (group == null)return null;
