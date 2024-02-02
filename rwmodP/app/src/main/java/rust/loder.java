@@ -362,9 +362,10 @@ class loder implements Callable,InputStreamSupplier {
       key = buff.substring(st, buff.length());
       if (isNumber) {
        buff.setLength(st);
-       cmp cVar = new cmp(key);
-       cVar.a();
-       double b = cVar.b();
+       cmpU cmp = new cmpU();
+       cmp.m = key;
+       cmp.t = key.charAt(0);
+       double b = cmp.cmp();
        int intd=(int)b;
        if (intd == b) buff.append(intd);
        else buff.append(b);
