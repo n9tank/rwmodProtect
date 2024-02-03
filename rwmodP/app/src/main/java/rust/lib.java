@@ -42,40 +42,31 @@ public class lib implements Runnable,ui {
   lib.In = in;
   close.addN(lib);
  }
- loder getlod(String str, String su) {
-  str = str.toLowerCase();
-  Object o=iniMap.get(str);
+ iniobj getlod(String str, String su) {
+  Object o=iniMap.get(str.toLowerCase());
   loder lod=(loder)o;
   if (!lod.use) {
    lod.use = true;
    lodAllCopy(lod, su);
   }
-  return lod;
+  return lod.put;
  }
  void lodAllCopy(loder lod, String file) {
   HashMap ini=lod.ini;
   Object o=ini.get("core");
-  HashMap put=null;
+  String list[]=null;
   if (o != null) {
    HashMap map=(HashMap)o;
    o = map.get("copyFrom");
-   if (o != null) {
-    String str=(String)o;
-    put = new HashMap();
-    String list[]=str.split(",");
-    int i=0,l=list.length;
-    do{
-     str = list[i];
-     loder loder=getlod(file.concat(str), file);
-     loder.putAnd(put, loder.put, null, null, null);
-    }while(++i < l);
-   }
+   if (o != null)list = ((String)o).split(",");
   }
-  if (put != null) {
-   loder.putAnd(put, ini, null, null, null);
-  } else put = ini;
-  lod.put = put;
+  iniobj put=lod.put;
   lod.ini = null;
+  if (list == null || Ou == null)put.put = ini;
+  if (list != null) {
+   int i=list.length;
+   while (--i >= 0)put.put(getlod(file.concat(list[i]), file).put, null, null);
+  }
  }
  public static ZipArchiveEntry getArc(String str) {
   ZipArchiveEntry en=new ZipArchiveEntry(str);
@@ -161,6 +152,7 @@ public class lib implements Runnable,ui {
      String name=zipe.getName();
      loder loder=new loder(zip.getInputStream(zipe));
      loder.task = task;
+     loder.str = name;
      inimap.put(name, loder);
      task.add(loder);
     }

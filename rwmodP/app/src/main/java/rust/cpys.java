@@ -5,5 +5,4 @@ class cpys {
  HashMap skip;
  HashMap hash;
  HashMap copy;
- boolean is;
 }

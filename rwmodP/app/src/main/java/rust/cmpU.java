@@ -1,3 +1,4 @@
+package rust;
 public class cmpU {
  String m;
  int in;

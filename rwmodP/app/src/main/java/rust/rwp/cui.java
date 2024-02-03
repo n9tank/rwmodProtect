@@ -1,10 +1,7 @@
 package rust.rwp;
 
-import rust.ui;
-import android.widget.ProgressBar;
-import android.widget.ListAdapter;
-import java.util.LinkedList;
 import android.widget.TextView;
+import rust.ui;
 
 public class cui implements ui,Runnable {
  String ti;

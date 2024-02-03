@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -137,8 +137,9 @@ public class rwmodProtect implements Runnable,ui {
   if (ini < 2)buff.append('/');
   return buff.toString();
  }
- loder replace(ZipArchiveEntry en, String str) throws Exception {
+ loder replace(ZipArchiveEntry en) throws Exception {
   loder lod=null;
+  String str=en.getName();
   int i=getType(str);
   HashMap map;
   if (i == 3)map = iniMap;
@@ -159,10 +160,11 @@ public class rwmodProtect implements Runnable,ui {
  void replace(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
   ini.str = FileName(isini ?3: 0);
   file = loder.getSuperPath(file);
-  HashMap put=new HashMap();
+  iniobj put=ini.put;
+  put.mbuff = buff;
   HashMap cou=new HashMap();
+  ini.cou = cou;
   loder alls=null;
-  ini.put = put;
   buff.setLength(0);
   tag:
   if (isini) {
@@ -176,33 +178,29 @@ public class rwmodProtect implements Runnable,ui {
     str = buff.toString();
     ZipArchiveEntry en=toPath(str);
     if (en != null) {
-     String allstr;
-     ini.all = alls = replace(en, allstr = en.getName());
-     alls.src = allstr;
+     alls = replace(en);
+     alls.src = en.getName();
      break;
     }
    }while(i > 0);
    buff.setLength(0);
   }
+  loder[] orr=null;
   HashMap map=ini.ini;
-  Object o=map.get("core");
-  if (o != null) {
-   HashMap core=(HashMap)o;
-   o = core.get("copyFrom");
-   String str;
-   if (o != null && (str = (String)o).length() > 0 && !str.equals("IGNORE")) {
-    StringBuilder buf=Buff;
+  HashMap core=(HashMap)map.get("core");
+  if (core != null) {
+   String str=(String)core.get("copyFrom");
+   StringBuilder buf=Buff;
+   if (str != null && str.length() > 0 && !str.equals("IGNORE")) {
     str = str.replace('\\', '/');
     String list[]=str.split(",");
-    int i=0,n=list.length;
-    Object[] orr=new Object[n];
-    ini.copy = orr;
+    int i=list.length;
+    orr = new loder[i];
     HashMap libs=lib.libMap;
-    do {
+    while (--i >= 0) {
      str = list[i].trim();
      loder lod=null;
-     boolean s;
-     if (s = !str.startsWith("CORE:")) {
+     if (!str.startsWith("CORE:")) {
       String sup;
       if (str.startsWith("ROOT:")) {
        str = str.substring(5);
@@ -211,139 +209,114 @@ public class rwmodProtect implements Runnable,ui {
       str = str.replaceFirst("^/+", "");
       if (sup.length() > 0)str = sup.concat(str);
       ZipArchiveEntry en = toPath(str);
+      lod = replace(en);
       str = en.getName();
-      lod = replace(en, str);
-      orr[i] = lod;
      } else if (libs != null) {
-      orr[i] = str;
       str = str.replaceFirst("^CORE:/*", "").toLowerCase();
       lod = (loder)libs.get(str);
+      str = null;
      }
+     orr[i] = lod;
      if (lod != null) {
-      String ss=!s ?null: str;
-      ini.putAnd(put, lod.put, cou, ss, map);
-      loder tk=lod.all;
+      put.put(lod.put.put, cou, str);
+      loder tk=lod.copy.all;
       if (tk != null) {
        if (alls != tk) {
-        lod.allindex = -2;
+        lod.notmp = true;
+        lod.allindex = 1;//不在根目录
         buf.setLength(0);
-        loder allt=lod.all;
-        String fn=allt.allD;
+        String fn=tk.allD;
         if (fn == null) {
          appendName(arr[6]++);
          buf.append('/');
-         allt.allD = fn = buf.toString();
+         tk.allD = fn = buf.toString();
          buf.append("all-units.template/");
-         allt.str = buf.toString();
-         buf.setLength(buf.length() - 19);
-        } else buf.append(fn);
-        appendName(++allt.allindex - 2);
-        buf.append(".ini/");
-        lod.str = buf.toString();
-       } else ini.allindex = -1;
+         tk.str = buff.toString();
+         buf.setLength(buff.length() - 19);
+        } else buff.append(fn);
+        if (lod.str == null) {
+         appendName(tk.allindex++ - 1);
+         buf.append(".ini/");
+         lod.str = buf.toString();
+        }
+       } else ini.notmp = true;//不追加all-tmp
       }
      }
-    }while(++i < n);
+    }
    }
   }
-  HashMap old=new HashMap();
+  HashMap coe=coeMap;
+  coe.put(new copyKey(new loder[]{ini}, alls), put);
+  copyKey key=new copyKey(orr, alls);
+  ini.copy = key;
+  iniobj old=(iniobj)coe.get(key);
+  if (old == null) {
+   coe.put(key, old = new iniobj());
+   old.mbuff = buff;
+   old.put(put.put, null, null);
+   if (alls != null)old.put(alls.put.put, null, null);
+   old.as();
+  }
   ini.old = old;
-  if (alls != null)loder.putAnd(old, alls.put, null, null, null);
-  loder.putAnd(old, put, null, null, null);
-  ini.putAnd(put, map, cou, null, map);
-  ini.cou = cou;
+  put.put(map, cou, null);
  }
- void add(Object orr[], loder ini, boolean ws, StringBuilder buff) {
-  if (orr != null) {
-   int i=0,len=orr.length;
-   while (i < len) {
-    Object o=orr[i++];
-    if (o instanceof String) buff.append((String)o);
-    else {
-     loder obj=(loder)o;
+ void write(loder ini, String file, StringBuilder buff) throws IOException {
+  file = loder.getSuperPath(file);
+  HashMap map=ini.ini;
+  buff.setLength(0);
+  int index=ini.allindex;
+  copyKey keycopy=ini.copy;
+  boolean ws=index > 0;
+  loder orr[];
+  loder all;
+  boolean notmp;
+  if ((orr = keycopy.copy) != null | (notmp = ((all = keycopy.all) != null && !ini.notmp))) {
+   HashMap core=(HashMap)map.get("core");
+   if (core == null)map.put("core", core = new HashMap());
+   if (notmp) {
+    buff.append(all.str);
+    buff.append(',');
+   }
+   if (orr != null) {
+    int i=0,len=orr.length;
+    while (i < len) {
+     loder obj=orr[i++];
      String str=obj.str;
      int st=0;
-     if (ws) {
-      loder all=ini.all;
-      if (all == null)all = ini;
-      if (obj.all == all && obj.allD == ini.allD) {
+     if (obj.ini == null)buff.append("CORE:");
+     else if (ws) {
+      if (obj.copy.all == all) {
        st = str.indexOf('/') + 1;
       } else buff.append("ROOT:");
      }
      buff.append(str, st, str.length());
-    }
-    buff.append(',');
-   }
-  }
-  int i=buff.length();
-  if (--i > 0)buff.setLength(i);
- }
- void write(loder ini, String file, StringBuilder buff) throws IOException {
-  file = loder.getSuperPath(file);
-  loder all=ini.all;
-  HashMap map=ini.ini;
-  String cput=null;
-  buff.setLength(0);
-  HashMap core=(HashMap)map.get("core");
-  int index=ini.allindex;
-  boolean ws=index == -2 || index > 0;
-  if (core != null) {
-   Object[] orr=ini.copy;
-   int st=0;
-   if (all != null) {
-    if (index == 0) {
-     String str=all.str;
-     st = str.length() + 1;
-     buff.append(str);
      buff.append(',');
     }
    }
-   add(orr, ini, ws, buff);
-   if (buff.length() > 0)core.put("copyFrom", cput = buff.toString());
-   if (index == -2)buff.insert(0, all.str.concat(","));
-   if (ws) {
-    buff.setLength(st);
-    add(orr, ini, false, buff);
-    cput = buff.toString();
-   }
+   int i=buff.length();
+   if (--i > 0)buff.setLength(i);
+   core.put("copyFrom", buff.toString());
   }
-  HashMap put=ini.put;
   String str;
   HashMap<String, HashMap> reu=Res;
-  HashMap coe,cou=ini.cou;
-  HashMap cache=coeMap;
-  HashMap as=new HashMap();
-  if (all != null) {
-   String src=all.src;
-   HashMap tmp2=new HashMap();
-   loder.putAnd(as, all.put, tmp2, src, ws ?null: ini.ini);
-   loder.put(tmp2, cou);
-   cou = tmp2;
-  }
-  loder.putAnd(as, put, null, null, null);
-  loder.as(as, buff);
-  Object o;
-  if (cput != null && cput.length() == 0)o = cput = null;
-  else o = cache.get(cput);
-  if (o == null) {
-   loder.as(coe = ini.old, buff);
-   if (cput != null)cache.put(cput, coe);
-  } else coe = (HashMap)o;
-  cache.put(ini.str, as);
-  HashSet skp=skip;
-  Iterator ite = as.entrySet().iterator();
-  while (ite.hasNext()) {
+  iniobj put=ini.put;
+  iniobj old=ini.old;
+  HashMap coe,cou=ini.cou,cache=coeMap,as=put.put;
+  /*
+   HashSet skp=skip;
+   Iterator ite = as.entrySet().iterator();
+   while (ite.hasNext()) {
    Map.Entry en=(Map.Entry)ite.next();
    String ac=(String)en.getKey();
    Object cp = en.getValue();
    HashMap put2=null;
    HashMap list;
    if (cp instanceof HashMap) {
-    list = (HashMap)cp;
+   list = (HashMap)cp;
    } else {
-    cpys cpy=(cpys)cp;
-    list = cpy.m;
-    put2 = cpy.skip;
+   cpys cpy=(cpys)cp;
+   list = cpy.m;
+   put2 = cpy.skip;
    }
    HashMap re=(HashMap)cou.get(ac);
    HashMap list2=null;
@@ -351,105 +324,106 @@ public class rwmodProtect implements Runnable,ui {
    HashMap find3=null;
    Object or = coe.get(ac);
    if (or != null) {
-    if (or instanceof HashMap) {
-     list2 = (HashMap)or;
-    } else {
-     cpys cpy=(cpys)or;
-     list2 = cpy.m;
-     find2 = cpy.skip;
-     find3 = cpy.hash;
-    }
+   if (or instanceof HashMap) {
+   list2 = (HashMap)or;
+   } else {
+   cpys cpy=(cpys)or;
+   list2 = cpy.m;
+   find2 = cpy.skip;
+   find3 = cpy.hash;
+   }
    }
    HashMap list3=(HashMap)map.get(ac);
    HashMap listv=list3;
    if (listv == null) {
-    listv = new HashMap();
-    map.put(ac, listv);
+   listv = new HashMap();
+   map.put(ac, listv);
    }
+   Object o;
    Iterator ite2=list.entrySet().iterator();
    boolean post=ini.isini && !ac.startsWith("te");
    boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o) || "true".equalsIgnoreCase((String)o));
    while (ite2.hasNext()) {
-    en = (Map.Entry) ite2.next();
-    String key=(String)en.getKey(),v=(String)en.getValue();
-    String ov;
-    if (list2 != null)ov = (String)list2.get(key);
-    else ov = null;
-    boolean eq=v.equals(ov);
-    boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(ov);
-    boolean img=(o = reu.get(key)) != null;
-    if (img) {
-     boolean lastRoot;
-     String pathRel,path;
-     if (re == null || (pathRel = (String)re.get(key)) == null) {
-      path = null;
-      lastRoot = false;
-     } else {
-      HashMap where;
-      if (getType(pathRel) == 3) {
-       where = iniMap;
-      } else where = iniHide;
-      loder ty=(loder)where.get(pathRel);
-      path = loder.getSuperPath(pathRel);
-      lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
-     }
-     int type;
-     String vl=loder.get(v, ac, as, cp, buff);
-     if (vl != null) {
-      if (ov != null)ov = loder.get(ov, ac, coe, or, buff);
-      type = (int)o;
-      String vll[]=vl == null ?null: AllPath(vl, key, file, type);
-      tag:
-      if (vll != null) {
-       buff.setLength(0);
-       if (type >= 0) {
-        int l=0,size=vll.length;
-        char to;
-        if (img = type == 0) to = '*';
-        else to = ':';
-        do {
-         str = vll[l]; 
-         int st;
-         if (str.startsWith("ROOT:"))st = 5;
-         else st = 0;
-         st = str.indexOf(to, st);
-         String add;
-         if (st >= 0)add = str.substring(0, st);
-         else add = str;
-         if (!replaceR(add, file, buff, img, post, ws)) {
-          v = null;
-          break tag;
-         }
-         if (st >= 0)buff.append(str, st, str.length());
-         buff.append(",");
-        }while(++l < size);
-        buff.setLength(buff.length() - 1);
-       } else {
-        if (!replaceR(vll[0], file, buff, true, post, ws)) {
-         v = null;
-         break tag;
-        }
-       }
-       v = buff.toString();
-      }
-      String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-      if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
-       str = null;
-       if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(loder.get(str, ac, coe, find2, buff)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
-        same = false;
-       }
-       if (!same && (ovl != null || vll != null || !eq)) {
-        eq = false;
-        listv.put(key, v);
-       }
-      }
-     }
-    }
-    if (list3 != null && !sikp && (v == null || eq || (same && !skp.contains(key)))) {
-     list3.remove(key);
-    }
+   en = (Map.Entry) ite2.next();
+   String key=(String)en.getKey(),v=(String)en.getValue();
+   String ov;
+   if (list2 != null)ov = (String)list2.get(key);
+   else ov = null;
+   boolean eq=v.equals(ov);
+   boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
+   boolean img=(o = reu.get(key)) != null;
+   if (img) {
+   boolean lastRoot;
+   String pathRel,path;
+   if (re == null || (pathRel = (String)re.get(key)) == null) {
+   path = null;
+   lastRoot = false;
+   } else {
+   HashMap where;
+   if (getType(pathRel) == 3) {
+   where = iniMap;
+   } else where = iniHide;
+   loder ty=(loder)where.get(pathRel);
+   path = loder.getSuperPath(pathRel);
+   lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
    }
-  }
+   int type;
+   String vl=put.get(v, ac, cp);
+   if (vl != null) {
+   if (ov != null)ov = old.get(ov, ac, or);
+   type = (int)o;
+   String vll[]=vl == null ?null: AllPath(vl, key, file, type);
+   tag:
+   if (vll != null) {
+   buff.setLength(0);
+   if (type >= 0) {
+   int l=0,size=vll.length;
+   char to;
+   if (img = type == 0) to = '*';
+   else to = ':';
+   do {
+   str = vll[l]; 
+   int st;
+   if (str.startsWith("ROOT:"))st = 5;
+   else st = 0;
+   st = str.indexOf(to, st);
+   String add;
+   if (st >= 0)add = str.substring(0, st);
+   else add = str;
+   if (!replaceR(add, file, buff, img, post, ws)) {
+   v = null;
+   break tag;
+   }
+   if (st >= 0)buff.append(str, st, str.length());
+   buff.append(",");
+   }while(++l < size);
+   buff.setLength(buff.length() - 1);
+   } else {
+   if (!replaceR(vll[0], file, buff, true, post, ws)) {
+   v = null;
+   break tag;
+   }
+   }
+   v = buff.toString();
+   }
+   String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
+   if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
+   str = null;
+   if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(old.get(str, ac, find2)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
+   same = false;
+   }
+   if (!same && (ovl != null || vll != null || !eq)) {
+   eq = false;
+   listv.put(key, v);
+   }
+   }
+   }
+   }
+   if (list3 != null && !sikp && (v == null || eq || (same && !skp.contains(key)))) {
+   list3.remove(key);
+   }
+   }
+   }*/
   cre.addArchiveEntry(lib.getArc(ini.str), ini);
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
@@ -474,7 +448,8 @@ public class rwmodProtect implements Runnable,ui {
   }
   return st;
  }
- boolean addResPath(String str, String path, boolean isimg, StringBuilder buff) {
+ boolean addResPath(String str, String path, boolean isimg) {
+  StringBuilder buff=Buff;
   int st=ResTry(str, isimg, buff);
   if (st >= 0) {
    if (str.startsWith("ROOT:", st)) {
@@ -510,11 +485,11 @@ public class rwmodProtect implements Runnable,ui {
    do {
     buff.setLength(0);
     str = list[m].trim();
-    ru = addResPath(str, path, isimg, buff) || ru;
+    ru = addResPath(str, path, isimg) || ru;
     list[m] = buff.toString();
    }while(++m < l);
   } else {
-   if (ru = addResPath(str, path, true, buff))
+   if (ru = addResPath(str, path, true))
     list = new String[]{buff.toString()};
    else list = null;
   }
@@ -600,13 +575,10 @@ public class rwmodProtect implements Runnable,ui {
  }
  public void end(Throwable e) {
   if (e == null) {
-   Set en=iniMap.entrySet();
-   Iterator<Map.Entry> ite=en.iterator();
+   Set<Map.Entry<String,loder>> en = iniMap.entrySet();
    try {
     StringBuilder buff=new StringBuilder();
-    Map.Entry<String,loder> ini;
-    while (ite.hasNext()) {
-     ini = ite.next();
+    for (Map.Entry<String,loder>ini:en) {
      loder lod=ini.getValue();
      if (!lod.isini)continue;
      if (lod.str == null) {
@@ -614,17 +586,23 @@ public class rwmodProtect implements Runnable,ui {
       replace(lod, key, true, buff);
      }
     }
-    ite = en.iterator();
-    while (ite.hasNext()) {
-     ini = ite.next();
+    Collection<loder> vls=(Collection<loder>)iniMap.values();
+    for (loder lod:vls) {
+     loder all;
+     if ((all = lod.copy.all) != null)lod.put.put(all.put.put, lod.cou, null);
+    }
+    for (loder lod:vls)
+     if (lod.isini || lod.use)lod.put.as();
+    for (loder lod:(Collection<loder>)iniHide.values())
+     if (lod.use)lod.put.as();
+    for (Map.Entry<String,loder>ini:en) {
      loder lod=ini.getValue();
      if (!lod.isini && !lod.use)continue;
      String key=(String)ini.getKey();
      write(lod, key, buff);
     }
-    ite = iniHide.entrySet().iterator();
-    while (ite.hasNext()) {
-     ini = ite.next();
+    en = iniHide.entrySet();
+    for (Map.Entry<String,loder>ini:en) {
      loder lod=ini.getValue();
      if (!lod.use)continue;
      String key=(String)ini.getKey();

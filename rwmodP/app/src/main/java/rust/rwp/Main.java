@@ -98,9 +98,8 @@ public class Main extends Activity {
   bar.setVisibility(0);
   File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
   cui ui=new cui("lib");
-  if (!li.exists()) {
-   lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
-  } else lib.exec(li, null, ui);
+  if (!li.exists())lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
+  else lib.exec(li, null, ui);
  }
  public void init() {
   if (init)lib();
