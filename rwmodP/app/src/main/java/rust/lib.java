@@ -63,6 +63,7 @@ public class lib implements Runnable,ui {
   iniobj put=lod.put;
   lod.ini = null;
   if (list == null || Ou == null)put.put = ini;
+  else put.put(ini, null, null);
   if (list != null) {
    int i=list.length;
    while (--i >= 0)put.put(getlod(file.concat(list[i]), file).put, null, null);

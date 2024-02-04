@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -19,6 +20,7 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import android.util.Log;
 public class rwmodProtect implements Runnable,ui {
  File In;
  File Ou;
@@ -94,17 +96,17 @@ public class rwmodProtect implements Runnable,ui {
   HashMap res=new HashMap();
   Res = res;
   String[] list=set.getProperty("image").split(",");
-  for (String str:list) {
-   res.put(str, -1);
-  }
+  Integer rp=Integer.valueOf(-1);
+  for (String str:list)
+   res.put(str, rp);
   list = set.getProperty("images").split(",");
-  for (String str:list) {
-   res.put(str, 0);
-  }
+  rp = Integer.valueOf(0);
+  for (String str:list)
+   res.put(str, rp);
   list = set.getProperty("music").split(",");
-  for (String str:list) {
-   res.put(str, 1);
-  }
+  rp = Integer.valueOf(1);
+  for (String str:list)
+   res.put(str, rp);
  }
  void appendName(int i) {
   if (i >= 0) {
@@ -218,7 +220,6 @@ public class rwmodProtect implements Runnable,ui {
      }
      orr[i] = lod;
      if (lod != null) {
-      put.put(lod.put.put, cou, str);
       loder tk=lod.copy.all;
       if (tk != null) {
        if (alls != tk) {
@@ -246,19 +247,19 @@ public class rwmodProtect implements Runnable,ui {
    }
   }
   HashMap coe=coeMap;
-  coe.put(new copyKey(new loder[]{ini}, alls), put);
   copyKey key=new copyKey(orr, alls);
   ini.copy = key;
   iniobj old=(iniobj)coe.get(key);
   if (old == null) {
    coe.put(key, old = new iniobj());
+   old.unclone = true;
    old.mbuff = buff;
-   old.put(put.put, null, null);
-   if (alls != null)old.put(alls.put.put, null, null);
-   old.as();
+   if (orr != null)for (loder lod:orr)old.put(lod.put.put, null, null);
   }
   ini.old = old;
-  put.put(map, cou, null);
+  coe.put(new copyKey(new loder[]{ini}, alls), put);
+  put.put(map, null, null);
+  put.put(old.put, null, null);
  }
  void write(loder ini, String file, StringBuilder buff) throws IOException {
   file = loder.getSuperPath(file);
@@ -300,130 +301,101 @@ public class rwmodProtect implements Runnable,ui {
   String str;
   HashMap<String, HashMap> reu=Res;
   iniobj put=ini.put;
+  HashMap as=put.put;
   iniobj old=ini.old;
-  HashMap coe,cou=ini.cou,cache=coeMap,as=put.put;
-  /*
-   HashSet skp=skip;
-   Iterator ite = as.entrySet().iterator();
-   while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   String ac=(String)en.getKey();
-   Object cp = en.getValue();
-   HashMap put2=null;
-   HashMap list;
-   if (cp instanceof HashMap) {
-   list = (HashMap)cp;
-   } else {
-   cpys cpy=(cpys)cp;
-   list = cpy.m;
-   put2 = cpy.skip;
+  HashMap oldsrc=old.put;
+  for (Map.Entry<String,Object>en:(Set<Map.Entry<String,Object>>)as.entrySet()) {
+   String ac=en.getKey();
+   Object asobj=en.getValue();
+   HashMap asmap;
+   HashMap asput=null;
+   Object asold=oldsrc.get(ac);
+   HashMap oldmap;
+   if (asobj instanceof cpys) {
+    cpys cpys = ((cpys)asobj);
+    asmap = cpys.m;
+    asput = cpys.skip;
+   } else asmap = (HashMap)asobj;
+   if (asold instanceof cpys) {
+    oldmap = ((cpys)asold).m;
+   } else oldmap = (HashMap)asold;
+   HashMap list=(HashMap)map.get(ac);
+   for (Map.Entry<String,String> en2:(Set<Map.Entry<String,String>>)asmap.entrySet()) {
+    String key=en2.getKey();
+    //保留global 避免global重构
+    if (!key.startsWith("@global ") && !skip.contains(key)) {
+     String value=en2.getValue();
+     String oldv;
+     boolean eq= oldmap != null && value.equals(oldv = (String)oldmap.get(key)); 
+     boolean same= asput != null && (value.equals(asput.get(key)));
+     HashMap<String, HashMap> res=rwmodProtect.Res;
+     Object o=res.get(key);
+     if (o != null) {
+      int type = (Integer)o;
+      String next=put.get(value, ac, asobj);
+      if (next != null) {
+       String[] nowlist=AllPath(next, key, file, type);
+       String[] lastlist=null;
+       if (same)same = !ws && next.equals(put.get(value, key, asput));
+       if (same && eq) {
+        if (ws)eq = false;
+        else {
+         str = old.get(value, ac, asold);
+         if ((eq = next.equals(str)))eq = nowlist != null && Arrays.equals(nowlist, lastlist = (str == null ?null: AllPath(str, ac, "", type)));
+        }
+       }
+       buff.setLength(0);
+       if ((ws && nowlist != null) || (!eq && !same && lastlist != nowlist)) {
+        if (list == null)map.put(ac, list = new HashMap());
+        char c=0;
+        if (type == 0)c = '*';
+        else if (type > 0)c = ':';
+        if (nowlist != null) {
+         for (String add:nowlist) {
+          int st=ResTry(add, type <= 0, buff);
+          if (st >= 0) {
+           int i=0;
+           if (c != 0)i = add.lastIndexOf(c);
+           if (i <= 0)i = add.length();
+           if (ws)buff.append("ROOT:");
+           str = add.substring(st, i);
+           ZipArchiveEntry ze = toPath(str);
+           if (ze != null) {
+            str = ze.getName();
+            HashMap fmp = Filemap;
+            res re=(res)fmp.get(str);
+            if (re == null) {
+             re = new res();
+             fmp.put(str, re);
+             int at;
+             if (type <= 0)at = 0;
+             else {
+              at = getType(str);
+              if (at != 4)at = 5;
+             }
+             re.str = str = FileName(at);
+            } else str = re.str;
+            if (!re.close) {
+             re.close = true;
+             cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, ze));
+            }
+           }
+           buff.append(str);
+           if (i > 0)buff.append(add, i, add.length());
+          } else buff.append(add);
+          buff.append(',');
+         }
+         buff.setLength(buff.length() - 1);
+         value = buff.toString();
+        }
+        list.put(key, value);
+       }
+      }
+     }
+     if (list != null && (eq || same))list.remove(key);
+    }
    }
-   HashMap re=(HashMap)cou.get(ac);
-   HashMap list2=null;
-   HashMap find2=null;
-   HashMap find3=null;
-   Object or = coe.get(ac);
-   if (or != null) {
-   if (or instanceof HashMap) {
-   list2 = (HashMap)or;
-   } else {
-   cpys cpy=(cpys)or;
-   list2 = cpy.m;
-   find2 = cpy.skip;
-   find3 = cpy.hash;
-   }
-   }
-   HashMap list3=(HashMap)map.get(ac);
-   HashMap listv=list3;
-   if (listv == null) {
-   listv = new HashMap();
-   map.put(ac, listv);
-   }
-   Object o;
-   Iterator ite2=list.entrySet().iterator();
-   boolean post=ini.isini && !ac.startsWith("te");
-   boolean sikp=list3 != null && (o = list3.get("@copyFrom_skipThisSection")) != null && ("1".equals(o) || "true".equalsIgnoreCase((String)o));
-   while (ite2.hasNext()) {
-   en = (Map.Entry) ite2.next();
-   String key=(String)en.getKey(),v=(String)en.getValue();
-   String ov;
-   if (list2 != null)ov = (String)list2.get(key);
-   else ov = null;
-   boolean eq=v.equals(ov);
-   boolean same=put2 != null && (str = (String)put2.get(key)) != null && v.equals(str);
-   boolean img=(o = reu.get(key)) != null;
-   if (img) {
-   boolean lastRoot;
-   String pathRel,path;
-   if (re == null || (pathRel = (String)re.get(key)) == null) {
-   path = null;
-   lastRoot = false;
-   } else {
-   HashMap where;
-   if (getType(pathRel) == 3) {
-   where = iniMap;
-   } else where = iniHide;
-   loder ty=(loder)where.get(pathRel);
-   path = loder.getSuperPath(pathRel);
-   lastRoot = ws && (ty == null || ((index = ty.allindex) != -2 && index <= 0));
-   }
-   int type;
-   String vl=put.get(v, ac, cp);
-   if (vl != null) {
-   if (ov != null)ov = old.get(ov, ac, or);
-   type = (int)o;
-   String vll[]=vl == null ?null: AllPath(vl, key, file, type);
-   tag:
-   if (vll != null) {
-   buff.setLength(0);
-   if (type >= 0) {
-   int l=0,size=vll.length;
-   char to;
-   if (img = type == 0) to = '*';
-   else to = ':';
-   do {
-   str = vll[l]; 
-   int st;
-   if (str.startsWith("ROOT:"))st = 5;
-   else st = 0;
-   st = str.indexOf(to, st);
-   String add;
-   if (st >= 0)add = str.substring(0, st);
-   else add = str;
-   if (!replaceR(add, file, buff, img, post, ws)) {
-   v = null;
-   break tag;
-   }
-   if (st >= 0)buff.append(str, st, str.length());
-   buff.append(",");
-   }while(++l < size);
-   buff.setLength(buff.length() - 1);
-   } else {
-   if (!replaceR(vll[0], file, buff, true, post, ws)) {
-   v = null;
-   break tag;
-   }
-   }
-   v = buff.toString();
-   }
-   String ovl[]=ov == null || path == null ?null: AllPath(ov, key, path, type);
-   if (v != null && (lastRoot || path == null || !vl.equals(ov) || (!Arrays.equals(vll, ovl)))) {
-   str = null;
-   if (same && ov != null && ((ovl != null && ((str = (String)find2.get(key)) == null || !ov.equals(old.get(str, ac, find2)))) || (find3 != null && (ov = (String)find3.get(key)) != null && !ov.equals(str)))) {
-   same = false;
-   }
-   if (!same && (ovl != null || vll != null || !eq)) {
-   eq = false;
-   listv.put(key, v);
-   }
-   }
-   }
-   }
-   if (list3 != null && !sikp && (v == null || eq || (same && !skp.contains(key)))) {
-   list3.remove(key);
-   }
-   }
-   }*/
+  }
   cre.addArchiveEntry(lib.getArc(ini.str), ini);
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
@@ -448,28 +420,6 @@ public class rwmodProtect implements Runnable,ui {
   }
   return st;
  }
- boolean addResPath(String str, String path, boolean isimg) {
-  StringBuilder buff=Buff;
-  int st=ResTry(str, isimg, buff);
-  if (st >= 0) {
-   if (str.startsWith("ROOT:", st)) {
-    st += 5;
-    path = rootPath;
-   }
-   if (isimg) {
-    boolean shaow=st > 0;
-    if (str.startsWith("SHADOW:", st)) {
-     st += 7;
-     if (!shaow)buff.append("SHADOW:");
-    }
-   }
-   if (st != 0)str = str.substring(st);
-   str = str.replaceFirst("^/+", "");
-   buff.append(path);
-  }
-  buff.append(str);
-  return st >= 0;
- }
  String[] AllPath(String str, String s, String path, int type) {
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
    return null;
@@ -478,52 +428,35 @@ public class rwmodProtect implements Runnable,ui {
   String list[];
   buff.setLength(0);
   boolean ru=false;
-  if (type >= 0) {
-   list = str.split(",");
-   int l=list.length,m=0;
-   boolean isimg=type == 0;
-   do {
-    buff.setLength(0);
-    str = list[m].trim();
-    ru = addResPath(str, path, isimg) || ru;
-    list[m] = buff.toString();
-   }while(++m < l);
-  } else {
-   if (ru = addResPath(str, path, true))
-    list = new String[]{buff.toString()};
-   else list = null;
-  }
+  list = str.split(",", type < 0 ?1: Integer.MAX_VALUE);
+  int l=list.length,m=0;
+  do {
+   buff.setLength(0);
+   str = list[m].trim();
+   int st=ResTry(str, type <= 0, buff);
+   boolean tag=st >= 0;
+   ru = ru || tag;
+   if (tag) {
+    if (str.startsWith("ROOT:", st)) {
+     st += 5;
+     path = rootPath;
+    }
+    if (type <= 0) {
+     boolean shaow=st > 0;
+     if (str.startsWith("SHADOW:", st)) {
+      st += 7;
+      if (!shaow)buff.append("SHADOW:");
+     }
+    }
+    if (st != 0)str = str.substring(st);
+    str = str.replaceFirst("^/+", "");
+    buff.append(path);
+   }
+   buff.append(str);
+   list[m] = buff.toString();
+  }while(++m < l);
   if (!ru)list = null;
   return list;
- }
- boolean replaceR(String str, String path, StringBuilder buff, boolean isimg, boolean post, boolean ws) throws IOException {
-  int st=ResTry(str, isimg, buff);
-  if (st >= 0) {
-   if (ws)buff.append("ROOT:");
-   if (st > 0)str = str.substring(st);
-   ZipArchiveEntry en = toPath(str);
-   if (en != null) {
-    str = en.getName();
-    HashMap map;
-    map = Filemap;
-    Object o=map.get(str);
-    res res;
-    if (o == null) {
-     res = new res();
-     map.put(str, res);
-     res.str = str = FileName(isimg ?0: getType(str));
-    } else {
-     res = (res)o;
-     str = res.str;
-    }
-    if (post && !res.close) {
-     res.close = true;
-     cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, en));
-    }
-   } else return false;
-  }
-  buff.append(str);
-  return true;
  }
  ZipArchiveEntry toPath(String str) {
   HashMap<String,ZipArchiveEntry> lowm=low;
@@ -586,15 +519,43 @@ public class rwmodProtect implements Runnable,ui {
       replace(lod, key, true, buff);
      }
     }
-    Collection<loder> vls=(Collection<loder>)iniMap.values();
-    for (loder lod:vls) {
-     loder all;
-     if ((all = lod.copy.all) != null)lod.put.put(all.put.put, lod.cou, null);
+    for (Map.Entry<copyKey,iniobj> en2:(Set<Map.Entry<copyKey,iniobj>>)coeMap.entrySet()) {
+     loder all=en2.getKey().all;
+     iniobj lod=en2.getValue();
+     if (all != null)lod.put(all.put.put, null, null);
     }
-    for (loder lod:vls)
-     if (lod.isini || lod.use)lod.put.as();
-    for (loder lod:(Collection<loder>)iniHide.values())
-     if (lod.use)lod.put.as();
+    for (iniobj as:(Collection<iniobj>)coeMap.values()) {
+     HashMap map=as.put;
+     HashMap gl= new HashMap();
+     as.gl = gl;
+     Iterator ite = map.entrySet().iterator();
+     while (ite.hasNext()) {
+      Map.Entry en3=(Map.Entry)ite.next();
+      HashMap gt;
+      Object o=en3.getValue();
+      if (o instanceof cpys) {
+       cpys cpy=(cpys)o;
+       en3.setValue(gt = cpy.m);
+      } else gt = (HashMap)o;
+      Iterator<Map.Entry<String, String>> ite2=gt.entrySet().iterator();
+      while (ite2.hasNext()) {
+       Map.Entry<String,String> en2=ite2.next();
+       String key=en2.getKey();
+       if (key.startsWith("@gloabl ")) {
+        gl.put(key.substring(8), en3.getValue());
+        ite.remove();
+       }
+      }
+     }
+     ite = map.entrySet().iterator();
+     while (ite.hasNext()) {
+      Map.Entry en2=(Map.Entry)ite.next();
+      as.asFor(en2.getValue(), (String)en2.getKey());
+     }
+     for (Map.Entry<String,Object> en2:(Set<Map.Entry>)map.entrySet()) {
+      as.ascopy(en2.getValue(), en2.getKey());
+     }
+    }
     for (Map.Entry<String,loder>ini:en) {
      loder lod=ini.getValue();
      if (!lod.isini && !lod.use)continue;

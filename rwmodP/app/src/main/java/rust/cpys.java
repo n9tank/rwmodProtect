@@ -3,6 +3,6 @@ import java.util.HashMap;
 class cpys {
  HashMap m;
  HashMap skip;
- HashMap hash;
+// HashMap hash;
  HashMap copy;
 }

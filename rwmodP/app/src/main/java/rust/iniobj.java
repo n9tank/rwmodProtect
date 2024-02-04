@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import android.util.Log;
 
 public class iniobj {
+ public boolean unclone;//不要制作副本
  public HashMap put;
  public HashMap gl;
  public StringBuilder mbuff;
@@ -53,7 +53,8 @@ public class iniobj {
     for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet()) {
      Object key=en2.getKey();
      o = en2.getValue();
-     if (skip.putIfAbsent(key, o) == null && coe != null && rwmodProtect.Res.containsKey(key))
+     //if (
+     skip.putIfAbsent(key, o)// == null && coe != null && rwmodProtect.Res.containsKey(key))
       ;
     }
    }
@@ -106,9 +107,9 @@ public class iniobj {
      }
     }
    }
-   cpy.hash = hash;
+   // cpy.hash = hash;
    if (mapput.size() > 0) {
-    cpy.skip = (HashMap)mapput.clone();
+    if (!unclone)cpy.skip = (HashMap)mapput.clone();
     mapput.putAll(hash);
     hash = mapput;
    }
@@ -136,7 +137,7 @@ public class iniobj {
    int i;
    if (!key.startsWith("te") && (i = key.indexOf('_')) > 0) {
     String str=(String)m.remove("copyFrom");
-    if (str != null) {
+    if (str != null && !str.equals("IGNORE")) {
      str = get(str, key, m);
      StringBuilder buff=mbuff;
      buff.setLength(0);
@@ -150,7 +151,8 @@ public class iniobj {
        cpy.m = m;
        map.put(key, cpy);
       }
-      if (mp == null) {
+      boolean unc=!unclone;
+      if (unc && mp == null) {
        mp = new HashMap();
        cpy.skip = mp;
       }
@@ -167,10 +169,10 @@ public class iniobj {
       cpy.copy = cop;
       for (Map.Entry<String,String> en:(Set<Map.Entry>)it.entrySet()) {
        String k= en.getKey();
+       String v=en.getValue();
+       if (unc)mp.putIfAbsent(k, v);
        if (res.containsKey(k)) {
-        String v=en.getValue();
         if ((o = m.putIfAbsent(k, v)) != null) {
-         mp.put(k, v);
          cop.put(k, o);
         }
        }
@@ -180,34 +182,6 @@ public class iniobj {
    }
   }
   return cpy == null ?m: cpy;
- }
- void as() {
-  HashMap map=put;
-  HashMap gl= new HashMap();
-  this.gl = gl;
-  for (HashMap<String,String> list:(Collection<HashMap>)map.values()) {
-   for (Map.Entry<String,String> en:(Set<Map.Entry<String,String>>)list.entrySet()) {
-    String key=en.getKey();
-    if (key.startsWith("@gloabl "))gl.put(key.substring(8), en.getValue());
-   }
-  }
-  Iterator ite = map.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   Object o=en.getValue();
-   if (o instanceof cpys) {
-    cpys cpy=(cpys)o;
-    en.setValue((cpy.m).clone());
-   }
-  }
-  ite = map.entrySet().iterator();
-  while (ite.hasNext()) {
-   Map.Entry en=(Map.Entry)ite.next();
-   asFor(en.getValue(), (String)en.getKey());
-  }
-  for (Map.Entry<String,Object> en:(Set<Map.Entry>)map.entrySet()) {
-   ascopy(en.getValue(), en.getKey());
-  }
  }
  static final HashSet set;
  static{
