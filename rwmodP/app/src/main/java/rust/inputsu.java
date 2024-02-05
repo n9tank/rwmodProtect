@@ -10,6 +10,8 @@ import java.util.Map;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import java.io.IOException;
 
 class inputsu implements InputStreamSupplier {
  ZipFile zip;

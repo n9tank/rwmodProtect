@@ -223,23 +223,30 @@ public class iniobj {
         String list[]=group.split("\\.", 2);
         String keyv=list[0];
         HashMap locv;
-        if (loc instanceof HashMap) {
-         locv = (HashMap)loc;
-        } else {
-         cpys cpy = (cpys)loc;
+        cpys cpy=null;
+        if (loc instanceof HashMap) locv = (HashMap)loc;
+        else {
+         cpy = (cpys)loc;
          locv = cpy.m;
         }
         Object o=null;
         if (list.length > 1) {
-         HashMap or=null;
          if (!(keyv.equals("section") || key.equals(eqz))) {
           loc = map.get(keyv);
           if (loc == null)return null;
-          if (loc instanceof HashMap)locv = (HashMap)loc;
-          else or = ((cpys)loc).copy;
+          if (loc instanceof HashMap) {
+           cpy = null;
+           locv = (HashMap)loc;
+          } else {
+           cpy = (cpys)loc;
+           locv = cpy.m;
+          }
          }
          String vl=list[1];
-         if (or != null)o = or.get(vl);
+         if (cpy != null) {
+          HashMap or=cpy.copy;
+          if (or != null)o = or.get(vl);
+         }
          if (o == null) o = locv.get(vl);
         } else {
          o = locv.get("@define ".concat(keyv));

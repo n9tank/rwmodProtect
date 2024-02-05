@@ -20,7 +20,6 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import android.util.Log;
 public class rwmodProtect implements Runnable,ui {
  File In;
  File Ou;
@@ -39,6 +38,7 @@ public class rwmodProtect implements Runnable,ui {
  StringBuilder Buff;
  String musicPath;
  String rootPath;
+ Map grops;
  static String cust[];
  static HashSet skip;
  static int[] cr;
@@ -77,7 +77,7 @@ public class rwmodProtect implements Runnable,ui {
   set.load(io);
   String file;
   if (ds == null) {
-   file = set.getProperty("file");
+   file = set.getProperty("chars");
    int i=0,len=file.length();
    int irr[]= new int[len];
    int cou=0;
@@ -89,7 +89,7 @@ public class rwmodProtect implements Runnable,ui {
    if (cou < len)irr = Arrays.copyOf(irr, cou);
    cr = irr;
   }
-  cust = set.getProperty("cust").split(",");
+  cust = set.getProperty("loader").split(",");
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.getProperty("skip").split(","));
@@ -155,11 +155,12 @@ public class rwmodProtect implements Runnable,ui {
   } else lod = (loder)o;
   if (lod.str == null) {
    lod.use = true;
-   replace(lod, str, lod.isini, new StringBuilder());
+   replace(lod, str, new StringBuilder());
   }
   return lod;
  }
- void replace(loder ini, String file, boolean isini, StringBuilder buff) throws Exception {
+ void replace(loder ini, String file, StringBuilder buff) throws Exception {
+  boolean isini=ini.isini;
   ini.str = FileName(isini ?3: 0);
   file = loder.getSuperPath(file);
   iniobj put=ini.put;
@@ -220,8 +221,9 @@ public class rwmodProtect implements Runnable,ui {
      }
      orr[i] = lod;
      if (lod != null) {
-      loder tk=lod.copy.all;
-      if (tk != null) {
+      copyKey copy=lod.copy;
+      loder tk;
+      if (copy != null && (tk = copy.all) != null) {
        if (alls != tk) {
         lod.notmp = true;
         lod.allindex = 1;//不在根目录
@@ -261,7 +263,14 @@ public class rwmodProtect implements Runnable,ui {
   put.put(map, null, null);
   put.put(old.put, null, null);
  }
- void write(loder ini, String file, StringBuilder buff) throws IOException {
+ void write(loder ini, String file, StringBuilder buff) throws Throwable {
+  Map gr=grops;
+  String ms[]=null;
+  if (ini.isini && gr != null) {
+   String fin=file;
+   while ((ms = (String[])gr.get(fin)) == null && fin.length() != 0)
+    fin = loder.getSuperPath(fin);
+  }
   file = loder.getSuperPath(file);
   HashMap map=ini.ini;
   buff.setLength(0);
@@ -320,11 +329,21 @@ public class rwmodProtect implements Runnable,ui {
     oldmap = ((cpys)asold).m;
    } else oldmap = (HashMap)asold;
    HashMap list=(HashMap)map.get(ac);
+   int le=Integer.MAX_VALUE;
+   String ak=null,av=null;
    for (Map.Entry<String,String> en2:(Set<Map.Entry<String,String>>)asmap.entrySet()) {
     String key=en2.getKey();
-    //保留global 避免global重构
-    if (!key.startsWith("@global ") && !skip.contains(key)) {
-     String value=en2.getValue();
+    String value=en2.getValue();
+    int i=key.length() + value.length();
+    if (i < le) {
+     /*i = key.getBytes().length + value.getBytes().length;
+      if (i < le) {*/
+     i = le;
+     ak = key;
+     av = value;
+     //} 寻找较短值追加倒兼容输出
+    }
+    if (!skip.contains(key)) {
      String oldv;
      boolean eq= oldmap != null && value.equals(oldv = (String)oldmap.get(key)); 
      boolean same= asput != null && (value.equals(asput.get(key)));
@@ -354,7 +373,7 @@ public class rwmodProtect implements Runnable,ui {
          for (String add:nowlist) {
           int st=ResTry(add, type <= 0, buff);
           if (st >= 0) {
-           int i=0;
+           i = 0;
            if (c != 0)i = add.lastIndexOf(c);
            if (i <= 0)i = add.length();
            if (ws)buff.append("ROOT:");
@@ -393,6 +412,15 @@ public class rwmodProtect implements Runnable,ui {
       }
      }
      if (list != null && (eq || same))list.remove(key);
+    }
+    if (ms != null && list == null) {
+     for (String s:ms) {
+      if (ac.startsWith(s)) {
+       map.put(ac, list = new HashMap());
+       list.put(ak, av);
+       break;
+      }
+     }
     }
    }
   }
@@ -513,10 +541,9 @@ public class rwmodProtect implements Runnable,ui {
     StringBuilder buff=new StringBuilder();
     for (Map.Entry<String,loder>ini:en) {
      loder lod=ini.getValue();
-     if (!lod.isini)continue;
-     if (lod.str == null) {
+     if (lod.isini && lod.str == null) {
       String key=ini.getKey();
-      replace(lod, key, true, buff);
+      replace(lod, key, buff);
      }
     }
     for (Map.Entry<copyKey,iniobj> en2:(Set<Map.Entry<copyKey,iniobj>>)coeMap.entrySet()) {
@@ -620,6 +647,17 @@ public class rwmodProtect implements Runnable,ui {
    ZipFile zip=new ZipFile(In);
    Zip = zip;
    String name=null;
+   ZipArchiveEntry rules=zip.getEntry("rules.md");
+   if (rules != null) {
+    Properties grs=new Properties();
+    grs.load(zip.getInputStream(rules));
+    grops = (Map)grs;
+    Iterator ite=grops.entrySet().iterator();
+    while (ite.hasNext()) {
+     Map.Entry en=(Map.Entry)ite.next();
+     en.setValue(((String)en.getValue()).split(","));
+    }
+   }
    HashSet rset=new HashSet();
    Enumeration<? extends ZipArchiveEntry> zipEntrys=zip.getEntries();
    do{
@@ -633,7 +671,7 @@ public class rwmodProtect implements Runnable,ui {
    //if (name == null)name = ""; 仅单个ini的rwmod
    rootPath = name;
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
-   zipout = new ZipArchiveOutputStream(Ou);
+   zipout = new zipout(Ou);
    out = zipout;
    cr = new ParallelScatterZipCreator();
    cre = cr;
@@ -658,7 +696,7 @@ public class rwmodProtect implements Runnable,ui {
    zipEntrys = zip.getEntries();
    do{
     ZipArchiveEntry zipEntry=zipEntrys.nextElement();
-    if (zipEntry.getSize() != 0l) { 
+    if (zipEntry.getCompressedSize() != 0l) { 
      name = zipEntry.getName();
      int type=getType(name);
      boolean istm=type == 2;
