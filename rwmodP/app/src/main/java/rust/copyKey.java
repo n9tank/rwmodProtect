@@ -5,21 +5,22 @@ public class copyKey {
  public loder copy[];
  public loder all;
  public int hashCode;
- public copyKey(loder copy[], loder all) {
-  int hash=Arrays.hashCode(copy);
-  this.copy = copy;
-  if (all != null) {
+ public boolean cktmp;
+ public copyKey(loder copy[], loder al) {
+  int hash = Arrays.hashCode(copy);
+  if (cktmp = all != null) {
+   all = al;
    if (hash == 0)hash = 1;
-   hash = 31 * hash + all.hashCode();
-   this.all = all;
+   hash = hash * 31 + al.hashCode();
   }
   hashCode = hash;
+  this.copy = copy;
  }
  public int hashCode() {
   return hashCode;
  }
  public boolean equals(Object obj) {
-  copyKey key=(copyKey)obj;
-  return all == key.all && Arrays.equals(copy, key.copy);
+  copyKey co;
+  return hashCode == obj.hashCode() && (all == (co = (copyKey)obj).all || !cktmp) && Arrays.equals(copy, co.copy);
  }
 }

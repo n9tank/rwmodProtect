@@ -2,20 +2,20 @@ package rust;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
-import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
-import java.io.ByteArrayInputStream;
+import android.util.Log;
+import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   ByteOut brr=new ByteOut();
@@ -23,28 +23,21 @@ class loder implements Callable,InputStreamSupplier {
    BufferedWriter out=new BufferedWriter(new OutputStreamWriter(brr));
    if (ini == null)call();
    try {
-    HashMap map=ini;
-    Iterator<Map.Entry<String,HashMap>> ite=map.entrySet().iterator();
+    HashMap hash=ini;
     boolean st=false;
-    while (ite.hasNext()) {
-     Map.Entry en = ite.next();
-     map = (HashMap)en.getValue();
-     if (map.size() > 0) {
+    for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)hash.entrySet()) {
+     HashMap ou=en.getValue().m;
+     if (ou.size() > 0) {
       if (st)out.write('\n');
       st = true;
-      String key=(String)en.getKey();
       out.write('[');
-      out.write(key);
-      out.write("]\n");
-      Iterator<Map.Entry> ite2=map.entrySet().iterator();
-      boolean nx=ite2.hasNext();
-      while (nx) {
-       en = ite2.next();
-       out.write((String)en.getKey());
+      out.write(en.getKey());
+      out.write(']');
+      for (Map.Entry<String,String> en2:(Set<Map.Entry<String,String>>)ou.entrySet()) {
+       out.write('\n');
+       out.write(en2.getKey());
        out.write(':');
-       out.write((String)en.getValue());
-       nx = ite2.hasNext();
-       if (nx)out.write('\n');
+       out.write(en2.getValue());
       }
      }
     }
@@ -64,13 +57,11 @@ class loder implements Callable,InputStreamSupplier {
   Exception ex=null;
   try {
    try {
-    HashMap core=new HashMap();
     String str;
     HashMap list=null;
     String last=null;
     HashMap table=new LinkedHashMap();
     ini = table;
-    table.put("core", core);
     wh:
     while ((str = buff.readLine()) != null) {
      str = str.trim();
@@ -92,49 +83,50 @@ class loder implements Callable,InputStreamSupplier {
       if (str.startsWith("comment_", 1))last = null;
       else {
        last = str.substring(1, i).trim();
-       list = (HashMap)table.get(last);
+       cpys cpy=((cpys)table.get(last));
+       list = cpy == null ?null: cpy.m;
       }
      } else if (last != null) {
       String value[]=str.split("[=:]", 2);
       if (value.length > 1) {
-       if (list == null)table.put(last, list = new HashMap());
+       if (list == null) {
+        cpys cpy=new cpys();
+        cpy.m = list = new HashMap();
+        table.put(last, cpy);
+       }
        String key=value[0].trim();
        String set=value[1].trim();
-       if (key.startsWith("@global ")) {
-        core.put(key, set);
-       } else {
-        if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-         bf.setLength(0);
-         int len=set.length();
-         int ed=len;
-         int st=3;
-         if (ed <= 6)ed = 3;else ed -= 3;
-         while (true) {
-          boolean now;
-          if (now = set.startsWith(with, ed))len = ed;
-          bf.append(set, st, len);
-          if (now)break;
-          st = 0;
-          set = buff.readLine();
-          if (set == null)return null;
-          set = set.trim();
-          len = set.length();
-          ed = len - 3;
-         }
-         set = bf.toString();
+       if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
+        bf.setLength(0);
+        int len=set.length();
+        int ed=len;
+        int st=3;
+        if (ed <= 6)ed = 3;else ed -= 3;
+        while (true) {
+         boolean now;
+         if (now = set.startsWith(with, ed))len = ed;
+         bf.append(set, st, len);
+         if (now)break;
+         st = 0;
+         set = buff.readLine();
+         if (set == null)return null;
+         set = set.trim();
+         len = set.length();
+         ed = len - 3;
         }
-        list.put(key, set);
+        set = bf.toString();
        }
+       list.put(key, set);
       }
      }
     }
     boolean istm=isini;
-    Object o = core.remove("dont_load");
-    if (o != null) {
-     str = (String)o;
+    cpys cp=(cpys)table.get("core");
+    if (cp != null) {
+     str = (String)cp.m.remove("dont_load");
      istm &= !("1".equals(str) || "true".equalsIgnoreCase(str));
+     isini = istm;
     }
-    isini = istm;
    } finally {
     if (red != null)buff.close();
    }
@@ -148,7 +140,6 @@ class loder implements Callable,InputStreamSupplier {
   return null;
  }
  iniobj put;
- HashMap cou;
  HashMap ini;
  iniobj old;
  String str;
@@ -163,7 +154,6 @@ class loder implements Callable,InputStreamSupplier {
  copyKey copy;
  loder(InputStream inp) {
   read = inp;
-  put = new iniobj();
  }
  static String getName(String file) {
   int len=file.length();

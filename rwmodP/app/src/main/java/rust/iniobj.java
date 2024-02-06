@@ -12,176 +12,169 @@ public class iniobj {
  public boolean unclone;//不要制作副本
  public HashMap put;
  public HashMap gl;
+ public loder all;
  public StringBuilder mbuff;
  public iniobj() {
   put = new HashMap();
  }
- public void put(HashMap drc, HashMap coe, String path) {
+ public static HashMap clone(HashMap map) {
+  HashMap put=new HashMap();
+  for (Map.Entry<String,cpys> en:(Set<Map.Entry<String,cpys>>)map.entrySet()) {
+   cpys cp=new cpys();
+   cp.m = (HashMap)en.getValue().m.clone();
+   put.put(en.getKey(), cp);
+  }
+  return put;
+ }
+ public iniobj(loder lod) {
+  this(clone(lod.ini), lod);
+ }
+ public iniobj(HashMap map, loder path) {
+  put = map;
+  for (cpys cpy:(Collection<cpys>)map.values()) {
+   HashMap m=cpy.m;
+   HashMap coe;
+   cpy.coe = coe = new HashMap();
+   for (Map.Entry<String,String> en:(Set<Map.Entry<String,String>>)m.entrySet()) {
+    String key= en.getKey();
+    if (rwmodProtect.Res.containsKey(key))coe.put(key, path);
+   }
+  }
+ }
+ public void put(iniobj drc, loder path) {
   HashMap src=put;
-  for (Map.Entry<String,HashMap<String,String>>en:(Set<Map.Entry>)drc.entrySet()) {
+  for (Map.Entry<String,cpys>en:(Set<Map.Entry>)drc.put.entrySet()) {
    String ac=en.getKey();
-   Object o=src.get(ac);
-   HashMap list;
-   cpys cpy=null;
+   HashMap list=null;
    HashMap skip=null;
    HashMap skipdrc=null;
-   if (o instanceof cpys) {
-    cpy = (cpys)o;
+   cpys cpy = (cpys)src.get(ac);
+   if (cpy != null) {
     list = cpy.m;
     skip = cpy.skip;
-   } else list = (HashMap)src.get(ac);
+   } else {
+    cpy = new cpys();
+    src.put(ac, cpy);
+   }
    String str=list == null ?null: (String)list.get("@copyFrom_skipThisSection");
    boolean has="1".equals(str) || "true".equals(str);
    boolean nil=str == null || str.equals("IGNORE");
-   HashMap listdrc=null;
-   o = en.getValue();
-   if (o instanceof HashMap)listdrc = (HashMap)o;
-   else {
-    cpys cp = ((cpys)o);
-    if (!nil && !has)listdrc = cp.skip;
-    if (nil) {
-     if (cpy == null) {
-      src.put(ac, cpy = new cpys());
-      cpy.m = list;
-      cpy.skip = skip = (HashMap)cp.skip.clone();
-     } else skipdrc = cp.skip;
-     listdrc = cp.m;
-    }
-   }
-   if (nil && cpy != null && skipdrc == null)skipdrc = listdrc;
+   cpys cp = en.getValue();
+   HashMap listdrc=cp.m;
+   HashMap cpskip = cp.skip;
+   if (cpskip == null)cpskip = listdrc;
+   if (!nil && !has)listdrc = cpskip;
+   if (!nil || (nil && skip != null))skipdrc = cpskip;
    if (skipdrc != null) {
-    for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet()) {
-     Object key=en2.getKey();
-     o = en2.getValue();
-     //if (
-     skip.putIfAbsent(key, o)// == null && coe != null && rwmodProtect.Res.containsKey(key))
-      ;
-    }
-   }
-   if (has) {
-    if (cpy == null) {
-     cpy = new cpys();
-     src.put(ac, cpy);
-     cpy.m = list;
-     cpy.skip = list = (HashMap)list.clone();
-    } else list = cpy.skip;
-   }
-   HashMap coelist=null;
-   if (coe != null) {
-    coelist = (HashMap)coe.get(ac);
-    if (coe == null)coe.put(ac, coelist = new HashMap());
-   }
-   if (list == null) {
-    src.put(ac, list = (HashMap)listdrc.clone());
-   } else {
-    for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet()) {
-     Object key=en2.getKey();
-     o = en2.getValue();
-     list.putIfAbsent(key, o);
-     //路径追踪不知道怎么写了
-     //if (list.putIfAbsent(key, o) == null && coe != null && rwmodProtect.Res.containsKey(key))coelist.put(key, path);
-    }
-   }
-  }
- }
- HashMap asFor(Object o, String key) {
-  HashMap map=put;
-  HashMap hash;
-  if (o instanceof HashMap) {
-   HashMap mapput=new HashMap();
-   hash = (HashMap)o;
-   cpys cpy=new cpys();
-   o = hash.remove("@copyFromSection");
-   if (o != null && !o.equals("IGNORE")) {
-    if (mapput.size() == 0)map.put(key, cpy);
-    key = (String)o;
-    String list[]=key.split(",");
-    int i = 0;
-    int l=list.length;
-    while (i < l) {
-     String vl=list[i++].trim();
-     Object set=map.get(vl);
-     HashMap as;
-     if (set != null && (as = asFor(set, vl)) != null) {
-      mapput.putAll(as);
+    HashMap coe=cpy.coeskip;
+    HashMap cpcoe=cp.coeskip;
+    if (cpcoe == null)cpcoe = cp.coe;
+    if (skip == null) {
+     cpy.skip = (HashMap)skipdrc.clone();
+     if (path == null && cpcoe != null)coe = (HashMap)cpcoe.clone();
+     else coe = new HashMap();
+     cpy.coeskip = coe;
+    } else {
+     for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet()) {
+      Object key=en2.getKey();
+      Object o = en2.getValue();
+      skip.putIfAbsent(key, o);
+     }
+     for (String s:(Set<String>)cpcoe.keySet()) {
+      coe.put(s, path);
      }
     }
    }
-   // cpy.hash = hash;
-   if (mapput.size() > 0) {
-    if (!unclone)cpy.skip = (HashMap)mapput.clone();
-    mapput.putAll(hash);
-    hash = mapput;
-   }
-   cpy.m = hash;
-  } else {
-   cpys cp2=(cpys)o;
-   hash = cp2.m;
-  }
-  return hash;
- }
- Object ascopy(Object o, String key) {
-  HashMap map=put;
-  cpys cpy=null;
-  HashMap cop=null;
-  HashMap m=null;
-  HashMap mp=null;
-  if (o instanceof HashMap) m = (HashMap)o;
-  else {
-   cpy = (cpys)o;
-   m = cpy.m;
-   mp = cpy.skip;
-   cop = cpy.copy;
-  }
-  if (cop == null) {
-   int i;
-   if (!key.startsWith("te") && (i = key.indexOf('_')) > 0) {
-    String str=(String)m.remove("copyFrom");
-    if (str != null && !str.equals("IGNORE")) {
-     str = get(str, key, m);
-     StringBuilder buff=mbuff;
-     buff.setLength(0);
-     buff.append(key, 0, ++i);
-     buff.append(str);
-     str = buff.toString();
-     o = map.get(str);
-     if (o != null && (o = ascopy(o, str)) != null) {
-      if (cpy == null) {
-       cpy = new cpys();
-       cpy.m = m;
-       map.put(key, cpy);
-      }
-      boolean unc=!unclone;
-      if (unc && mp == null) {
-       mp = new HashMap();
-       cpy.skip = mp;
-      }
-      HashMap it;
-      if (o instanceof HashMap) {
-       it = (HashMap)o;
-       cop = new HashMap();
-      } else {
-       cpys cp=(cpys)o;
-       it = cp.m;
-       cop = (HashMap)cp.copy.clone();
-      }
-      HashMap res=rwmodProtect.Res;
-      cpy.copy = cop;
-      for (Map.Entry<String,String> en:(Set<Map.Entry>)it.entrySet()) {
-       String k= en.getKey();
-       String v=en.getValue();
-       if (unc)mp.putIfAbsent(k, v);
-       if (res.containsKey(k)) {
-        if ((o = m.putIfAbsent(k, v)) != null) {
-         cop.put(k, o);
-        }
-       }
+   if (!has) {
+    HashMap coe=cpy.coe;
+    HashMap cpcoe=cp.coe;
+    if (list == null) {
+     cpy.m = (HashMap)listdrc.clone();
+     if (path == null && cpcoe != null) {
+      coe = (HashMap)cpcoe.clone();
+      cpcoe = null;
+     } else coe = new HashMap();
+     cpy.coe = coe ;
+    } else {
+     for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet()) {
+      Object key=en2.getKey();
+      Object o = en2.getValue();
+      list.putIfAbsent(key, o);
+     }
+     if (cpcoe != null) {
+      for (String s:(Set<String>)cpcoe.keySet()) {
+       coe.put(s, path);
       }
      }
     }
    }
   }
-  return cpy == null ?m: cpy;
+ }
+ cpys asFor(cpys cpy, String key) {
+  HashMap map=put;
+  HashMap hash=cpy.m;
+  String str = (String)hash.remove("@copyFromSection");
+  if (str != null && !str.equals("IGNORE")) {
+   HashMap mapput = unclone ?hash: (HashMap)hash.clone();
+   cpy.m = mapput;
+   String list[]=str.split(",");
+   int l=list.length;
+   while (--l >= 0) {
+    String vl=list[l].trim();
+    cpys set=(cpys)map.get(vl);
+    HashMap as;
+    if (set != null && (as = asFor(set, vl).m) != null) {
+     for (Map.Entry<String,String> en:(Set<Map.Entry<String,String>>)as.entrySet())
+      mapput.putIfAbsent(en.getKey(), en.getValue());
+    }
+   }
+  }
+  return cpy;
+ }
+ cpys ascopy(cpys cpy, String key) {
+  int i;
+  if (!key.startsWith("te") && (i = key.indexOf('_')) > 0) {
+   HashMap map=put;
+   HashMap m=cpy.m;
+   String str=(String)m.remove("copyFrom");
+   if (str != null && !str.equals("IGNORE")) {
+    str = get(str, key, cpy);
+    StringBuilder buff=mbuff;
+    buff.setLength(0);
+    buff.append(key, 0, ++i);
+    buff.append(str);
+    str = buff.toString();
+    cpys cp=(cpys)map.get(str);
+    if (cp != null && (cp = ascopy(cp, str)) != null) {
+     HashMap it = cp.m;
+     for (Map.Entry<String,String> en:(Set<Map.Entry>)it.entrySet())
+      m.putIfAbsent(en.getKey(), en.getValue());
+    }
+   }
+  }
+  return cpy;
+ }
+ public void as() {
+  HashMap map=put;
+  HashMap gl= new HashMap();
+  this.gl = gl;
+  for (cpys cpy:(Collection<cpys>)map.values()) {
+   Iterator<Map.Entry<String,String>> ite2=cpy.m.entrySet().iterator();
+   cpy.skip = cpy.m;
+   while (ite2.hasNext()) {
+    Map.Entry<String,String> en2=ite2.next();
+    String key=en2.getKey();
+    if (key.startsWith("@gloabl ")) {
+     gl.put(key.substring(8), en2.getValue());
+     ite2.remove();
+    }
+   }
+  }
+  Set<Map.Entry> se=(Set<Map.Entry>)map.entrySet();
+  for (Map.Entry<String,Object> en2:se)
+   asFor((cpys)en2.getValue(), (String)en2.getKey());
+  for (Map.Entry<String,Object> en2:se)
+   ascopy((cpys)en2.getValue(), en2.getKey());
  }
  static final HashSet set;
  static{
@@ -194,7 +187,7 @@ public class iniobj {
  }
  static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
- String get(String str, String eqz, Object loc) {
+ String get(String str, String eqz, cpys cpy) {
   HashMap map=put;
   HashMap gl=this.gl;
   StringBuilder buff=mbuff;
@@ -219,43 +212,23 @@ public class iniobj {
        buff.append(key, q, matcher.start());
        q = matcher.end();
        String group = matcher.group(0);
+       Object o=null;
        if (!sset.contains(group)) {
         String list[]=group.split("\\.", 2);
         String keyv=list[0];
-        HashMap locv;
-        cpys cpy=null;
-        if (loc instanceof HashMap) locv = (HashMap)loc;
-        else {
-         cpy = (cpys)loc;
-         locv = cpy.m;
-        }
-        Object o=null;
         if (list.length > 1) {
-         if (!(keyv.equals("section") || key.equals(eqz))) {
-          loc = map.get(keyv);
-          if (loc == null)return null;
-          if (loc instanceof HashMap) {
-           cpy = null;
-           locv = (HashMap)loc;
-          } else {
-           cpy = (cpys)loc;
-           locv = cpy.m;
-          }
+         if (!keyv.equals("section") && !key.equals(eqz)) {
+          cpy = (cpys)map.get(keyv);
+          if (cpy == null)return null;
          }
-         String vl=list[1];
-         if (cpy != null) {
-          HashMap or=cpy.copy;
-          if (or != null)o = or.get(vl);
-         }
-         if (o == null) o = locv.get(vl);
+         o = cpy.m.get(list[1]);
         } else {
-         o = locv.get("@define ".concat(keyv));
+         o = cpy.m.get("@define ".concat(keyv));
          if (o == null)o = gl.get(keyv);
         }
-        group = (String)o;
+        if (o == null)return null;
        }
-       if (group == null)return null;
-       buff.append(group);
+       buff.append((String)o);
       }
       int m = key.length();
       if (m > q)buff.append(key, q, m);

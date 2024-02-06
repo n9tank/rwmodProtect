@@ -39,6 +39,14 @@ public class rwmodProtect implements Runnable,ui {
  String musicPath;
  String rootPath;
  Map grops;
+ static cpys defcs;
+ static{
+  cpys cp=new cpys();
+  HashMap list=new HashMap();
+  defcs = cp;
+  list.put("@define *", "");
+  cp.m = list;
+ }
  static String cust[];
  static HashSet skip;
  static int[] cr;
@@ -150,48 +158,43 @@ public class rwmodProtect implements Runnable,ui {
   if (o == null) {
    ZipFile zip=Zip;
    lod = new loder(zip.getInputStream(en));
+   lod.src = str;
    lod.call();
    map.put(str, lod);
   } else lod = (loder)o;
   if (lod.str == null) {
    lod.use = true;
-   replace(lod, str, new StringBuilder());
+   replace(lod, new StringBuilder());
   }
   return lod;
  }
- void replace(loder ini, String file, StringBuilder buff) throws Exception {
+ void replace(loder ini, StringBuilder buff) throws Exception {
   boolean isini=ini.isini;
   ini.str = FileName(isini ?3: 0);
-  file = loder.getSuperPath(file);
-  iniobj put=ini.put;
-  put.mbuff = buff;
-  HashMap cou=new HashMap();
-  ini.cou = cou;
   loder alls=null;
   buff.setLength(0);
+  String file = loder.getSuperPath(ini.src);
   tag:
   if (isini) {
    int i=file.length();
    buff.append(file);
-   String str;
    do{
-    i = file.lastIndexOf("/", --i);
-    buff.setLength(i + 1);
     buff.append("all-units.template");
-    str = buff.toString();
-    ZipArchiveEntry en=toPath(str);
+    ZipArchiveEntry en=toPath(buff.toString());
     if (en != null) {
      alls = replace(en);
-     alls.src = en.getName();
      break;
     }
+    i = file.lastIndexOf("/", --i);
+    buff.setLength(i + 1);
    }while(i > 0);
    buff.setLength(0);
   }
   loder[] orr=null;
   HashMap map=ini.ini;
-  HashMap core=(HashMap)map.get("core");
-  if (core != null) {
+  cpys cp=(cpys)map.get("core");
+  if (cp != null) {
+   HashMap core=cp.m;
    String str=(String)core.get("copyFrom");
    StringBuilder buf=Buff;
    if (str != null && str.length() > 0 && !str.equals("IGNORE")) {
@@ -223,7 +226,8 @@ public class rwmodProtect implements Runnable,ui {
      if (lod != null) {
       copyKey copy=lod.copy;
       loder tk;
-      if (copy != null && (tk = copy.all) != null) {
+      if (copy != null && (tk = lod.put.all) != null) {
+       //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
        if (alls != tk) {
         lod.notmp = true;
         lod.allindex = 1;//不在根目录
@@ -249,23 +253,42 @@ public class rwmodProtect implements Runnable,ui {
    }
   }
   HashMap coe=coeMap;
-  copyKey key=new copyKey(orr, alls);
+  copyKey key=new copyKey(orr, null);
   ini.copy = key;
   iniobj old=(iniobj)coe.get(key);
+  if (old != null && alls != old.all) {
+   key = new copyKey(orr, alls);
+   old = (iniobj)coe.get(key);
+   if (old != null) {
+    iniobj nw=new iniobj();
+    coe.put(key, nw);
+    nw.unclone = true;
+    nw.put(old, null);
+    old = nw;
+   }
+  }
   if (old == null) {
+   key.all = alls;
    coe.put(key, old = new iniobj());
    old.unclone = true;
-   old.mbuff = buff;
-   if (orr != null)for (loder lod:orr)old.put(lod.put.put, null, null);
+   if (orr != null)for (loder lod:orr)old.put(lod.put, lod);
   }
+  old.mbuff = buff;
+  old.all = alls;
   ini.old = old;
-  coe.put(new copyKey(new loder[]{ini}, alls), put);
-  put.put(map, null, null);
-  put.put(old.put, null, null);
+  key = new copyKey(new loder[]{ini}, null);
+  key.all = alls;
+  iniobj put = new iniobj(ini);
+  coe.put(key, put);
+  ini.put = put;
+  put.all = alls;
+  put.mbuff = buff;
+  put.put(old, null);
  }
- void write(loder ini, String file, StringBuilder buff) throws Throwable {
+ void write(loder ini, StringBuilder buff) throws Throwable {
   Map gr=grops;
   String ms[]=null;
+  String file=ini.src;
   if (ini.isini && gr != null) {
    String fin=file;
    while ((ms = (String[])gr.get(fin)) == null && fin.length() != 0)
@@ -274,15 +297,18 @@ public class rwmodProtect implements Runnable,ui {
   file = loder.getSuperPath(file);
   HashMap map=ini.ini;
   buff.setLength(0);
-  int index=ini.allindex;
-  copyKey keycopy=ini.copy;
-  boolean ws=index > 0;
+  boolean ws=ini.allindex > 0;
   loder orr[];
   loder all;
   boolean notmp;
-  if ((orr = keycopy.copy) != null | (notmp = ((all = keycopy.all) != null && !ini.notmp))) {
-   HashMap core=(HashMap)map.get("core");
-   if (core == null)map.put("core", core = new HashMap());
+  if ((orr = ini.copy.copy) != null | (notmp = ((all = ini.put.all) != null && !ini.notmp))) {
+   cpys cp=(cpys)map.get("core");
+   HashMap core;
+   if (cp == null) {
+    cp = new cpys();
+    cp.m = core = new HashMap();
+    map.put("core", cp);
+   } else core = cp.m;
    if (notmp) {
     buff.append(all.str);
     buff.append(',');
@@ -295,7 +321,7 @@ public class rwmodProtect implements Runnable,ui {
      int st=0;
      if (obj.ini == null)buff.append("CORE:");
      else if (ws) {
-      if (obj.copy.all == all) {
+      if (obj.put.all == all) {
        st = str.indexOf('/') + 1;
       } else buff.append("ROOT:");
      }
@@ -308,72 +334,58 @@ public class rwmodProtect implements Runnable,ui {
    core.put("copyFrom", buff.toString());
   }
   String str;
-  HashMap<String, HashMap> reu=Res;
   iniobj put=ini.put;
   HashMap as=put.put;
   iniobj old=ini.old;
   HashMap oldsrc=old.put;
-  for (Map.Entry<String,Object>en:(Set<Map.Entry<String,Object>>)as.entrySet()) {
+  for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)as.entrySet()) {
    String ac=en.getKey();
-   Object asobj=en.getValue();
-   HashMap asmap;
-   HashMap asput=null;
-   Object asold=oldsrc.get(ac);
+   cpys cpys=en.getValue();
+   HashMap asmap = cpys.m;
+   HashMap asput = cpys.skip;
+   cpys asold=(cpys)oldsrc.get(ac);
    HashMap oldmap;
-   if (asobj instanceof cpys) {
-    cpys cpys = ((cpys)asobj);
-    asmap = cpys.m;
-    asput = cpys.skip;
-   } else asmap = (HashMap)asobj;
-   if (asold instanceof cpys) {
-    oldmap = ((cpys)asold).m;
-   } else oldmap = (HashMap)asold;
-   HashMap list=(HashMap)map.get(ac);
-   int le=Integer.MAX_VALUE;
-   String ak=null,av=null;
+   HashMap lastcoe;
+   if (asold != null) {
+    oldmap = asold.m;
+    lastcoe = asold.coe;
+   } else {
+    oldmap = null;
+    lastcoe = null;
+   }
+   cpys licp=(cpys)map.get(ac);
+   HashMap list=licp == null ?null: licp.m;
    for (Map.Entry<String,String> en2:(Set<Map.Entry<String,String>>)asmap.entrySet()) {
     String key=en2.getKey();
-    String value=en2.getValue();
-    int i=key.length() + value.length();
-    if (i < le) {
-     /*i = key.getBytes().length + value.getBytes().length;
-      if (i < le) {*/
-     i = le;
-     ak = key;
-     av = value;
-     //} 寻找较短值追加倒兼容输出
-    }
     if (!skip.contains(key)) {
-     String oldv;
-     boolean eq= oldmap != null && value.equals(oldv = (String)oldmap.get(key)); 
-     boolean same= asput != null && (value.equals(asput.get(key)));
+     String value=en2.getValue();
+     boolean eq= oldmap != null && value.equals(oldmap.get(key)); 
+     boolean same=!asput.containsKey(key);
      HashMap<String, HashMap> res=rwmodProtect.Res;
      Object o=res.get(key);
      if (o != null) {
       int type = (Integer)o;
-      String next=put.get(value, ac, asobj);
+      String next=put.get(value, ac, cpys);
       if (next != null) {
        String[] nowlist=AllPath(next, key, file, type);
        String[] lastlist=null;
-       if (same)same = !ws && next.equals(put.get(value, key, asput));
-       if (same && eq) {
-        if (ws)eq = false;
-        else {
-         str = old.get(value, ac, asold);
-         if ((eq = next.equals(str)))eq = nowlist != null && Arrays.equals(nowlist, lastlist = (str == null ?null: AllPath(str, ac, "", type)));
+       loder coe;
+       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && Arrays.equals(nowlist, lastlist = (str == null || lastcoe == null || (coe = (loder)lastcoe.get(key)) == null) ?null: AllPath(str, ac, (str = coe.src) == null ?null: loder.getSuperPath(str), type)) && !ws;
+       if (!eq && !same && lastlist != nowlist) {
+        if (list == null) {
+         cpys cp=new cpys();
+         cp.m = list = new HashMap();
+         map.put(ac, cp);
         }
-       }
-       buff.setLength(0);
-       if ((ws && nowlist != null) || (!eq && !same && lastlist != nowlist)) {
-        if (list == null)map.put(ac, list = new HashMap());
         char c=0;
         if (type == 0)c = '*';
         else if (type > 0)c = ':';
         if (nowlist != null) {
+         buff.setLength(0);
          for (String add:nowlist) {
           int st=ResTry(add, type <= 0, buff);
           if (st >= 0) {
-           i = 0;
+           int i = 0;
            if (c != 0)i = add.lastIndexOf(c);
            if (i <= 0)i = add.length();
            if (ws)buff.append("ROOT:");
@@ -411,15 +423,16 @@ public class rwmodProtect implements Runnable,ui {
        }
       }
      }
-     if (list != null && (eq || same))list.remove(key);
+     if (list != null && eq)list.remove(key);
     }
-    if (ms != null && list == null) {
-     for (String s:ms) {
-      if (ac.startsWith(s)) {
-       map.put(ac, list = new HashMap());
-       list.put(ak, av);
-       break;
-      }
+   }
+   if (ms != null) {
+    for (String s:ms) {
+     if (ac.startsWith(s)) {
+      cpys cp;
+      if (list == null)cp = defcs;
+      else cp = (cpys)map.remove(s);
+      map.put(s, cp);
      }
     }
    }
@@ -463,6 +476,7 @@ public class rwmodProtect implements Runnable,ui {
    str = list[m].trim();
    int st=ResTry(str, type <= 0, buff);
    boolean tag=st >= 0;
+   if (tag && path == null)return new String[]{};
    ru = ru || tag;
    if (tag) {
     if (str.startsWith("ROOT:", st)) {
@@ -536,65 +550,28 @@ public class rwmodProtect implements Runnable,ui {
  }
  public void end(Throwable e) {
   if (e == null) {
-   Set<Map.Entry<String,loder>> en = iniMap.entrySet();
+   Collection<loder> en = iniMap.values();
    try {
     StringBuilder buff=new StringBuilder();
-    for (Map.Entry<String,loder>ini:en) {
-     loder lod=ini.getValue();
+    for (loder lod:en) {
      if (lod.isini && lod.str == null) {
-      String key=ini.getKey();
-      replace(lod, key, buff);
+      replace(lod, buff);
      }
     }
-    for (Map.Entry<copyKey,iniobj> en2:(Set<Map.Entry<copyKey,iniobj>>)coeMap.entrySet()) {
-     loder all=en2.getKey().all;
-     iniobj lod=en2.getValue();
-     if (all != null)lod.put(all.put.put, null, null);
+    Collection<iniobj> vl=(Collection<iniobj>)coeMap.values();
+    for (iniobj put:vl) {
+     loder all;
+     if ((all = put.all) != null)put.put(all.put, all);
     }
-    for (iniobj as:(Collection<iniobj>)coeMap.values()) {
-     HashMap map=as.put;
-     HashMap gl= new HashMap();
-     as.gl = gl;
-     Iterator ite = map.entrySet().iterator();
-     while (ite.hasNext()) {
-      Map.Entry en3=(Map.Entry)ite.next();
-      HashMap gt;
-      Object o=en3.getValue();
-      if (o instanceof cpys) {
-       cpys cpy=(cpys)o;
-       en3.setValue(gt = cpy.m);
-      } else gt = (HashMap)o;
-      Iterator<Map.Entry<String, String>> ite2=gt.entrySet().iterator();
-      while (ite2.hasNext()) {
-       Map.Entry<String,String> en2=ite2.next();
-       String key=en2.getKey();
-       if (key.startsWith("@gloabl ")) {
-        gl.put(key.substring(8), en3.getValue());
-        ite.remove();
-       }
-      }
-     }
-     ite = map.entrySet().iterator();
-     while (ite.hasNext()) {
-      Map.Entry en2=(Map.Entry)ite.next();
-      as.asFor(en2.getValue(), (String)en2.getKey());
-     }
-     for (Map.Entry<String,Object> en2:(Set<Map.Entry>)map.entrySet()) {
-      as.ascopy(en2.getValue(), en2.getKey());
-     }
-    }
-    for (Map.Entry<String,loder>ini:en) {
-     loder lod=ini.getValue();
+    for (iniobj put:vl)put.as();
+    for (loder lod:en) {
      if (!lod.isini && !lod.use)continue;
-     String key=(String)ini.getKey();
-     write(lod, key, buff);
+     write(lod, buff);
     }
-    en = iniHide.entrySet();
-    for (Map.Entry<String,loder>ini:en) {
-     loder lod=ini.getValue();
+    en = iniHide.values();
+    for (loder lod:en) {
      if (!lod.use)continue;
-     String key=(String)ini.getKey();
-     write(lod, key, buff);
+     write(lod, buff);
     }
    } catch (Throwable e2) {
     e = e2;
@@ -702,6 +679,7 @@ public class rwmodProtect implements Runnable,ui {
      boolean istm=type == 2;
      if (istm || type == 3) {
       loder lod=new loder(zip.getInputStream(zipEntry));
+      lod.src = name;
       lod.task = tas;
       HashMap map;
       if (!istm) {
