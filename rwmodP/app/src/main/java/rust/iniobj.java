@@ -71,8 +71,10 @@ public class iniobj {
     if (cpcoe == null)cpcoe = cp.coe;
     if (skip == null) {
      cpy.skip = (HashMap)skipdrc.clone();
-     if (path == null && cpcoe != null)coe = (HashMap)cpcoe.clone();
-     else coe = new HashMap();
+     if (path == null && cpcoe != null) {
+      coe = (HashMap)cpcoe.clone();
+      cpcoe = null;
+     } else coe = new HashMap();
      cpy.coeskip = coe;
     } else {
      for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet()) {
@@ -80,9 +82,10 @@ public class iniobj {
       Object o = en2.getValue();
       skip.putIfAbsent(key, o);
      }
-     for (String s:(Set<String>)cpcoe.keySet()) {
-      coe.put(s, path);
-     }
+    }
+    if (cpcoe != null) {
+     for (String s:(Set<String>)cpcoe.keySet())
+      coe.putIfAbsent(s, path);
     }
    }
    if (!has) {
@@ -96,16 +99,12 @@ public class iniobj {
      } else coe = new HashMap();
      cpy.coe = coe ;
     } else {
-     for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet()) {
-      Object key=en2.getKey();
-      Object o = en2.getValue();
-      list.putIfAbsent(key, o);
-     }
-     if (cpcoe != null) {
-      for (String s:(Set<String>)cpcoe.keySet()) {
-       coe.put(s, path);
-      }
-     }
+     for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet())
+      list.putIfAbsent(en2.getKey(), en2.getValue());
+    }
+    if (cpcoe != null) {
+     for (String s:(Set<String>)cpcoe.keySet())
+      coe.putIfAbsent(s, path);
     }
    }
   }

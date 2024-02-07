@@ -5,7 +5,4 @@ class cpys {
  HashMap skip;
  HashMap coe;
  HashMap coeskip;
- public String toString() {
-  return m.toString();
- } 
 }

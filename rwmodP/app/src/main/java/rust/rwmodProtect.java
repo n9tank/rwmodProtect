@@ -271,7 +271,13 @@ public class rwmodProtect implements Runnable,ui {
    key.all = alls;
    coe.put(key, old = new iniobj());
    old.unclone = true;
-   if (orr != null)for (loder lod:orr)old.put(lod.put, lod);
+   if (orr != null) {
+    int i=orr.length;
+    while (--i >= 0) {
+     loder lod=orr[i];
+     old.put(lod.put, lod);
+    }
+   }
   }
   old.mbuff = buff;
   old.all = alls;
@@ -360,7 +366,7 @@ public class rwmodProtect implements Runnable,ui {
     if (!skip.contains(key)) {
      String value=en2.getValue();
      boolean eq= oldmap != null && value.equals(oldmap.get(key)); 
-     boolean same=!asput.containsKey(key);
+     boolean same=asput != null && !asput.containsKey(key);
      HashMap<String, HashMap> res=rwmodProtect.Res;
      Object o=res.get(key);
      if (o != null) {
