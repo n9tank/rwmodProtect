@@ -178,7 +178,7 @@ public class Main extends Activity {
   if (f.exists()) {
    cui cui=new cui(path);
    cui.ui = true;
-   rwmodProtect.exec(f, new File(f.getParent(), rwmodProtect.out(f)), cui);
+   new rwmodProtect(f, new File(f.getParent(), rwmodProtect.out(f)), cui);
    arr.add(cui);
   }
  }

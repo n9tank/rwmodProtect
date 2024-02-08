@@ -13,7 +13,6 @@ public class iniobj {
  public HashMap put;
  public HashMap gl;
  public loder all;
- public StringBuilder mbuff;
  public iniobj() {
   put = new HashMap();
  }
@@ -25,9 +24,6 @@ public class iniobj {
    put.put(en.getKey(), cp);
   }
   return put;
- }
- public iniobj(loder lod) {
-  this(clone(lod.ini), lod);
  }
  public iniobj(HashMap map, loder path) {
   put = map;
@@ -138,11 +134,7 @@ public class iniobj {
    String str=(String)m.remove("copyFrom");
    if (str != null && !str.equals("IGNORE")) {
     str = get(str, key, cpy);
-    StringBuilder buff=mbuff;
-    buff.setLength(0);
-    buff.append(key, 0, ++i);
-    buff.append(str);
-    str = buff.toString();
+    str = key.substring(0, ++i).concat(str);
     cpys cp=(cpys)map.get(str);
     if (cp != null && (cp = ascopy(cp, str)) != null) {
      HashMap it = cp.m;
@@ -189,7 +181,7 @@ public class iniobj {
  String get(String str, String eqz, cpys cpy) {
   HashMap map=put;
   HashMap gl=this.gl;
-  StringBuilder buff=mbuff;
+  StringBuilder buff=new StringBuilder();
   int i=0,j=0;
   buff.setLength(0);
   Pattern find0=find;

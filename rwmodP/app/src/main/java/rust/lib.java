@@ -7,67 +7,32 @@ import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
-public class lib implements Runnable,ui {
+public class lib extends TaskWait implements Runnable {
  InputStream inp;
  File In;
  File Ou;
- ui Ui;
- ZipFile Zip;
- HashMap iniMap;
- static HashMap libMap;
- static TaskWait close=new TaskWait(null);
+ static Map libMap;
+ static lib close;
  lib(File ou, ui ui) {
+  super(ui);
   Ou = ou;
-  Ui = ui;
-  TaskWait task=close;
-  task.down(task.cancel);
-  task.back = this;
-  task.err = null;
+  lib task=close;
+  if (task != null)task.down(TaskWait.cancel);
+  close = this;
  }
  public static void exec(InputStream in, File ou, ui ui) {
   lib lib=new lib(ou, ui);
   lib.inp = in;
-  close.addN(lib);
  }
  public static void exec(File in, File ou, ui ui) {
   lib lib=new lib(ou, ui);
   lib.In = in;
-  close.addN(lib);
- }
- loder getlod(String str, String su) {
-  Object o=iniMap.get(str.toLowerCase());
-  loder lod=(loder)o;
-  if (!lod.use) {
-   lod.use = true;
-   lodAllCopy(lod, su);
-  }
-  return lod;
- }
- void lodAllCopy(loder lod, String file) {
-  HashMap ini=lod.ini;
-  cpys map=(cpys)ini.get("core");
-  String list[]=null;
-  if (map != null) {
-   Object str = map.m.get("copyFrom");
-   if (str != null)list = ((String)str).split(",");
-  }
-  iniobj put;
-  if (list == null || Ou == null)put = new iniobj(ini, lod);
-  else put = new iniobj(lod);
-  lod.put = put;
-  lod.ini = null;
-  if (list != null) {
-   int i=list.length;
-   while (--i >= 0)put.put((lod = getlod(file.concat(list[i]), file)).put, lod);
-  }
  }
  public static ZipArchiveEntry getArc(String str) {
   ZipArchiveEntry en=new ZipArchiveEntry(str);
@@ -84,33 +49,11 @@ public class lib implements Runnable,ui {
   if (e != null) {
    File ou=Ou;
    if (ou != null)ou.delete();
-  } else {
-   try {
-    HashMap inimap=iniMap;
-    Iterator ite=inimap.entrySet().iterator();
-    while (ite.hasNext()) {
-     Map.Entry en=(Map.Entry)ite.next();
-     String key=(String)en.getKey();
-     loder lod=(loder)en.getValue();
-     if (!lod.use) {
-      lod.use = true;
-      lodAllCopy(lod, loder.getSuperPath(key));
-     }
-    }
-    libMap = inimap;
-   } catch (Throwable e2) {
-    if (e == null)e = e2;
-    else e.addSuppressed(e2);
-   }
-  }
-  if (!(e instanceof InterruptedException))Ui.end(e);
+  } else libMap = Zipmap;
+  if (!(e instanceof InterruptedException))back.end(e);
  }
  public void run() {
-  HashMap inimap=new HashMap();
-  iniMap = inimap;
   File ou=Ou;
-  ZipFile zip=null;
-  TaskWait task=close;
   try {
    File red;
    InputStream in=inp;
@@ -125,41 +68,44 @@ public class lib implements Runnable,ui {
      ch.close();
     }
    } else red = In;
-   zip = new ZipFile(red);
+   ZipFile zip = new ZipFile(red);
+   Zip = zip;
    Enumeration<? extends ZipArchiveEntry> ens=zip.getEntries();
+   ZipArchiveOutputStream out=null;
+   ParallelScatterZipCreator cre=null;
    if (ou != null) {
-    ZipArchiveOutputStream out= new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
+    rootPath = "";
+    out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
     out.setLevel(9);
-    ParallelScatterZipCreator cre = new ParallelScatterZipCreator();
-    try {
-     while (ens.hasMoreElements()) {
-      ZipArchiveEntry zipe=ens.nextElement();
-      String name;
-      if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && name.charAt(7) == 'u') {
-       loder loder=new loder(zip.getInputStream(zipe));
-       name = name.substring(13).toLowerCase();
-       inimap.put(name, loder);
+    cre = new ParallelScatterZipCreator();
+   } else rootPath = "assets/units/";
+   try {
+    while (ens.hasMoreElements()) {
+     ZipArchiveEntry zipe=ens.nextElement();
+     String name;
+     if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && (ou == null || name.charAt(7) == 'u')) {
+      loder loder=new loder(zip.getInputStream(zipe));
+      loder.task = this;
+      loder.src = name;
+      if (ou != null)name = name.substring(13);
+      loder.str = name;
+      name = name.toLowerCase();
+      Zipmap.put(name, loder);
+      if (ou == null)add(loder);
+      else {
+       ato.increment();
        cre.addArchiveEntry(getArc(name), loder);
       }
      }
-    } finally {
+    }
+   } finally {
+    if (cre != null) {
      cre.writeTo(out);
      out.close();
     }
-    end(null);
-   } else {
-    while (ens.hasMoreElements()) {
-     ZipArchiveEntry zipe= ens.nextElement();
-     String name=zipe.getName();
-     loder loder=new loder(zip.getInputStream(zipe));
-     loder.task = task;
-     inimap.put(name, loder);
-     task.add(loder);
-    }
-    // task.end();
    }
   } catch (Throwable e) {
-   task.down(e);
+   end(e);
   }
  }
 }

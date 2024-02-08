@@ -8,7 +8,7 @@ public class copyKey {
  public boolean cktmp;
  public copyKey(loder copy[], loder al) {
   int hash = Arrays.hashCode(copy);
-  if (cktmp = all != null) {
+  if (cktmp = (al != null)) {
    all = al;
    if (hash == 0)hash = 1;
    hash = hash * 31 + al.hashCode();
