@@ -2,6 +2,7 @@ package rust;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -11,30 +12,27 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import java.util.Collection;
-import android.util.Log;
-import java.util.HashMap;
-import java.util.Set;
 
-public class lib extends TaskWait {
+public class lib extends TaskWait implements Runnable {
  InputStream inp;
+ File In;
+ File Ou;
  static Map libMap;
  static lib close;
- public lib(File in, File ou, ui ui) {
-  super(in, ou, ui);
+ lib(File ou, ui ui) {
+  super(ui);
+  Ou = ou;
   lib task=close;
   if (task != null)task.down(TaskWait.cancel);
   close = this;
  }
- public loder getLoder(String str) throws Throwable {
-  ZipArchiveEntry za=toPath(str);
-  if (Ou != null)str = str.substring(13);
-  str = str.toLowerCase();
-  return addLoder(za, str, false);
- }
  public static void exec(InputStream in, File ou, ui ui) {
-  lib lib=new lib(null, ou, ui);
+  lib lib=new lib(ou, ui);
   lib.inp = in;
+ }
+ public static void exec(File in, File ou, ui ui) {
+  lib lib=new lib(ou, ui);
+  lib.In = in;
  }
  public static ZipArchiveEntry getArc(String str) {
   ZipArchiveEntry en=new ZipArchiveEntry(str);
@@ -42,27 +40,16 @@ public class lib extends TaskWait {
   return en;
  }
  public void end(Throwable e) {
-  File ou=Ou;
-  if (e == null) {
-   if (ou != null) {
-    try {
-     ZipArchiveOutputStream out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
-     out.setLevel(9);
-     ParallelScatterZipCreator cre = new ParallelScatterZipCreator();
-     try {
-      for (loder lod:(Collection<loder>)Zipmap.values()) {
-       cre.addArchiveEntry(getArc(lod.str), lod);
-      }
-     } finally {
-      cre.writeTo(out);
-      out.close();
-     }
-    } catch (Throwable e2) {
-     e = e2;
-    }
-   }
-   libMap = Zipmap;
+  ZipFile zip=Zip;
+  if (zip != null) {
+   try {
+    zip.close();
+   } catch (IOException e2) {}
   }
+  if (e != null) {
+   File ou=Ou;
+   if (ou != null)ou.delete();
+  } else libMap = Zipmap;
   if (!(e instanceof InterruptedException))back.end(e);
  }
  public void run() {
@@ -74,7 +61,7 @@ public class lib extends TaskWait {
    if (in != null) {
     red = ou;
     FileChannel ch=new FileOutputStream(ou).getChannel();
-    Ou = ou = null;
+    ou = null;
     try {
      ch.transferFrom(Channels.newChannel(in), 0L, Long.MAX_VALUE);
     } finally {
@@ -84,14 +71,37 @@ public class lib extends TaskWait {
    ZipFile zip = new ZipFile(red);
    Zip = zip;
    Enumeration<? extends ZipArchiveEntry> ens=zip.getEntries();
-   while (ens.hasMoreElements()) {
-    ZipArchiveEntry zipe=ens.nextElement();
-    String name = zipe.getName();
-    if (name.endsWith("i") && (ou == null || name.charAt(7) == 'u')) {
-     if (ou != null)name = name.substring(13);
-     name = name.toLowerCase();
-     loder lod=addLoder(zipe, name, false);
-     lod.str = name;
+   ZipArchiveOutputStream out=null;
+   ParallelScatterZipCreator cre=null;
+   if (ou != null) {
+    rootPath = "";
+    out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
+    out.setLevel(9);
+    cre = new ParallelScatterZipCreator();
+   } else rootPath = "assets/units/";
+   try {
+    while (ens.hasMoreElements()) {
+     ZipArchiveEntry zipe=ens.nextElement();
+     String name;
+     if (!zipe.isDirectory() && (name = zipe.getName()).endsWith("i") && (ou == null || name.charAt(7) == 'u')) {
+      loder loder=new loder(zip.getInputStream(zipe));
+      loder.task = this;
+      loder.src = name;
+      if (ou != null)name = name.substring(13);
+      loder.str = name;
+      name = name.toLowerCase();
+      Zipmap.put(name, loder);
+      if (ou == null)add(loder);
+      else {
+       ato.increment();
+       cre.addArchiveEntry(getArc(name), loder);
+      }
+     }
+    }
+   } finally {
+    if (cre != null) {
+     cre.writeTo(out);
+     out.close();
     }
    }
   } catch (Throwable e) {

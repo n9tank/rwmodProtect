@@ -1,5 +1,4 @@
 package rust;
-import carsh.log;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
@@ -10,45 +9,50 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.LongAdder;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import android.util.Log;
+import carsh.log;
 
-public abstract class TaskWait implements Runnable,ui {
+public abstract class TaskWait implements ui {
  LongAdder ato;
  String rootPath;
  File Ou;
- File In;
  volatile Throwable err;
  Vector<Future> ar;
  ZipFile Zip;
  ui back;
  ConcurrentHashMap Zipmap;
  public static final InterruptedException cancel=new InterruptedException();
- public TaskWait(File in,File ou,ui ui) {
-  In=in;
-  Ou=ou;
+ TaskWait(ui ui) {
   ato = new LongAdder();
   ar = new Vector();
   Zipmap = new ConcurrentHashMap();
   back = ui;
   addN(this);
  }
- public ZipArchiveEntry toPath(String str) {
-  return Zip.getEntry(str);
- }
- public loder addLoder(ZipArchiveEntry za, String src, boolean isini) throws Throwable {
-  loder lod = new loder(null);
-  String str = za.getName();
-  loder obj=(loder)Zipmap.putIfAbsent(str, lod);
+ public Object getRes(String str) {
+  Object obj=Zipmap.get(str);
+  if (obj == null)obj = Zip.getEntry(str);
   if (obj == null) {
-   lod.isini = isini;
-   lod.read = Zip.getInputStream(za);
-   lod.src = str;
-   lod.task = this;
-   add(lod);
-  } else lod = obj;
+   str = str.toLowerCase();
+   obj = Zipmap.get(str);
+   if (obj == null)obj = Zip.getEntry(str);
+  }
+  return obj;
+ }
+ public loder getLoder(String str) throws Throwable {
+  Object obj=getRes(str);
+  if (obj == null)return null;
+  if (obj instanceof loder)return(loder)obj;
+  ZipArchiveEntry za=(ZipArchiveEntry)obj;
+  str = za.getName();
+  loder lod=new loder(Zip.getInputStream(za));
+  lod.src = str;
+  lod.task = this;
+  ConcurrentHashMap map=Zipmap;
+  map.put(str, lod);
+  map.put(str.toLowerCase(), lod);
+  add(lod);
   return lod;
  }
- public abstract loder getLoder(String str) throws Throwable;
  public boolean lod(loder ini) {
   HashMap map=ini.ini;
   loder all=ini.copy.all;
@@ -112,12 +116,6 @@ public abstract class TaskWait implements Runnable,ui {
   if (ui != null) {
    at.reset();
    end(e);
-   if (Zip != null) {
-    try {
-     Zip.close();
-    } catch (Throwable e2) {
-    }
-   }
   }
  }
 }

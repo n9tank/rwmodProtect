@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-import android.util.Log;
+import carsh.log;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   try {
@@ -178,6 +178,7 @@ class loder implements Callable,InputStreamSupplier {
   TaskWait tas=task;
   if (ex != null) {
    if (tas != null)tas.down(ex);
+   else log.e(this,ex);
    throw (Exception)ex;
   }
   loder all=null;
@@ -192,9 +193,8 @@ class loder implements Callable,InputStreamSupplier {
     if (all != null && !all.finsh)break tag;
     if (tas.lod(this))break tag2;
    }
-   //可以增加锁的实现，避免可能出现的低任务长尾链，造成cpu浪费
+   //放弃所有权，避免堵塞线程
    tas.addN(this);
-   //增加到队列尾部，释放所有权，避免堵塞造成池线程浪费
    return null;
   }
   finsh = true;

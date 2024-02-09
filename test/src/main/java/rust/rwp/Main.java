@@ -99,7 +99,7 @@ public class Main extends Activity {
   File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
   cui ui=new cui("lib");
   if (!li.exists())lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
-  else new lib(li, null, ui);
+  else lib.exec(li, null, ui);
  }
  public void init() {
   if (init)lib();
@@ -212,7 +212,7 @@ public class Main extends Activity {
    ed.setText("");
    bar.setVisibility(0);
    File lb=new File("sdcard/rustedWarfare/rwmod/lib.zip");
-   new lib(f, lb, new cui("lib"));
+   lib.exec(f, lb, new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
  public void ch(View v) {

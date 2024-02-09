@@ -25,7 +25,7 @@ public class log implements Thread.UncaughtExceptionHandler {
   Thread.setDefaultUncaughtExceptionHandler(log);
  }
  public static void e(Object cla, Throwable e) {
-  Log.e("rust.rwp", cla.toString(), e);
+  Log.e("rust.rwp",cla.toString(), e);
  }
  public void uncaughtException(Thread thread, Throwable ex) {
   String name=thread.getName();
