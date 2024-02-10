@@ -122,7 +122,7 @@ class loder implements Callable,InputStreamSupplier {
      if (task == null)return null;
      loder all=null;
      loder[] orr=null;
-     //请不要在定义未使用的ini该版本移除了检查，便于并行
+     //请不要在定义未使用的ini。该版本移除了检查，便于并行
      String file = getSuperPath(src);
      cpys cp=(cpys)table.get("core");
      if (cp != null) {

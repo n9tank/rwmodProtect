@@ -441,6 +441,7 @@ public class rwmodProtect extends TaskWait {
    return 3;
   } else if (file.regionMatches(true, ed, ".tmx", 0, 4) || file.regionMatches(true, ed - 4, "_map.png", 0, 8))
    return 1;
+ // else if (file.regionMatches(true, ed -5, ".template", 0, 9))return 2;
   //type==2 自定义加载类型，已被移除。
   String path=musicPath;
   if (file.regionMatches(true, i, ".ogg", 0, 4)) {

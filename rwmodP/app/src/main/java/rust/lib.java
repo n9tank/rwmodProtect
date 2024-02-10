@@ -5,16 +5,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import java.util.Collection;
-import android.util.Log;
-import java.util.HashMap;
-import java.util.Set;
 
 public class lib extends TaskWait {
  InputStream inp;

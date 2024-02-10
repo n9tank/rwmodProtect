@@ -23,9 +23,9 @@ public abstract class TaskWait implements Runnable,ui {
  ui back;
  ConcurrentHashMap Zipmap;
  public static final InterruptedException cancel=new InterruptedException();
- public TaskWait(File in,File ou,ui ui) {
-  In=in;
-  Ou=ou;
+ public TaskWait(File in, File ou, ui ui) {
+  In = in;
+  Ou = ou;
   ato = new LongAdder();
   ar = new Vector();
   Zipmap = new ConcurrentHashMap();
@@ -37,12 +37,11 @@ public abstract class TaskWait implements Runnable,ui {
  }
  public loder addLoder(ZipArchiveEntry za, String src, boolean isini) throws Throwable {
   loder lod = new loder(null);
-  String str = za.getName();
-  loder obj=(loder)Zipmap.putIfAbsent(str, lod);
+  loder obj=(loder)Zipmap.putIfAbsent(src, lod);
   if (obj == null) {
    lod.isini = isini;
    lod.read = Zip.getInputStream(za);
-   lod.src = str;
+   lod.src = za.getName();
    lod.task = this;
    add(lod);
   } else lod = obj;
