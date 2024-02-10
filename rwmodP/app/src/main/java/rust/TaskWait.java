@@ -115,6 +115,7 @@ public abstract class TaskWait implements Runnable,ui {
     try {
      Zip.close();
     } catch (Throwable e2) {
+     log.e(this, e2);
     }
    }
   }

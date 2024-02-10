@@ -149,7 +149,12 @@ public class rwmodProtect extends TaskWait {
   if (ini < 2)buff.append('/');
   return buff.toString();
  }
- final static iniobj em=new iniobj();
+ final static iniobj em;
+ static{
+  iniobj wr=new iniobj();
+  wr.gl = new HashMap();
+  em = wr;
+ }
  public boolean lod(loder ini) {
   //便于改动到并行加载，没多大优化，主要耗时为io流。
   ConcurrentHashMap coe=coeMap;
@@ -280,9 +285,11 @@ public class rwmodProtect extends TaskWait {
   }
   String str;
   iniobj put=ini.put;
+  if (put.gl == null)put.as();
   HashMap as=put.put;
   iniobj old=ini.old;
   if (old == null)old = em;
+  else if (old.gl == null)old.as();
   HashMap oldsrc=old.put;
   for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)as.entrySet()) {
    String ac=en.getKey();
@@ -441,7 +448,7 @@ public class rwmodProtect extends TaskWait {
    return 3;
   } else if (file.regionMatches(true, ed, ".tmx", 0, 4) || file.regionMatches(true, ed - 4, "_map.png", 0, 8))
    return 1;
- // else if (file.regionMatches(true, ed -5, ".template", 0, 9))return 2;
+  // else if (file.regionMatches(true, ed -5, ".template", 0, 9))return 2;
   //type==2 自定义加载类型，已被移除。
   String path=musicPath;
   if (file.regionMatches(true, i, ".ogg", 0, 4)) {
@@ -458,19 +465,25 @@ public class rwmodProtect extends TaskWait {
  }
  public void end(Throwable e) {
   if (e == null) {
-   //这里即使改并行没有多大提升 90ms-30ms
-   Collection<iniobj> vl=(Collection<iniobj>)coeMap.values();
-   for (iniobj put:vl) {
-    loder all;
-    if ((all = put.all) != null) {
-     put.put(all.put, all);
-     put.all = null;
-    }
-   }
-   for (iniobj put:vl)if (put.gl == null)put.as();
-   //并行输出概率出bug，已丢弃
    try {
-    for (Object t:Zipmap.values()) {
+    Collection vl=Zipmap.values();
+    for (Object t:vl) {
+     if (t instanceof loder) {
+      loder lod=(loder)t;
+      iniobj put=lod.put;
+      loder all;
+      if ((all = put.all) != null) {
+       put.put(all.put, all);
+       put.all = null;
+      }
+      put = lod.old;
+      if (put != null && (all = put.all) != null) {
+       put.put(all.put, all);
+       put.all = null;
+      }
+     }
+    }
+    for (Object t:vl) {
      if (t instanceof loder) {
       loder lod=(loder)t;
       if (lod.finsh) {
@@ -480,25 +493,21 @@ public class rwmodProtect extends TaskWait {
      }
     }
    } catch (Throwable e2) {
-    log.e(this, e2);
+    log.e(this, e = e2);
    }
   }
-  Throwable add=null;
   ZipArchiveOutputStream zipout=out;
   if (zipout != null) {
    try {
-    cre.writeTo(e != null ?null: zipout);
+    try {
+     cre.writeTo(e != null ?null: zipout);
+    } finally {
+     zipout.close();
+    }
    } catch (Throwable e2) {
-    add = e2;
-   }
-   try {
-    zipout.close();
-   } catch (Throwable e2) {
+    log.e(this, e = e2);
    }
   }
-  if (e != null) {
-   if (add != null)e.addSuppressed(add);
-  } else e = add;
   if (e != null)Ou.delete();
   //if (!(e instanceof InterruptedException))
   back.end(e);

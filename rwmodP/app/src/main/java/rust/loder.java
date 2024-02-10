@@ -1,5 +1,6 @@
 package rust;
 
+import carsh.log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -12,7 +13,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-import android.util.Log;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   try {
@@ -44,8 +44,7 @@ class loder implements Callable,InputStreamSupplier {
     out.close();
    }
   } catch (Throwable e) {
-   TaskWait tas=task;
-   if (tas != null)tas.down(e);
+   log.e(this, e);
   }
   return null;
  }
@@ -66,18 +65,33 @@ class loder implements Callable,InputStreamSupplier {
       str = str.trim();
       int i=str.length();
       if (i == 0 || str.startsWith("#"))continue;
-      String with;
-      if (str.startsWith(with = "\"\"\"") || str.startsWith(with = "'''")) {
-       int len=str.length();
-       if (len <= 6)len = 3;else len -= 3;
-       while (true) {
-        if (str.startsWith(with, len))continue wh;
-        str = buff.readLine();
-        if (str == null)return null;
-        str = str.trim();
-        len = str.length() - 3;
+      boolean skip=str.startsWith("\"");
+      boolean c=false;
+      bf.setLength(0);
+      tag:
+      while (true) {
+       int j=0;
+       while (j >= 0) {
+        int k = str.indexOf("\"\"\"", j);
+        int m;
+        if (k < 0) {
+         if (bf.length() == 0 && !c)break tag;
+         m = k;
+         k = str.length();
+        } else {
+         c = !c;
+         m = k + 3;
+        }
+        if (!skip)bf.append(str, j, k);
+        j = m;
+       }
+       if (c)str = buff.readLine().trim();
+       else {
+        str = bf.toString();
+        break;
        }
       }
+      if (skip)continue;
       if (str.startsWith("[") && str.indexOf(']', 1) == --i) {
        if (str.startsWith("comment_", 1))last = null;
        else {
@@ -95,26 +109,6 @@ class loder implements Callable,InputStreamSupplier {
         }
         String key=value[0].trim();
         String set=value[1].trim();
-        if (set.startsWith(with = "\"\"\"") || set.startsWith(with = "\'\'\'")) {
-         bf.setLength(0);
-         int len=set.length();
-         int ed=len;
-         int st=3;
-         if (ed <= 6)ed = 3;else ed -= 3;
-         while (true) {
-          boolean now;
-          if (now = set.startsWith(with, ed))len = ed;
-          bf.append(set, st, len);
-          if (now)break;
-          st = 0;
-          set = buff.readLine();
-          if (set == null)return null;
-          set = set.trim();
-          len = set.length();
-          ed = len - 3;
-         }
-         set = bf.toString();
-        }
         list.put(key, set);
        }
       }
@@ -122,34 +116,31 @@ class loder implements Callable,InputStreamSupplier {
      if (task == null)return null;
      loder all=null;
      loder[] orr=null;
-     //请不要在定义未使用的ini。该版本移除了检查，便于并行
+     //请不要定义未使用的ini。该版本移除了检查，便于并行
      String file = getSuperPath(src);
      cpys cp=(cpys)table.get("core");
      if (cp != null) {
       HashMap m=cp.m;
       str = (String)m.remove("dont_load");
-      boolean is;
-      isini = is = isini && !"1".equals(str) && !"true".equalsIgnoreCase(str);
-      if (is) {
-       str = (String)m.get("copyFrom");
-       if (str != null && str.length() > 0 && !str.equals("IGNORE")) {
-        String lrr[]=str.replace('\\', '/').split(",");
-        int i = lrr.length;
-        orr = new loder[i];
-        while (--i >= 0) {
-         str = lrr[i].trim();
-         loder lod;
-         if (!str.startsWith("CORE:")) {
-          String con;
-          if (str.startsWith("ROOT:")) {
-           str = str.substring(5);
-           con = task.rootPath;
-          } else con = file;
-          str = str.replaceFirst("^/+", "");
-          lod = task.getLoder(con.concat(str));
-         } else lod = (loder)lib.libMap.get(str.replaceFirst("^CORE:/*", "").toLowerCase());
-         orr[i] = lod;
-        }
+      isini = isini && !"1".equals(str) && !"true".equalsIgnoreCase(str);
+      str = (String)m.get("copyFrom");
+      if (str != null && str.length() > 0 && !str.equals("IGNORE")) {
+       String lrr[]=str.replace('\\', '/').split(",");
+       int i = lrr.length;
+       orr = new loder[i];
+       while (--i >= 0) {
+        str = lrr[i].trim();
+        loder lod;
+        if (!str.startsWith("CORE:")) {
+         String con;
+         if (str.startsWith("ROOT:")) {
+          str = str.substring(5);
+          con = task.rootPath;
+         } else con = file;
+         str = str.replaceFirst("^/+", "");
+         lod = task.getLoder(con.concat(str));
+        } else lod = (loder)lib.libMap.get(str.replaceFirst("^CORE:/*", "").toLowerCase());
+        orr[i] = lod;
        }
       }
      }

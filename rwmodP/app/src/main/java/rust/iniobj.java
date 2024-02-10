@@ -155,7 +155,7 @@ public class iniobj {
    while (ite2.hasNext()) {
     Map.Entry<String,String> en2=ite2.next();
     String key=en2.getKey();
-    if (key.startsWith("@gloabl ")) {
+    if (key.startsWith("@global ")) {
      gl.put(key.substring(8), en2.getValue());
      ite2.remove();
     }
