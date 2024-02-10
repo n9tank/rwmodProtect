@@ -486,10 +486,10 @@ public class rwmodProtect extends TaskWait {
     for (Object t:vl) {
      if (t instanceof loder) {
       loder lod=(loder)t;
-      if (lod.finsh) {
-       lod.finsh = false;
-       write(lod);
-      }
+      // if (lod.finsh) {
+      //lod.finsh = false;
+      write(lod);
+      // }
      }
     }
    } catch (Throwable e2) {

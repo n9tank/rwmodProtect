@@ -63,8 +63,7 @@ class loder implements Callable,InputStreamSupplier {
      wh:
      while ((str = buff.readLine()) != null) {
       str = str.trim();
-      int i=str.length();
-      if (i == 0 || str.startsWith("#"))continue;
+      if (str.length() == 0 || str.startsWith("#"))continue;
       boolean skip=str.startsWith("\"");
       boolean c=false;
       bf.setLength(0);
@@ -92,7 +91,8 @@ class loder implements Callable,InputStreamSupplier {
        }
       }
       if (skip)continue;
-      if (str.startsWith("[") && str.indexOf(']', 1) == --i) {
+      int i=str.length() - 1;
+      if (str.startsWith("[") && str.indexOf(']', 1) == i) {
        if (str.startsWith("comment_", 1))last = null;
        else {
         last = str.substring(1, i).trim();
