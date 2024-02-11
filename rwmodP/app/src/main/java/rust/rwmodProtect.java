@@ -1,5 +1,6 @@
 package rust;
 
+import android.util.Log;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.File;
@@ -163,17 +164,23 @@ public class rwmodProtect extends TaskWait {
   loder[] lods=new loder[]{ini};
   copyKey ik=new copyKey(lods, alls);
   coe.put(ik, ini);
-  ik = new copyKey(lods, null);
-  coe.put(ik, ini);
+  copyKey iu =null;
+  if (alls != null) {
+   iu = new copyKey(lods, null);
+   iu.all = alls;
+   coe.put(iu, ini);
+  }
   loder orr[];
   iniobj old;
-  if ((orr = key.copy) != null) {
+  if ((orr = key.copy) != null || alls != null) {
    Object obj = coe.putIfAbsent(key, ini);
    if ((obj instanceof loder) && obj != ini)return false;
    old = (iniobj)obj;
    copyKey key2=null;
    if (old == null || alls != old.all) {
+    if (old != null)coe.put(key, ini);
     iniobj nw = new iniobj();
+    nw.all = alls;
     if (old == null) {
      if (alls != null) {
       key2 = new copyKey(orr, null);
@@ -181,7 +188,7 @@ public class rwmodProtect extends TaskWait {
       if ((obj instanceof loder) && obj != ini)return false;
       old = (iniobj)obj;
      }
-     if (old == null) {
+     if (old == null && orr != null) {
       int i=orr.length;
       while (--i >= 0) {
        loder lod=orr[i];
@@ -190,47 +197,45 @@ public class rwmodProtect extends TaskWait {
      }
     }
     if (old != null)nw.put(old, null);
-    if (key2 != null)coe.put(key2, nw);
+    else if (key2 != null)coe.put(key2, nw);
     coe.put(key, nw);
     old = nw;
    }
    ini.old = old;
    StringBuilder buf=new StringBuilder();
-   for (loder lod:orr) {
-    loder tk;
-    if ((tk = lod.copy.all) != null) {
-     //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
-     if (alls != tk) {
-      lod.notmp = true;
-      lod.allindex = 1;//不在根目录
-      buf.setLength(0);
-      String fn=tk.str;
-      if (fn == null) {
-       LongAdder at=alltmp;
-       at.increment();
-       appendName(at.intValue(), buf);
-       buf.append("/all-units.template/");
-       tk.str = buf.toString();
-       buf.setLength(buf.length() - 19);
-      } else buf.append(fn, 0, fn.length() - 19);
-      if (lod.str == null) {
-       appendName(tk.allindex++ - 1, buf);
-       buf.append(".ini/");
-       lod.str = buf.toString();
-      }
-     } else ini.notmp = true;//不追加all-tmp
+   if (orr != null) {
+    for (loder lod:orr) {
+     loder tk;
+     if ((tk = lod.copy.all) != null) {
+      //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+      if (alls != tk) {
+       lod.notmp = true;
+       lod.allindex = 1;//不在根目录
+       buf.setLength(0);
+       String fn=tk.str;
+       if (fn == null) {
+        LongAdder at=alltmp;
+        at.increment();
+        appendName(at.intValue(), buf);
+        buf.append("/all-units.template/");
+        tk.str = buf.toString();
+        buf.setLength(buf.length() - 19);
+       } else buf.append(fn, 0, fn.length() - 19);
+       if (lod.str == null) {
+        appendName(tk.allindex++ - 1, buf);
+        buf.append(".ini/");
+        lod.str = buf.toString();
+       }
+      } else ini.notmp = true;//不追加all-tmp
+     }
     }
    }
   }
   super.lod(ini);
-  loder[] lode=new loder[]{ini};
   iniobj obj=ini.put;
-  coe.put(new copyKey(lode, alls), obj);
-  if (alls != null) {
-   key = new copyKey(lode, null);
-   key.all = alls;
-   coe.put(key, obj);
-  }
+  obj.all = alls;
+  coe.put(ik, obj);
+  if (iu != null)coe.put(iu, obj);
   return true;
  }
  void write(loder ini) throws Throwable {
@@ -285,11 +290,9 @@ public class rwmodProtect extends TaskWait {
   }
   String str;
   iniobj put=ini.put;
-  if (put.gl == null)put.as();
   HashMap as=put.put;
   iniobj old=ini.old;
   if (old == null)old = em;
-  else if (old.gl == null)old.as();
   HashMap oldsrc=old.put;
   for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)as.entrySet()) {
    String ac=en.getKey();
@@ -323,7 +326,7 @@ public class rwmodProtect extends TaskWait {
        String[] nowlist=AllPath(next, key, file, type, buff);
        String[] lastlist=null;
        loder coe;
-       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && Arrays.equals(nowlist, lastlist = (str == null || lastcoe == null || (coe = (loder)lastcoe.get(key)) == null) ?null: AllPath(str, ac, (str = coe.src) == null ?null: loder.getSuperPath(str), type, buff)) && !ws;
+       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, ac, loder.getSuperPath(coe.src), type, buff))) && !ws;
        if (!eq && !same && lastlist != nowlist) {
         if (list == null) {
          cpys cp=new cpys();
@@ -466,30 +469,22 @@ public class rwmodProtect extends TaskWait {
  public void end(Throwable e) {
   if (e == null) {
    try {
-    Collection vl=Zipmap.values();
-    for (Object t:vl) {
-     if (t instanceof loder) {
-      loder lod=(loder)t;
-      iniobj put=lod.put;
-      loder all;
-      if ((all = put.all) != null) {
-       put.put(all.put, all);
-       put.all = null;
-      }
-      put = lod.old;
-      if (put != null && (all = put.all) != null) {
-       put.put(all.put, all);
-       put.all = null;
-      }
+    Collection<iniobj> vl=(Collection<iniobj>)coeMap.values();
+    for (iniobj o:vl) {
+     loder all=o.all;
+     if (all != null) {
+      o.all = null;
+      o.put(all.put, all);
      }
     }
-    for (Object t:vl) {
+    for (iniobj o:vl)if (o.gl == null)o.as();
+    for (Object t:Zipmap.values()) {
      if (t instanceof loder) {
       loder lod=(loder)t;
-      // if (lod.finsh) {
-      //lod.finsh = false;
-      write(lod);
-      // }
+      if (lod.finsh) {
+       lod.finsh = false;
+       write(lod);
+      }
      }
     }
    } catch (Throwable e2) {

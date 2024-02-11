@@ -80,8 +80,13 @@ public class iniobj {
      }
     }
     if (cpcoe != null) {
-     for (String s:(Set<String>)cpcoe.keySet())
-      coe.putIfAbsent(s, path);
+     if (path != null) {
+      for (String s:(Set<String>)cpcoe.keySet())
+       coe.putIfAbsent(s, path);
+     } else {
+      for (Map.Entry s:(Set<Map.Entry<String,loder>>)cpcoe.entrySet())
+       coe.putIfAbsent(s.getKey(), s.getValue());
+     }
     }
    }
    if (!has) {
@@ -99,8 +104,13 @@ public class iniobj {
       list.putIfAbsent(en2.getKey(), en2.getValue());
     }
     if (cpcoe != null) {
-     for (String s:(Set<String>)cpcoe.keySet())
-      coe.putIfAbsent(s, path);
+     if (path != null) {
+      for (String s:(Set<String>)cpcoe.keySet())
+       coe.putIfAbsent(s, path);
+     } else {
+      for (Map.Entry s:(Set<Map.Entry<String,loder>>)cpcoe.entrySet())
+       coe.putIfAbsent(s.getKey(), s.getValue());
+     }
     }
    }
   }

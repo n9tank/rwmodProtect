@@ -50,10 +50,8 @@ public abstract class TaskWait implements Runnable,ui {
  public abstract loder getLoder(String str) throws Throwable;
  public boolean lod(loder ini) {
   HashMap map=ini.ini;
-  loder all=ini.copy.all;
   if (Ou != null)map = iniobj.clone(map);
   iniobj obj= new iniobj(map, ini);
-  obj.all = all;
   ini.put = obj;
   iniobj old=ini.old;
   copyKey key=ini.copy;
@@ -66,10 +64,7 @@ public abstract class TaskWait implements Runnable,ui {
      iniobj put = lod.put;
      obj.put(put, lod);
     }
-   } else {
-    old.all = all;
-    obj.put(old, null);
-   }
+   } else obj.put(old, null);
   }
   return true;
  }

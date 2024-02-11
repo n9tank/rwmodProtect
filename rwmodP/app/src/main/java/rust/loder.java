@@ -49,9 +49,8 @@ class loder implements Callable,InputStreamSupplier {
   return null;
  }
  public Object call() throws Exception {
-  Throwable ex=null;
-  if (ini == null) {
-   try {
+  try {
+   if (ini == null) {
     BufferedReader buff=new BufferedReader(new InputStreamReader(read));
     try {
      StringBuilder bf=new StringBuilder();
@@ -162,34 +161,32 @@ class loder implements Callable,InputStreamSupplier {
     } finally {
      buff.close();
     }
-   } catch (Throwable e) {
-    ex = e;
    }
-  }
-  TaskWait tas=task;
-  if (ex != null) {
+   TaskWait tas=task;
+   loder all=null;
+   tag2: {
+    tag: {
+     loder[] or=copy.copy;
+     if (or != null) {
+      for (loder orr:or)
+       if (!orr.finsh)break tag;
+     }
+     all = copy.all;
+     if (all != null && !all.finsh)break tag;
+     if (tas.lod(this))break tag2;
+    }
+    //可以增加锁的实现，避免可能出现的低任务长尾链，造成cpu浪费
+    tas.addN(this);
+    //增加到队列尾部，释放所有权，避免堵塞造成池线程浪费
+    return null;
+   }
+   finsh = true;
+   tas.down(null);
+  } catch (Throwable ex) {
+   TaskWait tas=task;
    if (tas != null)tas.down(ex);
    throw (Exception)ex;
   }
-  loder all=null;
-  tag2: {
-   tag: {
-    loder[] or=copy.copy;
-    if (or != null) {
-     for (loder orr:or)
-      if (!orr.finsh)break tag;
-    }
-    all = copy.all;
-    if (all != null && !all.finsh)break tag;
-    if (tas.lod(this))break tag2;
-   }
-   //可以增加锁的实现，避免可能出现的低任务长尾链，造成cpu浪费
-   tas.addN(this);
-   //增加到队列尾部，释放所有权，避免堵塞造成池线程浪费
-   return null;
-  }
-  finsh = true;
-  tas.down(null);
   return null;
  }
  boolean finsh;

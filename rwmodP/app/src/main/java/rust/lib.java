@@ -39,6 +39,7 @@ public class lib extends TaskWait {
   return en;
  }
  public void end(Throwable e) {
+  close = null;
   File ou=Ou;
   if (e == null) {
    if (ou != null) {
@@ -57,6 +58,10 @@ public class lib extends TaskWait {
     } catch (Throwable e2) {
      e = e2;
     }
+   }
+   for (loder lod:(Collection<loder>)Zipmap.values()) {
+    lod.task = null;
+    lod.src = "//";//CORE://
    }
    libMap = Zipmap;
   }
