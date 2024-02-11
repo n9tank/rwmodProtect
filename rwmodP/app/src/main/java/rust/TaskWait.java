@@ -32,9 +32,6 @@ public abstract class TaskWait implements Runnable,ui {
   back = ui;
   addN(this);
  }
- public ZipArchiveEntry toPath(String str) {
-  return Zip.getEntry(str);
- }
  public loder addLoder(ZipArchiveEntry za, String src, boolean isini) throws Throwable {
   loder lod = new loder(null);
   loder obj=(loder)Zipmap.putIfAbsent(src, lod);

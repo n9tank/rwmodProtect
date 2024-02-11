@@ -24,7 +24,7 @@ public class lib extends TaskWait {
   close = this;
  }
  public loder getLoder(String str) throws Throwable {
-  ZipArchiveEntry za=toPath(str);
+  ZipArchiveEntry za=Zip.getEntry(str);
   if (Ou != null)str = str.substring(13);
   str = str.toLowerCase();
   return addLoder(za, str, false);

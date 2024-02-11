@@ -51,7 +51,7 @@ public class cmpU {
   t = c;
  }
  public boolean nextChar(char c) {
-  while (t <= 33)nextChar();
+  while (t <= 32)nextChar();
   if (t != c)return false;
   nextChar();
   return true;

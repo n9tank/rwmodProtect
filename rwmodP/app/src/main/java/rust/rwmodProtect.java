@@ -326,7 +326,7 @@ public class rwmodProtect extends TaskWait {
        String[] nowlist=AllPath(next, key, file, type, buff);
        String[] lastlist=null;
        loder coe;
-       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, ac, loder.getSuperPath(coe.src), type, buff))) && !ws;
+       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, ac, loder.getSuperPath(coe.src), type, buff))) && (!ws || (coe != null && coe.copy.all == all));
        if (!eq && !same && lastlist != nowlist) {
         if (list == null) {
          cpys cp=new cpys();
