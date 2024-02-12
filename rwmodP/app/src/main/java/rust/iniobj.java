@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class iniobj {
  public boolean unclone;//不要制作副本
  public HashMap put;
- public HashMap gl;
+ public Map gl;
  public loder all;
  public iniobj() {
   put = new HashMap();
@@ -54,44 +54,18 @@ public class iniobj {
    }
    String str=list == null ?null: (String)list.get("@copyFrom_skipThisSection");
    boolean has="1".equals(str) || "true".equals(str);
-   boolean nil=str == null || str.equals("IGNORE");
    cpys cp = en.getValue();
    HashMap listdrc=cp.m;
+   HashMap cpcoe=cp.coe;
    HashMap cpskip = cp.skip;
    if (cpskip == null)cpskip = listdrc;
-   if (!nil && !has)listdrc = cpskip;
-   if (!nil || (nil && skip != null))skipdrc = cpskip;
-   if (skipdrc != null) {
-    HashMap coe=cpy.coeskip;
-    HashMap cpcoe=cp.coeskip;
-    if (cpcoe == null)cpcoe = cp.coe;
-    if (skip == null) {
-     cpy.skip = (HashMap)skipdrc.clone();
-     if (path == null && cpcoe != null) {
-      coe = (HashMap)cpcoe.clone();
-      cpcoe = null;
-     } else coe = new HashMap();
-     cpy.coeskip = coe;
-    } else {
-     for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet()) {
-      Object key=en2.getKey();
-      Object o = en2.getValue();
-      skip.putIfAbsent(key, o);
-     }
-    }
-    if (cpcoe != null) {
-     if (path != null) {
-      for (String s:(Set<String>)cpcoe.keySet())
-       coe.putIfAbsent(s, path);
-     } else {
-      for (Map.Entry s:(Set<Map.Entry<String,loder>>)cpcoe.entrySet())
-       coe.putIfAbsent(s.getKey(), s.getValue());
-     }
-    }
-   }
+   if (str != null && !has) {
+    listdrc = cpskip;
+    HashMap v = cp.coeskip;
+    if (v != null)cpcoe = v;
+   } else if (has)skipdrc = cpskip;
+   HashMap coe=cpy.coe;
    if (!has) {
-    HashMap coe=cpy.coe;
-    HashMap cpcoe=cp.coe;
     if (list == null) {
      cpy.m = (HashMap)listdrc.clone();
      if (path == null && cpcoe != null) {
@@ -105,12 +79,30 @@ public class iniobj {
     }
     if (cpcoe != null) {
      if (path != null) {
-      for (String s:(Set<String>)cpcoe.keySet())
+      for (Object s:(Set)cpcoe.keySet())
        coe.putIfAbsent(s, path);
      } else {
-      for (Map.Entry s:(Set<Map.Entry<String,loder>>)cpcoe.entrySet())
+      for (Map.Entry s:(Set<Map.Entry>)cpcoe.entrySet())
        coe.putIfAbsent(s.getKey(), s.getValue());
      }
+    }
+   }
+   if (skipdrc != null) {
+    HashMap coeskip=cpy.coeskip;
+    HashMap cpcoeskip=cp.coeskip;
+    if (cpcoeskip == null)cpcoeskip = cpcoe;
+    if (skip == null) {
+     cpy.skip = skip = (HashMap)list.clone();
+     cpy.coeskip = coeskip = (HashMap)coe.clone();
+    }
+    for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet())
+     skip.putIfAbsent(en2.getKey(), en2.getValue());
+    if (path != null) {
+     for (Object s:(Set)cpcoeskip.keySet())
+      coeskip.putIfAbsent(s, path);
+    } else {
+     for (Map.Entry s:(Set<Map.Entry>)cpcoeskip.entrySet())
+      coeskip.putIfAbsent(s.getKey(), s.getValue());
     }
    }
   }
@@ -190,7 +182,7 @@ public class iniobj {
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  String get(String str, String eqz, cpys cpy) {
   HashMap map=put;
-  HashMap gl=this.gl;
+  Map gl=this.gl;
   StringBuilder buff=new StringBuilder();
   int i=0,j=0;
   buff.setLength(0);

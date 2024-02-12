@@ -1,6 +1,5 @@
 package rust;
 
-import android.util.Log;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.File;
@@ -153,7 +152,7 @@ public class rwmodProtect extends TaskWait {
  final static iniobj em;
  static{
   iniobj wr=new iniobj();
-  wr.gl = new HashMap();
+  wr.gl = Collections.emptyMap();
   em = wr;
  }
  public boolean lod(loder ini) {

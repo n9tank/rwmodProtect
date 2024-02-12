@@ -2,6 +2,7 @@ package rust;
 import carsh.log;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +11,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.LongAdder;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import android.util.Log;
 
 public abstract class TaskWait implements Runnable,ui {
  LongAdder ato;
@@ -21,7 +21,7 @@ public abstract class TaskWait implements Runnable,ui {
  Vector<Future> ar;
  ZipFile Zip;
  ui back;
- ConcurrentHashMap Zipmap;
+ Map Zipmap;
  public static final InterruptedException cancel=new InterruptedException();
  public TaskWait(File in, File ou, ui ui) {
   In = in;
@@ -32,9 +32,9 @@ public abstract class TaskWait implements Runnable,ui {
   back = ui;
   addN(this);
  }
- public loder addLoder(ZipArchiveEntry za, String src, boolean isini) throws Throwable {
+ public loder addLoder(ZipArchiveEntry za, String putkey, boolean isini) throws Throwable {
   loder lod = new loder(null);
-  loder obj=(loder)Zipmap.putIfAbsent(src, lod);
+  loder obj=(loder)Zipmap.putIfAbsent(putkey, lod);
   if (obj == null) {
    lod.isini = isini;
    lod.read = Zip.getInputStream(za);
