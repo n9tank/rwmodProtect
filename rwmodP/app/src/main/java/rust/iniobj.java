@@ -148,9 +148,9 @@ public class iniobj {
   return cpy;
  }
  public void as() {
-  HashMap map=put;
   HashMap gl= new HashMap();
   this.gl = gl;
+  HashMap map=put;
   for (cpys cpy:(Collection<cpys>)map.values()) {
    Iterator<Map.Entry<String,String>> ite2=cpy.m.entrySet().iterator();
    cpy.skip = cpy.m;

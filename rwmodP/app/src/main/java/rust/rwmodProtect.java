@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Consumer;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -28,7 +28,6 @@ public class rwmodProtect extends TaskWait {
  ParallelScatterZipCreator cre;
  ConcurrentHashMap coeMap;
  int arr[];
- LongAdder alltmp;
  String musicPath;
  Map grops;
  static cpys defcs;
@@ -201,34 +200,6 @@ public class rwmodProtect extends TaskWait {
     old = nw;
    }
    ini.old = old;
-   StringBuilder buf=new StringBuilder();
-   if (orr != null) {
-    for (loder lod:orr) {
-     loder tk;
-     if ((tk = lod.copy.all) != null) {
-      //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
-      if (alls != tk) {
-       lod.notmp = true;
-       lod.allindex = 1;//不在根目录
-       buf.setLength(0);
-       String fn=tk.str;
-       if (fn == null) {
-        LongAdder at=alltmp;
-        at.increment();
-        appendName(at.intValue(), buf);
-        buf.append("/all-units.template/");
-        tk.str = buf.toString();
-        buf.setLength(buf.length() - 19);
-       } else buf.append(fn, 0, fn.length() - 19);
-       if (lod.str == null) {
-        appendName(tk.allindex++ - 1, buf);
-        buf.append(".ini/");
-        lod.str = buf.toString();
-       }
-      } else ini.notmp = true;//不追加all-tmp
-     }
-    }
-   }
   }
   super.lod(ini);
   iniobj obj=ini.put;
@@ -250,7 +221,7 @@ public class rwmodProtect extends TaskWait {
   }
   file = loder.getSuperPath(file);
   HashMap map=ini.ini;
-  boolean ws=ini.allindex > 0;
+  boolean ws=ini.acou > 0;
   loder orr[];
   loder all;
   boolean notmp;
@@ -465,23 +436,79 @@ public class rwmodProtect extends TaskWait {
   }
   return 0;
  }
+ static class fore implements Consumer {
+  public void accept(Object t) {
+   iniobj o=(iniobj)t;
+   loder all=o.all;
+   if (all != null) {
+    o.all = null;
+    o.put(all.put, all);
+   }
+  }
+ }
+ static class fore2 implements Consumer {
+  public void accept(Object t) {
+   iniobj o=(iniobj)t;
+   if (o.gl == null)o.as();
+  }
+ }
  public void end(Throwable e) {
   if (e == null) {
    try {
     Collection<iniobj> vl=(Collection<iniobj>)coeMap.values();
-    for (iniobj o:vl) {
+    vl.parallelStream().forEach(new fore());
+    vl.parallelStream().forEach(new fore2());
+    /*for (iniobj o:vl) {
      loder all=o.all;
      if (all != null) {
-      o.all = null;
-      o.put(all.put, all);
+     o.all = null;
+     o.put(all.put, all);
+     }
+     }
+     for (iniobj o:vl)if (o.gl == null)o.as();*/
+    StringBuilder buf=new StringBuilder();
+    for (Object t:Zipmap.values()) {
+     if (t instanceof loder) {
+      loder ini=(loder)t;
+      if (ini.finsh) {
+       ini.finsh = false;
+       copyKey key=ini.copy;
+       loder[] orr=key.copy;
+       loder alls=key.all;
+       if (orr != null) {
+        for (loder lod:orr) {
+         loder tk;
+         if ((tk = lod.copy.all) != null) {
+          //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+          if (alls != tk) {
+           lod.notmp = true;
+           lod.acou = 1;//不在根目录
+           buf.setLength(0);
+           String fn=tk.str;
+           if (fn == null) {
+            appendName(arr[6]++, buf);
+            buf.append("/all-units.template/");
+            tk.acou = -1;
+            tk.str = buf.toString();
+            buf.setLength(buf.length() - 19);
+           } else buf.append(fn, 0, fn.length() - 19);
+           if (lod.str == null) {
+            appendName(tk.acou++, buf);
+            buf.append(".ini/");
+            lod.str = buf.toString();
+           }
+          } else ini.notmp = true;//不追加all-tmp
+         }
+        }
+       }
+      }
      }
     }
-    for (iniobj o:vl)if (o.gl == null)o.as();
     for (Object t:Zipmap.values()) {
      if (t instanceof loder) {
       loder lod=(loder)t;
-      if (lod.finsh) {
-       lod.finsh = false;
+      if (!lod.finsh) {
+       lod.finsh = true;
        write(lod);
       }
      }
@@ -509,7 +536,6 @@ public class rwmodProtect extends TaskWait {
  public void run() {
   arr = new int[7];
   arr[0] = 1;
-  alltmp = new LongAdder();
   HashMap lows=new HashMap();
   lowmap = lows;
   coeMap = new ConcurrentHashMap();

@@ -17,7 +17,7 @@ public abstract class TaskWait implements Runnable,ui {
  String rootPath;
  File Ou;
  File In;
- volatile Throwable err;
+ Throwable err;
  Vector<Future> ar;
  ZipFile Zip;
  ui back;

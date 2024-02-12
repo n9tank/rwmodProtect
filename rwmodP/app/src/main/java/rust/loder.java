@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
+import java.util.concurrent.atomic.LongAdder;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   try {
@@ -175,9 +176,7 @@ class loder implements Callable,InputStreamSupplier {
      if (all != null && !all.finsh)break tag;
      if (tas.lod(this))break tag2;
     }
-    //可以增加锁的实现，避免可能出现的低任务长尾链，造成cpu浪费
     tas.addN(this);
-    //增加到队列尾部，释放所有权，避免堵塞造成池线程浪费
     return null;
    }
    finsh = true;
@@ -189,18 +188,21 @@ class loder implements Callable,InputStreamSupplier {
   }
   return null;
  }
- boolean finsh;
+ int acou;
+ //finsh
  iniobj put;
- HashMap ini;
  iniobj old;
+ boolean notmp;
+ boolean finsh;
+ //copy
+ boolean isini;//pool
+ HashMap ini;
+ copyKey copy;
+ //pool
  String str;
  String src;
- int allindex;
- boolean notmp;
  InputStream read;
  TaskWait task;
- boolean isini;
- copyKey copy;
  loder(InputStream inp) {
   read = inp;
  }
