@@ -44,12 +44,17 @@ public class lib extends TaskWait {
   File ou=Ou;
   if (e == null) {
    if (ou != null) {
+    Collection<loder> vl=Zipmap.values();
+    for (loder lod:vl) {
+     lod.task = null;
+     lod.src = "//";//CORE://
+    }
     try {
      ZipArchiveOutputStream out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
      out.setLevel(9);
      ParallelScatterZipCreator cre = new ParallelScatterZipCreator();
      try {
-      for (loder lod:(Collection<loder>)Zipmap.values()) {
+      for (loder lod:vl) {
        cre.addArchiveEntry(getArc(lod.str), lod);
       }
      } finally {
@@ -59,10 +64,6 @@ public class lib extends TaskWait {
     } catch (Throwable e2) {
      e = e2;
     }
-   }
-   for (loder lod:(Collection<loder>)Zipmap.values()) {
-    lod.task = null;
-    lod.src = "//";//CORE://
    }
    libMap = Zipmap;
   }

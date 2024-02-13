@@ -17,7 +17,7 @@ public abstract class TaskWait implements Runnable,ui {
  String rootPath;
  File Ou;
  File In;
- Throwable err;
+ volatile Throwable err;
  Vector<Future> ar;
  ZipFile Zip;
  ui back;
@@ -37,9 +37,9 @@ public abstract class TaskWait implements Runnable,ui {
   loder obj=(loder)Zipmap.putIfAbsent(putkey, lod);
   if (obj == null) {
    lod.isini = isini;
-   lod.read = Zip.getInputStream(za);
    lod.src = za.getName();
    lod.task = this;
+   lod.read = Zip.getInputStream(za);
    add(lod);
   } else lod = obj;
   return lod;

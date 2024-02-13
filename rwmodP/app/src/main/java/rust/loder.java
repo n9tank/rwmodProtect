@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-import java.util.concurrent.atomic.LongAdder;
+import android.util.Log;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   try {
@@ -113,11 +113,12 @@ class loder implements Callable,InputStreamSupplier {
        }
       }
      }
-     if (task == null)return null;
+     String file=src;
+     if (file == null)return null;
      loder all=null;
      loder[] orr=null;
      //请不要定义未使用的ini。该版本移除了检查，便于并行
-     String file = getSuperPath(src);
+     file = getSuperPath(file);
      cpys cp=(cpys)table.get("core");
      if (cp != null) {
       HashMap m=cp.m;
@@ -189,16 +190,13 @@ class loder implements Callable,InputStreamSupplier {
   return null;
  }
  int acou;
- //finsh
  iniobj put;
  iniobj old;
  boolean notmp;
- boolean finsh;
- //copy
- boolean isini;//pool
+ volatile boolean finsh;
+ boolean isini;
  HashMap ini;
  copyKey copy;
- //pool
  String str;
  String src;
  InputStream read;

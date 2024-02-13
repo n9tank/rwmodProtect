@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -22,6 +21,8 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import java.util.Collection;
+import java.util.stream.Stream;
 public class rwmodProtect extends TaskWait {
  HashMap lowmap;
  ZipArchiveOutputStream out;
@@ -225,7 +226,8 @@ public class rwmodProtect extends TaskWait {
   loder orr[];
   loder all;
   boolean notmp;
-  if ((orr = ini.copy.copy) != null | (notmp = ((all = ini.copy.all) != null && !ini.notmp))) {
+  copyKey copy=ini.copy;
+  if ((orr = copy.copy) != null | (notmp = ((all = copy.all) != null && !ini.notmp))) {
    cpys cp=(cpys)map.get("core");
    HashMap core;
    if (cp == null) {
@@ -437,27 +439,39 @@ public class rwmodProtect extends TaskWait {
   return 0;
  }
  static class fore implements Consumer {
+  boolean is;
   public void accept(Object t) {
-   iniobj o=(iniobj)t;
-   loder all=o.all;
-   if (all != null) {
-    o.all = null;
-    o.put(all.put, all);
-   }
-  }
- }
- static class fore2 implements Consumer {
-  public void accept(Object t) {
-   iniobj o=(iniobj)t;
-   if (o.gl == null)o.as();
+   iniobj ini=((iniobj)t);
+   if (!is) {
+    loder all=ini.all;
+    if (all != null)ini.put(all.put, all);
+   } else ini.as();
   }
  }
  public void end(Throwable e) {
   if (e == null) {
    try {
-    Collection<iniobj> vl=(Collection<iniobj>)coeMap.values();
-    vl.parallelStream().forEach(new fore());
-    vl.parallelStream().forEach(new fore2());
+    Collection vl=coeMap.values();
+    iniobj nolockarr[]=new iniobj[vl.size()];
+    int cou=0;
+    for (iniobj ob:(Collection<iniobj>)vl) {
+     if (ob.gl == null) {
+      ob.gl = new HashMap();
+      nolockarr[cou++] = ob;
+     }
+    }
+    nolockarr = Arrays.copyOf(nolockarr, cou);
+    fore f=new fore();
+    Stream.of(nolockarr).parallel().forEach(f);
+    f.is = true;
+    Stream.of(nolockarr).parallel().forEach(f);
+    for (Object t:Zipmap.values()) {
+     if (t instanceof loder) {
+      loder ini=(loder)t;
+      while (!ini.finsh);
+      //等待cpu高速缓存刷新
+     }
+    }
     /*for (iniobj o:vl) {
      loder all=o.all;
      if (all != null) {
@@ -575,6 +589,7 @@ public class rwmodProtect extends TaskWait {
    cre = cr;
    if (inf != null) {
     loder ini=new loder(zip.getInputStream(inf));
+    //ini.task = this;
     ini.call();
     HashMap info=ini.ini;
     cpys cp=(cpys)info.get("music");
