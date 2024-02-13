@@ -1,5 +1,6 @@
 package rust;
 
+import android.util.Log;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -17,12 +19,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import java.util.Collection;
-import java.util.stream.Stream;
 public class rwmodProtect extends TaskWait {
  HashMap lowmap;
  ZipArchiveOutputStream out;
@@ -465,66 +466,52 @@ public class rwmodProtect extends TaskWait {
     Stream.of(nolockarr).parallel().forEach(f);
     f.is = true;
     Stream.of(nolockarr).parallel().forEach(f);
-    for (Object t:Zipmap.values()) {
+    StringBuilder buf=new StringBuilder();
+    vl = Zipmap.values();
+    for (Object t:vl) {
      if (t instanceof loder) {
       loder ini=(loder)t;
       while (!ini.finsh);
-      //等待cpu高速缓存刷新
      }
     }
-    /*for (iniobj o:vl) {
-     loder all=o.all;
-     if (all != null) {
-     o.all = null;
-     o.put(all.put, all);
-     }
-     }
-     for (iniobj o:vl)if (o.gl == null)o.as();*/
-    StringBuilder buf=new StringBuilder();
-    for (Object t:Zipmap.values()) {
+    for (Object t:vl) {
      if (t instanceof loder) {
       loder ini=(loder)t;
-      if (ini.finsh) {
-       ini.finsh = false;
-       copyKey key=ini.copy;
-       loder[] orr=key.copy;
-       loder alls=key.all;
-       if (orr != null) {
-        for (loder lod:orr) {
-         loder tk;
-         if ((tk = lod.copy.all) != null) {
-          //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
-          if (alls != tk) {
-           lod.notmp = true;
-           lod.acou = 1;//不在根目录
-           buf.setLength(0);
-           String fn=tk.str;
-           if (fn == null) {
-            appendName(arr[6]++, buf);
-            buf.append("/all-units.template/");
-            tk.acou = -1;
-            tk.str = buf.toString();
-            buf.setLength(buf.length() - 19);
-           } else buf.append(fn, 0, fn.length() - 19);
-           if (lod.str == null) {
-            appendName(tk.acou++, buf);
-            buf.append(".ini/");
-            lod.str = buf.toString();
-           }
-          } else ini.notmp = true;//不追加all-tmp
-         }
+      copyKey key=ini.copy;
+      loder[] orr=key.copy;
+      loder alls=key.all;
+      if (orr != null) {
+       for (loder lod:orr) {
+        loder tk;
+        if ((tk = lod.copy.all) != null) {
+         //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+         if (alls != tk) {
+          lod.notmp = true;
+          lod.acou = 1;//不在根目录
+          buf.setLength(0);
+          String fn=tk.str;
+          if (fn == null) {
+           appendName(arr[6]++, buf);
+           buf.append("/all-units.template/");
+           tk.acou = -1;
+           tk.str = buf.toString();
+           buf.setLength(buf.length() - 19);
+          } else buf.append(fn, 0, fn.length() - 19);
+          if (lod.str == null) {
+           appendName(tk.acou++, buf);
+           buf.append(".ini/");
+           lod.str = buf.toString();
+          }
+         } else ini.notmp = true;//不追加all-tmp
         }
        }
       }
      }
     }
-    for (Object t:Zipmap.values()) {
+    for (Object t:vl) {
      if (t instanceof loder) {
       loder lod=(loder)t;
-      if (!lod.finsh) {
-       lod.finsh = true;
-       write(lod);
-      }
+      write(lod);
      }
     }
    } catch (Throwable e2) {
