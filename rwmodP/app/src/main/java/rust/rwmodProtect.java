@@ -1,6 +1,5 @@
 package rust;
 
-import android.util.Log;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.File;
@@ -471,12 +470,6 @@ public class rwmodProtect extends TaskWait {
     for (Object t:vl) {
      if (t instanceof loder) {
       loder ini=(loder)t;
-      while (!ini.finsh);
-     }
-    }
-    for (Object t:vl) {
-     if (t instanceof loder) {
-      loder ini=(loder)t;
       copyKey key=ini.copy;
       loder[] orr=key.copy;
       loder alls=key.all;
@@ -607,6 +600,7 @@ public class rwmodProtect extends TaskWait {
      }
     }
    }while(zipEntrys.hasMoreElements());
+   ato.decrement();
    // tas.end();
   } catch (Throwable e) {
    down(e);

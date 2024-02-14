@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-import android.util.Log;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   try {
@@ -193,7 +192,7 @@ class loder implements Callable,InputStreamSupplier {
  iniobj put;
  iniobj old;
  boolean notmp;
- volatile boolean finsh;
+ boolean finsh;
  boolean isini;
  HashMap ini;
  copyKey copy;

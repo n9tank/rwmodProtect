@@ -91,13 +91,14 @@ public class lib extends TaskWait {
    while (ens.hasMoreElements()) {
     ZipArchiveEntry zipe=ens.nextElement();
     String name = zipe.getName();
-    if (name.endsWith("i") && (ou == null || name.charAt(7) == 'u')) {
+    if (ou == null || (name.endsWith("i") && name.charAt(7) == 'u')) {
      if (ou != null)name = name.substring(13);
      name = name.toLowerCase();
      loder lod=addLoder(zipe, name, false);
      lod.str = name;
     }
    }
+   ato.decrement();
   } catch (Throwable e) {
    down(e);
   }

@@ -17,7 +17,7 @@ public abstract class TaskWait implements Runnable,ui {
  String rootPath;
  File Ou;
  File In;
- volatile Throwable err;
+ Throwable err;
  Vector<Future> ar;
  ZipFile Zip;
  ui back;
@@ -30,6 +30,7 @@ public abstract class TaskWait implements Runnable,ui {
   ar = new Vector();
   Zipmap = new ConcurrentHashMap();
   back = ui;
+  ato.increment();
   addN(this);
  }
  public loder addLoder(ZipArchiveEntry za, String putkey, boolean isini) throws Throwable {
@@ -101,7 +102,6 @@ public abstract class TaskWait implements Runnable,ui {
    if (at.sum() > 0l)ui = null;
   }
   if (ui != null) {
-   at.reset();
    end(e);
    if (Zip != null) {
     try {
