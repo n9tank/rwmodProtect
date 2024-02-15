@@ -128,25 +128,6 @@ public class iniobj {
   }
   return cpy;
  }
- cpys ascopy(cpys cpy, String key) {
-  int i;
-  if (!key.startsWith("te") && (i = key.indexOf('_')) > 0) {
-   HashMap map=put;
-   HashMap m=cpy.m;
-   String str=(String)m.remove("copyFrom");
-   if (str != null && !str.equals("IGNORE")) {
-    str = get(str, key, cpy);
-    str = key.substring(0, ++i).concat(str);
-    cpys cp=(cpys)map.get(str);
-    if (cp != null && (cp = ascopy(cp, str)) != null) {
-     HashMap it = cp.m;
-     for (Map.Entry<String,String> en:(Set<Map.Entry>)it.entrySet())
-      m.putIfAbsent(en.getKey(), en.getValue());
-    }
-   }
-  }
-  return cpy;
- }
  public void as() {
   Map gl= this.gl;
   // this.gl = gl;
@@ -166,8 +147,6 @@ public class iniobj {
   Set<Map.Entry> se=(Set<Map.Entry>)map.entrySet();
   for (Map.Entry<String,Object> en2:se)
    asFor((cpys)en2.getValue(), (String)en2.getKey());
-  for (Map.Entry<String,Object> en2:se)
-   ascopy((cpys)en2.getValue(), en2.getKey());
  }
  static final HashSet set;
  static{

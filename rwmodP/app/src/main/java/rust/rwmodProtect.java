@@ -295,6 +295,7 @@ public class rwmodProtect extends TaskWait {
       int type = (Integer)o;
       String next=put.get(value, ac, cpys);
       if (next != null) {
+       same &= key.equals(next);//临时策略，暴力衍射
        String[] nowlist=AllPath(next, key, file, type, buff);
        String[] lastlist=null;
        loder coe;

@@ -15,6 +15,27 @@
 
 	<LinearLayout
 		android:orientation="horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+
+		<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="log"
+			android:onClick="log"
+			android:id="@+id/log"/>
+
+		<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/ch"
+			android:text="lib"
+			android:onClick="ch"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
@@ -22,20 +43,14 @@
 			android:layout_width="wrap_content"
 			style="?android:attr/buttonStyleSmall"
 			android:layout_height="wrap_content"
-			android:text="选择"
+			android:text="start"
+			android:textAllCaps="false"
 			android:onClick="sw"/>
-
-		<CheckBox
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="依赖"
-			android:onClick="ch"
-			android:id="@+id/ch"/>
 
 		<EditText
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:hint="apk"
+			android:hint="APK"
 			android:id="@+id/ed"/>
 
 	</LinearLayout>

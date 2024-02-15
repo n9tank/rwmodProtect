@@ -2,7 +2,6 @@ package rust.rwp;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,18 +19,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import java.io.ByteArrayOutputStream;
+import carsh.log;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import rust.lib;
 import rust.rwmodProtect;
-import rust.rwp.cpstr;
-public class Main extends Activity { 
+public class Main extends Activity {
  boolean init;
  SharedPreferences sha;
  Intent Intent;
@@ -45,23 +42,13 @@ public class Main extends Activity {
  }
  public static void error(Throwable e, String where, Context c) {
   AlertDialog.Builder show=new AlertDialog.Builder(c);
-  ByteArrayOutputStream brr=new ByteArrayOutputStream();
-  PrintStream pr= new PrintStream(brr);
-  e.printStackTrace(pr);
-  pr.close();
   show.setTitle(where);
-  String mss=brr.toString();
-  show.setMessage(mss);
-  cpstr cp=new cpstr();
-  cp.str = mss;
-  show.setPositiveButton("复制", cp);
+  show.setMessage(e.toString());
   show.show();
  }
  protected void onCreate(Bundle savedInstanceState) {
   super.onCreate(savedInstanceState);
-  carsh.log.init(this);
-  carsh.log.bind();
-  cpstr.manager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+  Thread.setDefaultUncaughtExceptionHandler(new log(this));
   SharedPreferences sh=getSharedPreferences("", MODE_PRIVATE);
   sha = sh;
   setContentView(R.layout.activity_main);
@@ -76,6 +63,12 @@ public class Main extends Activity {
    CheckBox checkbox=findViewById(R.id.ch);
    checkbox.setChecked(def);
    init = def;
+  }
+  def = sh.getBoolean("0", false);
+  if (def) {
+   CheckBox ch=findViewById(R.id.log);
+   ch.setChecked(def);
+   carsh.log.debug = def;
   }
   Intent i=getIntent();
   if (i != null)st(i);
@@ -96,7 +89,7 @@ public class Main extends Activity {
  }
  public void lib() {
   bar.setVisibility(0);
-  File li=new File("sdcard/rustedWarfare/rwmod/lib.zip");
+  File li=new File(getExternalFilesDir(null), "lib.zip");
   cui ui=new cui("lib");
   if (!li.exists())lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
   else new lib(li, null, ui);
@@ -104,14 +97,16 @@ public class Main extends Activity {
  public void init() {
   if (init)lib();
   try {
-   File ini=new File("sdcard/rustedWarfare/rwmod/.txt");
+   File su=getExternalFilesDir(null);
+   File ini=new File(su, ".txt");
    if (ini.exists())rwmodProtect.dictionary(new FileReader(ini));
    Reader io;
-   ini = new File("sdcard/rustedWarfare/rwmod/.ini");
+   ini = new File(su, ".ini");
    if (ini.exists())io = new FileReader(ini);
    else io = new InputStreamReader(getResources().openRawResource(R.raw.def));
    rwmodProtect.init(io);
   } catch (Throwable e) {
+   log.e(this, e);
    error(e, "init", this);
   }
  }
@@ -211,19 +206,26 @@ public class Main extends Activity {
    init = true;
    ed.setText("");
    bar.setVisibility(0);
-   File lb=new File("sdcard/rustedWarfare/rwmod/lib.zip");
+   File lb=new File(getExternalFilesDir(null), "lib.zip");
    new lib(f, lb, new cui("lib"));
   } else startActivityForResult(sw, 1);
  }
  public void ch(View v) {
   CheckBox ch=(CheckBox)v;
   boolean is=ch.isChecked();
-  if (is = true && init == false) {
+  if (is && !init) {
    init = true;
    lib();
   }
   SharedPreferences.Editor ed=sha.edit();
   ed.putBoolean("", is);
+  ed.apply();
+ }
+ public void log(View v) {
+  boolean debug = ((CheckBox)v).isChecked();
+  SharedPreferences.Editor ed=sha.edit();
+  log.debug = debug;
+  ed.putBoolean("0", debug);
   ed.apply();
  }
 }

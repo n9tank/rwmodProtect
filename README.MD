@@ -23,9 +23,10 @@
 - [x] 重排序<br>由于屎山代码，对多态值进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
 - [x] 序列化的copyFrom<br>在一些旧的节中，copyFrom使用宏访问序列化对的目标进行操作，这使得键为私有变量。
 - [ ] 不检查的内容<br>为了性能移除了一些不必要的检查，这些不和法的文件将引发异常。
+- [ ] 多态宏<br>对多态宏达重复追踪尚未实现，无论是否进行复制节，你都需要在节定义有效的键引用，来表达该内容不是重复的。。
 
 ## 配置
-Android的路径是sdcard/rustedWarfare/rwmod
+配置路径移动到/sdcard/Android/data/rust.rwp/files，避免卸载残留。
 * .ini<br>默认的加载配置，这将覆盖安装包内的加载配置。
 * .txt<br>默认的加载字典，每行一项，这将覆盖默认的字符计算。
 * lib.zip<br>默认的加载依赖，用于copyFrom:CORE:实现。
