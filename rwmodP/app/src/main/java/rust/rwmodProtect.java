@@ -23,7 +23,7 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-public class rwmodProtect extends TaskWait {
+public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
@@ -288,18 +288,17 @@ public class rwmodProtect extends TaskWait {
     if (!skip.contains(key)) {
      String value=en2.getValue();
      boolean eq= oldmap != null && value.equals(oldmap.get(key)); 
-     boolean same=asput != null && !asput.containsKey(key);
      HashMap<String, HashMap> res=rwmodProtect.Res;
      Object o=res.get(key);
      if (o != null) {
       int type = (Integer)o;
       String next=put.get(value, ac, cpys);
       if (next != null) {
-       same &= key.equals(next);//临时策略，暴力衍射
-       String[] nowlist=AllPath(next, key, file, type, buff);
+       boolean same=asput != null && !asput.containsKey(key) && value.equals(next);//临时策略，暴力衍射
+       String[] nowlist=AllPath(next, file, type, buff);
        String[] lastlist=null;
-       loder coe;
-       eq = eq && asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, ac, loder.getSuperPath(coe.src), type, buff))) && (!ws || (coe != null && coe.copy.all == all));
+       loder coe=null;
+       eq &= asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, loder.getSuperPath(coe.src), type, buff)) && (!ws || (coe != null && coe.copy.all == all)));
        if (!eq && !same && lastlist != nowlist) {
         if (list == null) {
          cpys cp=new cpys();
@@ -379,8 +378,8 @@ public class rwmodProtect extends TaskWait {
   }
   return st;
  }
- String[] AllPath(String str, String s, String path, int type, StringBuilder buff) {
-  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || (str.equalsIgnoreCase("auto") && s.equals("image_shadow")))
+ String[] AllPath(String str, String path, int type, StringBuilder buff) {
+  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || str.equalsIgnoreCase("auto"))
    return null;
   str = str.replace('\\', '/');
   String list[];
@@ -411,6 +410,7 @@ public class rwmodProtect extends TaskWait {
     buff.append(path);
    }
    buff.append(str);
+   str = buff.toString();
    list[m] = buff.toString();
   }while(++m < l);
   if (!ru)list = null;
@@ -439,15 +439,13 @@ public class rwmodProtect extends TaskWait {
   }
   return 0;
  }
- static class fore implements Consumer {
-  boolean is;
-  public void accept(Object t) {
-   iniobj ini=((iniobj)t);
-   if (!is) {
-    loder all=ini.all;
-    if (all != null)ini.put(all.put, all);
-   } else ini.as();
-  }
+ boolean is;
+ public void accept(Object t) {
+  iniobj ini=((iniobj)t);
+  if (!is) {
+   loder all=ini.all;
+   if (all != null)ini.put(all.put, all);
+  } else ini.as();
  }
  public void end(Throwable e) {
   if (e == null) {
@@ -462,10 +460,9 @@ public class rwmodProtect extends TaskWait {
      }
     }
     nolockarr = Arrays.copyOf(nolockarr, cou);
-    fore f=new fore();
-    Stream.of(nolockarr).parallel().forEach(f);
-    f.is = true;
-    Stream.of(nolockarr).parallel().forEach(f);
+    Stream.of(nolockarr).parallel().forEach(this);
+    is = true;
+    Stream.of(nolockarr).parallel().forEach(this);
     StringBuilder buf=new StringBuilder();
     vl = Zipmap.values();
     for (Object t:vl) {

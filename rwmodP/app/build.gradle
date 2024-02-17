@@ -16,9 +16,8 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1
-        versionName "0.5e"
+        versionName "0.5.2"
     }
-
     buildTypes {
         release {
         signingConfig signingConfigs.sign
@@ -33,7 +32,7 @@ android {
 }
 
 dependencies {
-implementation "org.apache.commons:commons-compress:1.25.0"
-//implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.25.0/commons-compress-1.25.0.jar")
+//implementation "org.apache.commons:commons-compress:1.25.0"
+implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.25.0/commons-compress-1.25.0.jar")
 implementation fileTree(dir: "libs", include: ["*.jar"])
 }

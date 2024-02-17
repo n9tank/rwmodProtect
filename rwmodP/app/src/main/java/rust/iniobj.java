@@ -146,7 +146,7 @@ public class iniobj {
   }
   Set<Map.Entry> se=(Set<Map.Entry>)map.entrySet();
   for (Map.Entry<String,Object> en2:se)
-   asFor((cpys)en2.getValue(), (String)en2.getKey());
+   asFor((cpys)en2.getValue(), en2.getKey());
  }
  static final HashSet set;
  static{
