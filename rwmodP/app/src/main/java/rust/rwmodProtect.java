@@ -21,7 +21,10 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-public class rwmodProtect extends TaskWait {
+import android.util.Log;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
@@ -255,9 +258,9 @@ public class rwmodProtect extends TaskWait {
   }
   String str;
   iniobj put=ini.put;
-  put.as();
   HashMap as=put.put;
   iniobj old=ini.old;
+  if (old == null)old = em;
   HashMap oldsrc=old.put;
   for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)as.entrySet()) {
    String ac=en.getKey();
@@ -432,9 +435,36 @@ public class rwmodProtect extends TaskWait {
   }
   return 0;
  }
+ boolean is;
+ public void accept(Object o) {
+  if (!is) {
+   iniobj obj=(iniobj)o;
+   loder all;
+   obj.put((all = obj.all).put, all);
+  } else {
+   if (o instanceof loder) {
+    loder lod=(loder)o;
+    lod.put.as();
+   }
+  }
+ }
  public void end(Throwable e) {
   if (e == null) {
-   Collection vl=Zipmap.values();
+   Collection<iniobj> vl=coeMap.values();
+   int index=0;
+   iniobj[] iniar=new iniobj[vl.size()];
+   HashMap egl=new HashMap();
+   for (iniobj obj:vl) {
+    if (obj.all != null && obj.gl == null) {
+     obj.gl = egl;
+     iniar[index++] = obj;
+    }
+   }
+   iniar = Arrays.copyOf(iniar, index);
+   Stream.of(iniar).parallel().forEach(this);
+   is = true;
+   vl = Zipmap.values();
+   vl.parallelStream().forEach(this);
    StringBuilder buf=new StringBuilder();
    for (Object t:vl) {
     if (t instanceof loder) {
@@ -442,16 +472,6 @@ public class rwmodProtect extends TaskWait {
      copyKey key=ini.copy;
      loder[] orr=key.copy;
      loder alls=key.all;
-     iniobj old=ini.old;
-     if (old != null) {
-      loder oall=old.all;
-      if (oall != null) {
-       old.all = null;
-       old.put(oall.put, oall);
-      }
-     } else ini.old = em;
-     iniobj put=ini.put;
-     if (alls != null)put.put(alls.put, alls);
      if (orr != null) {
       for (loder lod:orr) {
        loder tk;
