@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class iniobj {
  public boolean unclone;//不要制作副本
  public HashMap put;
- public Map gl;
+ public HashMap gl;
  public loder all;
  public iniobj() {
   put = new HashMap();
@@ -129,8 +129,8 @@ public class iniobj {
   return cpy;
  }
  public void as() {
-  Map gl= this.gl;
-  // this.gl = gl;
+  HashMap gl=new HashMap();
+  this.gl = gl;
   HashMap map=put;
   for (cpys cpy:(Collection<cpys>)map.values()) {
    Iterator<Map.Entry<String,String>> ite2=cpy.m.entrySet().iterator();

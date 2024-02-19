@@ -18,7 +18,7 @@
 - [x] 地图与音乐文件<br>已完成对外部文件的主要兼容
 - [x] all-units.template<br>all-units.template优先于copyFrom。使用copyFrom复制ini，不会被追加ini持有的all-units.template。
 - [x] @copyFrom_skipThisSection<br>@copyFrom_skipThisSection定义为false或0时拿回之前的所有键，反之丢弃。
-- [ ] 不规范的持有<br>持有mod-info.txt，背景音乐，地图以及地图图像，使打包出错或造成多次复制，以及被移除的键。
+- [ ] 不规范的持有<br>持有mod-info.txt，背景音乐，地图以及地图图像，使打包出错或造成多次复制，以及被修改的键。
 - [ ] 非法路径<br>使用"/"或"\\"作为路径头，这导致游戏加载出现bug，使加载结果不一致，新的版本没有多次匹配检查，这可能引发异常。
 - [x] 重排序<br>由于屎山代码，对多态值进行强制衍射，这可能引起重排序，特别是action的显示循序、autoTrigger和autoTriggerOnEvent事件链的执行循序。
 - [ ] 不检查的内容<br>为了性能移除了一些不必要的检查，这些不和法的文件将引发异常。
@@ -38,10 +38,8 @@ a/=action,hiddenAction
 b/c.ini=turret,leg_keep</pre>
 
 ## 开发规则
-为解决兼容问题和获取原生性能，你可以在此规则的基础上开发你的MOD。
+为解决兼容问题和获取原生性能，你可以在此规则的基础上开发你的MOD。<br>诺要彻底解决此问题，需重构代码实现虚拟宏。
 
 * 任何包含资源的键不能为多态值
   * 此值不能使用宏，即不能包含“${}”。
   * 此值不能进行多态的路径，两个文件复制同一份文件，它们的父路径不同，使值指向两份文件。
-* all-units.template不能为多态
-  * 当两个ini有复制关系时，它们指向的all-units.template均不相同。

@@ -17,13 +17,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-public class rwmodProtect extends TaskWait implements Consumer {
+public class rwmodProtect extends TaskWait {
  HashMap lowmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
@@ -149,12 +147,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   if (ini < 2)buff.append('/');
   return buff.toString();
  }
- final static iniobj em;
- static{
-  iniobj wr=new iniobj();
-  wr.gl = Collections.emptyMap();
-  em = wr;
- }
+ final static iniobj em=new iniobj();
  public boolean lod(loder ini) {
   //便于改动到并行加载，没多大优化，主要耗时为io流。
   ConcurrentHashMap coe=coeMap;
@@ -262,9 +255,9 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   String str;
   iniobj put=ini.put;
+  put.as();
   HashMap as=put.put;
   iniobj old=ini.old;
-  if (old == null)old = em;
   HashMap oldsrc=old.put;
   for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)as.entrySet()) {
    String ac=en.getKey();
@@ -294,12 +287,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
       int type = (Integer)o;
       String next=put.get(value, ac, cpys);
       if (next != null) {
-       boolean same=asput != null && !asput.containsKey(key) && value.equals(next);//临时策略，暴力衍射
        String[] nowlist=AllPath(next, file, type, buff);
-       String[] lastlist=null;
        loder coe=null;
-       eq &= asold != null && next.equals(str = old.get(value, ac, asold)) && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, lastlist = AllPath(next, loder.getSuperPath(coe.src), type, buff)) && (!ws || (coe != null && coe.copy.all == all)));
-       if (!eq && !same && lastlist != nowlist) {
+       boolean same=value.equals(next);
+       eq &= same && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, AllPath(next, loder.getSuperPath(coe.src), type, buff)) && (!ws || (coe != null && coe.copy.all == all)));
+       //补修宏绕过
+       if (!same || !eq && (asput == null || asput.containsKey(key))) {
         if (list == null) {
          cpys cp=new cpys();
          cp.m = list = new HashMap();
@@ -439,66 +432,55 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   return 0;
  }
- boolean is;
- public void accept(Object t) {
-  iniobj ini=((iniobj)t);
-  if (!is) {
-   loder all=ini.all;
-   if (all != null)ini.put(all.put, all);
-  } else ini.as();
- }
  public void end(Throwable e) {
   if (e == null) {
-   try {
-    Collection vl=coeMap.values();
-    iniobj nolockarr[]=new iniobj[vl.size()];
-    int cou=0;
-    for (iniobj ob:(Collection<iniobj>)vl) {
-     if (ob.gl == null) {
-      ob.gl = new HashMap();
-      nolockarr[cou++] = ob;
-     }
-    }
-    nolockarr = Arrays.copyOf(nolockarr, cou);
-    Stream.of(nolockarr).parallel().forEach(this);
-    is = true;
-    Stream.of(nolockarr).parallel().forEach(this);
-    StringBuilder buf=new StringBuilder();
-    vl = Zipmap.values();
-    for (Object t:vl) {
-     if (t instanceof loder) {
-      loder ini=(loder)t;
-      copyKey key=ini.copy;
-      loder[] orr=key.copy;
-      loder alls=key.all;
-      if (orr != null) {
-       for (loder lod:orr) {
-        loder tk;
-        if ((tk = lod.copy.all) != null) {
-         //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
-         if (alls != tk) {
-          lod.notmp = true;
-          lod.acou = 1;//不在根目录
-          buf.setLength(0);
-          String fn=tk.str;
-          if (fn == null) {
-           appendName(arr[6]++, buf);
-           buf.append("/all-units.template/");
-           tk.acou = -1;
-           tk.str = buf.toString();
-           buf.setLength(buf.length() - 19);
-          } else buf.append(fn, 0, fn.length() - 19);
-          if (lod.str == null) {
-           appendName(tk.acou++, buf);
-           buf.append(".ini/");
-           lod.str = buf.toString();
-          }
-         } else ini.notmp = true;//不追加all-tmp
-        }
+   Collection vl=Zipmap.values();
+   StringBuilder buf=new StringBuilder();
+   for (Object t:vl) {
+    if (t instanceof loder) {
+     loder ini=(loder)t;
+     copyKey key=ini.copy;
+     loder[] orr=key.copy;
+     loder alls=key.all;
+     iniobj old=ini.old;
+     if (old != null) {
+      loder oall=old.all;
+      if (oall != null) {
+       old.all = null;
+       old.put(oall.put, oall);
+      }
+     } else ini.old = em;
+     iniobj put=ini.put;
+     if (alls != null)put.put(alls.put, alls);
+     if (orr != null) {
+      for (loder lod:orr) {
+       loder tk;
+       if ((tk = lod.copy.all) != null) {
+        //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+        if (alls != tk) {
+         lod.notmp = true;
+         lod.acou = 1;//不在根目录
+         buf.setLength(0);
+         String fn=tk.str;
+         if (fn == null) {
+          appendName(arr[6]++, buf);
+          buf.append("/all-units.template/");
+          tk.acou = -1;
+          tk.str = buf.toString();
+          buf.setLength(buf.length() - 19);
+         } else buf.append(fn, 0, fn.length() - 19);
+         if (lod.str == null) {
+          appendName(tk.acou++, buf);
+          buf.append(".ini/");
+          lod.str = buf.toString();
+         }
+        } else ini.notmp = true;//不追加all-tmp
        }
       }
      }
     }
+   }
+   try {
     for (Object t:vl) {
      if (t instanceof loder) {
       loder lod=(loder)t;
