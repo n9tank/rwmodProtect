@@ -17,13 +17,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import android.util.Log;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  ZipArchiveOutputStream out;
@@ -476,7 +476,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
       for (loder lod:orr) {
        loder tk;
        if ((tk = lod.copy.all) != null) {
-        //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+        //存在bug，请尽量避免对多态all-tmp的ini对象使用宏或重复值
         if (alls != tk) {
          lod.notmp = true;
          lod.acou = 1;//不在根目录

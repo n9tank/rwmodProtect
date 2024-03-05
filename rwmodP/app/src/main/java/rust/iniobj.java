@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class iniobj {
- public boolean unclone;//不要制作副本
  public HashMap put;
  public HashMap gl;
  public loder all;
@@ -112,7 +111,7 @@ public class iniobj {
   HashMap hash=cpy.m;
   String str = (String)hash.remove("@copyFromSection");
   if (str != null && !str.equals("IGNORE")) {
-   HashMap mapput = unclone ?hash: (HashMap)hash.clone();
+   HashMap mapput = (HashMap)hash.clone();
    cpy.m = mapput;
    String list[]=str.split(",");
    int l=list.length;
@@ -167,7 +166,7 @@ public class iniobj {
   buff.setLength(0);
   Pattern find0=find;
   Pattern find1=find2;
-  do{
+  while (true) {
    i = str.indexOf("${", i);
    if (i >= 0) {
     buff.append(str, j, i);
@@ -204,8 +203,8 @@ public class iniobj {
       }
       int m = key.length();
       if (m > q)buff.append(key, q, m);
-      key = buff.substring(st, buff.length());
       if (isNumber) {
+       key = buff.substring(st, buff.length());
        buff.setLength(st);
        cmpU cmp = new cmpU();
        cmp.m = key;
@@ -219,7 +218,8 @@ public class iniobj {
      j = i = ++n;
     } else break;
    } else break;
-  }while(true);
+  }
+  if (buff.length() == 0)return str;
   buff.append(str, j, str.length());
   return buff.toString();
  }
