@@ -156,7 +156,7 @@ public class iniobj {
   sset.add("sin");
   sset.add("sqrt");
  }
- static final Pattern find=Pattern.compile("[aA-zZ_][aA0-zZ9_.]*");
+ static final Pattern find=Pattern.compile("[a-zA-Z_][0-9a-zA-Z_.]*");
  static final Pattern find2=Pattern.compile("[-+/*^%()]");
  String get(String str, String eqz, cpys cpy) {
   HashMap map=put;
