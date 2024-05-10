@@ -1,7 +1,13 @@
-apply plugin: 'com.android.application'
-
+plugins {
+    id 'com.android.application'
+    
+}
 android {
+namespace 'rust.rwp'
     compileSdkVersion 31
+    packagingOptions{
+      exclude "org**"
+    }
     signingConfigs {
         sign {
             keyAlias '0'
@@ -21,7 +27,7 @@ android {
     buildTypes {
         release {
         signingConfig signingConfigs.sign
-        //shrinkResources true
+        shrinkResources true
         minifyEnabled true
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
@@ -32,7 +38,7 @@ android {
 }
 
 dependencies {
-//implementation "org.apache.commons:commons-compress:1.25.0"
-implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.25.0/commons-compress-1.25.0.jar")
+implementation "org.apache.commons:commons-compress:1.26.1"
+//implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.26.1/commons-compress-1.26.1.jar")
 implementation fileTree(dir: "libs", include: ["*.jar"])
 }
