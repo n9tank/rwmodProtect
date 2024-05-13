@@ -1,7 +1,5 @@
-plugins {
-    id 'com.android.application'
-    
-}
+apply plugin: 'com.android.application'
+
 android {
 namespace 'rust.rwp'
     compileSdkVersion 31
@@ -18,11 +16,11 @@ namespace 'rust.rwp'
         }
     defaultConfig {
         applicationId "rust.rwp"
-        minSdkVersion 21
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1
-        versionName "0.5.2"
+        versionName "0.5.3"
     }
     buildTypes {
         release {
@@ -34,6 +32,10 @@ namespace 'rust.rwp'
         debug {
         signingConfig signingConfigs.sign
         }
+        compileOptions {
+sourceCompatibility JavaVersion.VERSION_1_8
+targetCompatibility JavaVersion.VERSION_1_8
+}
     }
 }
 

@@ -23,9 +23,9 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import android.util.Log;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
+ HashMap resmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
  ConcurrentHashMap coeMap;
@@ -46,6 +46,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static HashMap<String,HashMap> Res;
  public rwmodProtect(File in, File ou, ui ui) {
   super(in, ou, ui);
+  resmap = new HashMap();
  }
  public static String out(File path) {
   String name=path.getName();
@@ -317,10 +318,11 @@ public class rwmodProtect extends TaskWait implements Consumer {
            ZipArchiveEntry ze = toPath(str);
            if (ze != null) {
             String name=ze.getName();
-            Object obj=Zipmap.get(name);
+            Object obj=resmap.get(name);
             if (obj == null) {
+			 //不予修复不规范的文件名称
              str = FileName(getType(name), bf);
-             Zipmap.put(name, str);
+             resmap.put(name, str);
              cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, ze));
             } else str = (String)obj;
            }
@@ -336,7 +338,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
        }
       }
      }
-     if (list != null && eq)list.remove(key);
+	 //补修all-tmp删除key冲突
+     if (!ws && list != null && eq)list.remove(key);
     }
    }
    if (ms != null) {
@@ -375,6 +378,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   return st;
  }
  String[] AllPath(String str, String path, int type, StringBuilder buff) {
+  //不予修复非法auto图像
   if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || str.equalsIgnoreCase("auto"))
    return null;
   str = str.replace('\\', '/');
@@ -442,10 +446,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
    loder all;
    obj.put((all = obj.all).put, all);
   } else {
-   if (o instanceof loder) {
-    loder lod=(loder)o;
-    lod.put.as();
-   }
+   loder lod=(loder)o;
+   lod.put.as();
   }
  }
  public void end(Throwable e) {
@@ -463,64 +465,67 @@ public class rwmodProtect extends TaskWait implements Consumer {
    iniar = Arrays.copyOf(iniar, index);
    Stream.of(iniar).parallel().forEach(this);
    is = true;
-   vl = Zipmap.values();
-   vl.parallelStream().forEach(this);
+   Collection<loder> lods=Zipmap.values();
+   lods.parallelStream().forEach(this);
    StringBuilder buf=new StringBuilder();
-   for (Object t:vl) {
-    if (t instanceof loder) {
-     loder ini=(loder)t;
-     copyKey key=ini.copy;
-     loder[] orr=key.copy;
-     loder alls=key.all;
-     if (orr != null) {
-      for (loder lod:orr) {
-       loder tk;
-       if ((tk = lod.copy.all) != null) {
-        //存在bug，请尽量避免对多态all-tmp的ini对象使用宏或重复值
-        if (alls != tk) {
-         lod.notmp = true;
-         lod.acou = 1;//不在根目录
-         buf.setLength(0);
-         String fn=tk.str;
-         if (fn == null) {
-          appendName(arr[6]++, buf);
-          buf.append("/all-units.template/");
-          tk.acou = -1;
-          tk.str = buf.toString();
-          buf.setLength(buf.length() - 19);
-         } else buf.append(fn, 0, fn.length() - 19);
-         if (lod.str == null) {
-          appendName(tk.acou++, buf);
-          buf.append(".ini/");
-          lod.str = buf.toString();
-         }
-        } else ini.notmp = true;//不追加all-tmp
-       }
-      }
-     }
-    }
+   for (loder ini:lods) {
+	copyKey key=ini.copy;
+	loder[] orr=key.copy;
+	loder alls=key.all;
+	if (orr != null) {
+	 for (loder lod:orr) {
+	  loder tk;
+	  if ((tk = lod.copy.all) != null) {
+	   //存在bug，请尽量避免对多态all-tmp的ini对象使用宏
+	   if (alls != tk) {
+		lod.notmp = true;
+		lod.acou = 1;//不在根目录
+		buf.setLength(0);
+		String fn=tk.str;
+		if (fn == null) {
+		 appendName(arr[6]++, buf);
+		 buf.append("/all-units.template/");
+		 tk.str = buf.toString();
+		 buf.setLength(buf.length() - 19);
+		} else buf.append(fn, 0, fn.length() - 19);
+		if (lod.str == null) {
+		 appendName(++tk.acou - 2, buf);
+		 buf.append(".ini/");
+		 lod.str = buf.toString();
+		}
+	   } else ini.notmp = true;//不追加all-tmp
+	  }
+	 }
+	}
    }
    try {
-    for (Object t:vl) {
-     if (t instanceof loder) {
-      loder lod=(loder)t;
-      write(lod);
-     }
-    }
+	for (loder ini:lods) {
+	 copyKey key=ini.copy;
+	 loder[] orr= key.copy;
+	 loder alls=key.all;
+	 tag:
+	 if (orr != null && alls != null && ini.acou == 0) {
+	  for (loder lod:orr) {
+	   if (alls == lod.copy.all && lod.acou == 0)break tag;
+	  }
+	  ini.notmp = false;
+	 }
+	 write(ini);
+	}
    } catch (Throwable e2) {
-    log.e(this, e = e2);
+	log.e(this, e = e2);
    }
   }
   ZipArchiveOutputStream zipout=out;
   if (zipout != null) {
    try {
-    try {
-     cre.writeTo(e != null ?null: zipout);
-    } finally {
-     zipout.close();
-    }
+	try {
+	 cre.writeTo(e != null ?null: zipout);
+	} finally {
+	 zipout.close();
+	}
    } catch (Throwable e2) {
-    log.e(this, e = e2);
+	log.e(this, e = e2);
    }
   }
   if (e != null)Ou.delete();
