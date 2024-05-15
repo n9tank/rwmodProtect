@@ -17,19 +17,23 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import android.util.Log;
+import java.util.concurrent.atomic.LongAdder;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
- HashMap resmap;
+ ConcurrentHashMap resmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
  ConcurrentHashMap coeMap;
  int arr[];
+ AtomicInteger adds[];
  String musicPath;
  Map grops;
  static cpys defcs;
@@ -46,7 +50,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static HashMap<String,HashMap> Res;
  public rwmodProtect(File in, File ou, ui ui) {
   super(in, ou, ui);
-  resmap = new HashMap();
+  resmap = new ConcurrentHashMap();
  }
  public static String out(File path) {
   String name=path.getName();
@@ -60,7 +64,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   ZipArchiveEntry za=toPath(str);
   if (za == null)return null;
   str = za.getName();
-  return addLoder(za, str, getType(str) == 3);
+  return addLoder(za, str, getType(str) == 2);
  }
  public static void dictionary(Reader io) throws IOException {
   BufferedReader buff= new BufferedReader(io);
@@ -137,18 +141,38 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }while(i > 0);
   }
  }
- String FileName(int ini, StringBuilder buff) {
+ String safeName(int ini, StringBuilder buff) {
   buff.setLength(0);
-  ini -= 2;
-  if (ini < 0)ini = 0;
-  int i=++arr[ini] - 2;
-  if (ini > 4)buff.append("￸/");
-  if (ini == 5)buff.append("[noloop]");
-  appendName(i, buff);
-  if (ini == 1)buff.append(".ini");
-  else if (ini > 2)buff.append(".ogg");
-  else if (ini == 2)buff.append(".wav");
-  if (ini < 2)buff.append('/');
+  if (ini < 5) {
+   AtomicInteger add=adds[--ini];
+   int i=((int)add.incrementAndGet() - 1);
+   if (ini > 0)--i;
+   appendName(i, buff);
+   String ed;
+   switch (ini) {
+	case 1:
+	 ed = ".ini";
+	 break;
+	case 2:
+	 ed = ".wav";
+	 break;
+	case 3:
+	 ed = ".ogg";
+	 break;
+	default:
+	 ed = "";
+	 break;
+   }
+   buff.append(ed);
+   if (ini < 2)buff.append('/');
+  } else {
+   ini -= 5;
+   int i=++arr[ini] - 2;
+   buff.append("￸/");
+   if (ini != 0)buff.append("[noloop]");
+   appendName(i, buff);
+   buff.append(".ogg");
+  }
   return buff.toString();
  }
  final static iniobj em=new iniobj();
@@ -207,6 +231,16 @@ public class rwmodProtect extends TaskWait implements Consumer {
   return true;
  }
  void write(loder ini) throws Throwable {
+  copyKey ck=ini.copy;
+  loder[] orr= ck.copy;
+  loder alls=ck.all;
+  tag:
+  if (orr != null && alls != null && ini.acou == 0) {
+   for (loder lod:orr) {
+	if (alls == lod.copy.all && lod.acou == 0)break tag;
+   }
+   ini.notmp = false;
+  }
   StringBuilder buff=new StringBuilder();
   StringBuilder bf=new StringBuilder();
   Map gr=grops;
@@ -220,7 +254,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   file = loder.getSuperPath(file);
   HashMap map=ini.ini;
   boolean ws=ini.acou > 0;
-  loder orr[];
   loder all;
   boolean notmp;
   copyKey copy=ini.copy;
@@ -318,46 +351,53 @@ public class rwmodProtect extends TaskWait implements Consumer {
            ZipArchiveEntry ze = toPath(str);
            if (ze != null) {
             String name=ze.getName();
-            Object obj=resmap.get(name);
-            if (obj == null) {
-			 //不予修复不规范的文件名称
-             str = FileName(getType(name), bf);
-             resmap.put(name, str);
-             cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, ze));
-            } else str = (String)obj;
-           }
-           buff.append(str);
-           if (i > 0)buff.append(add, i, add.length());
-          } else buff.append(add);
-          buff.append(',');
-         }
-         buff.setLength(buff.length() - 1);
-         value = buff.toString();
-        }
-        list.put(key, value);
-       }
-      }
-     }
+			Object obj;
+			do{
+			 obj = resmap.putIfAbsent(name, "");
+			}while(obj == "");
+			if (obj == null) {
+			 resmap.put(name, str = safeName(getType(name), bf));
+			 cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, ze));
+			} else str = (String)obj;
+		   }
+		   buff.append(str);
+		   if (i > 0)buff.append(add, i, add.length());
+		  } else buff.append(add);
+		  buff.append(',');
+		 }
+		 buff.setLength(buff.length() - 1);
+		 value = buff.toString();
+		}
+		list.put(key, value);
+	   }
+	  }
+	 }
 	 //补修all-tmp删除key冲突
-     if (!ws && list != null && eq)list.remove(key);
-    }
+	 if (!ws && list != null && eq)list.remove(key);
+	}
    }
    if (ms != null) {
-    for (String s:ms) {
-     if (ac.startsWith(s)) {
-      cpys cp;
-      if (list == null)cp = defcs;
-      else cp = (cpys)map.remove(s);
-      map.put(s, cp);
-     }
-    }
+	for (String s:ms) {
+	 if (ac.startsWith(s)) {
+	  cpys cp;
+	  if (list == null)cp = defcs;
+	  else cp = (cpys)map.remove(s);
+	  map.put(s, cp);
+	 }
+	}
    }
   }
   cre.addArchiveEntry(lib.getArc(get(ini, bf)), ini);
  }
  public String get(loder ini, StringBuilder bf) {
   String str = ini.str;
-  if (str == null)ini.str = str = FileName(ini.isini ?3: 0, bf);
+  if (str == null) {
+   synchronized (ini) {
+	if ((str = ini.str) == null) {
+	 ini.str = str = safeName(ini.isini ?2: 1, bf);
+	}
+   }
+  }
   return str;
  }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
@@ -379,7 +419,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  }
  String[] AllPath(String str, String path, int type, StringBuilder buff) {
   //不予修复非法auto图像
-  if (str.equalsIgnoreCase("none") || str.equals("IGNORE") || str.equalsIgnoreCase("auto"))
+  if (str.length() == 0 || str.equalsIgnoreCase("none") || str.equals("IGNORE") || str.equalsIgnoreCase("auto"))
    return null;
   str = str.replace('\\', '/');
   String list[];
@@ -421,33 +461,42 @@ public class rwmodProtect extends TaskWait implements Consumer {
   int ed=i;
   if (file.endsWith("/"))--ed;
   if (file.regionMatches(true, ed, ".ini", 0, 4)) {
-   return 3;
+   return 2;
   } else if (file.regionMatches(true, ed, ".tmx", 0, 4) || file.regionMatches(true, ed - 4, "_map.png", 0, 8))
-   return 1;
-  // else if (file.regionMatches(true, ed -5, ".template", 0, 9))return 2;
-  //type==2 自定义加载类型，已被移除。
+   return 0;
   String path=musicPath;
   if (file.regionMatches(true, i, ".ogg", 0, 4)) {
    if (path != null && file.startsWith(path)) {
-    if (file.indexOf("[noloop]", path.length()) < 0)return 6;
-    return 7;
+    if (file.indexOf("[noloop]", path.length()) < 0)return 5;
+    return 6;
    } else {
-    return 5;
+    return 4;
    }
   } else if (file.regionMatches(true, i, ".wav", 0, 4)) {
-   return 4;
+   return 3;
   }
-  return 0;
+  return 1;
  }
- boolean is;
+ int is;
  public void accept(Object o) {
-  if (!is) {
-   iniobj obj=(iniobj)o;
-   loder all;
-   obj.put((all = obj.all).put, all);
-  } else {
-   loder lod=(loder)o;
-   lod.put.as();
+  switch (is) {
+   case 0:
+	iniobj obj=(iniobj)o;
+	loder all;
+	obj.put((all = obj.all).put, all);
+	break;
+   case 1:
+	loder lod=(loder)o;
+	lod.put.as();
+	break;
+   case 2:
+	try {
+	 write((loder)o);
+	} catch (Throwable e) {
+	 is = 3;
+	 log.e(this, e);
+	}
+	break;
   }
  }
  public void end(Throwable e) {
@@ -464,7 +513,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }
    iniar = Arrays.copyOf(iniar, index);
    Stream.of(iniar).parallel().forEach(this);
-   is = true;
+   is = 1;
    Collection<loder> lods=Zipmap.values();
    lods.parallelStream().forEach(this);
    StringBuilder buf=new StringBuilder();
@@ -483,7 +532,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
 		buf.setLength(0);
 		String fn=tk.str;
 		if (fn == null) {
-		 appendName(arr[6]++, buf);
+		 appendName(arr[2]++, buf);
 		 buf.append("/all-units.template/");
 		 tk.str = buf.toString();
 		 buf.setLength(buf.length() - 19);
@@ -498,23 +547,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
 	 }
 	}
    }
-   try {
-	for (loder ini:lods) {
-	 copyKey key=ini.copy;
-	 loder[] orr= key.copy;
-	 loder alls=key.all;
-	 tag:
-	 if (orr != null && alls != null && ini.acou == 0) {
-	  for (loder lod:orr) {
-	   if (alls == lod.copy.all && lod.acou == 0)break tag;
-	  }
-	  ini.notmp = false;
-	 }
-	 write(ini);
-	}
-   } catch (Throwable e2) {
-	log.e(this, e = e2);
-   }
+   is = 2;
+   lods.parallelStream().forEach(this);
   }
   ZipArchiveOutputStream zipout=out;
   if (zipout != null) {
@@ -533,8 +567,11 @@ public class rwmodProtect extends TaskWait implements Consumer {
   back.end(e);
  }
  public void run() {
-  arr = new int[7];
-  arr[0] = 1;
+  AtomicInteger[] add=new AtomicInteger[4];
+  adds = add;
+  int i=4;
+  while (i > 0)add[--i] = new AtomicInteger();
+  arr = new int[3];
   HashMap lows=new HashMap();
   lowmap = lows;
   coeMap = new ConcurrentHashMap();
@@ -596,12 +633,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
     if (zipEntry.getCompressedSize() != 0l) { 
      name = zipEntry.getName();
      int type=getType(name);
-     if (type == 3) {
+     if (type == 2) {
       addLoder(zipEntry, name, true);
-     } else if (type == 1) {
+     } else if (type == 0) {
       cr.addArchiveEntry(lib.getArc(loder.getName(name).concat("/")), new inputsu(zip, zipEntry));
-     } else if (type == 6) {
-      cr.addArchiveEntry(lib.getArc(FileName(type, mbuff)), new inputsu(zip, zipEntry));
+     } else if (type >= 5) {
+      cr.addArchiveEntry(lib.getArc(safeName(type, mbuff)), new inputsu(zip, zipEntry));
      }
     }
    }while(zipEntrys.hasMoreElements());
