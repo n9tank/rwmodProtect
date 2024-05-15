@@ -3,50 +3,79 @@ package rust;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-class loder implements Callable,InputStreamSupplier {
- public InputStream get() {
-  try {
-   if (ini == null)call();
-   ByteOut brr=new ByteOut();
-   BufferedWriter out=new BufferedWriter(new OutputStreamWriter(brr));
-   try {
-    HashMap hash=ini;
-    boolean st=false;
-    for (Map.Entry<String,cpys>en:(Set<Map.Entry<String,cpys>>)hash.entrySet()) {
-     HashMap ou=en.getValue().m;
-     if (ou.size() > 0) {
-      if (st)out.write('\n');
-      st = true;
-      out.write('[');
-      out.write(en.getKey());
-      out.write(']');
-      for (Map.Entry<String,String> en2:(Set<Map.Entry<String,String>>)ou.entrySet()) {
-       out.write('\n');
-       out.write(en2.getKey());
-       out.write(':');
-       out.write(en2.getValue());
-      }
-     }
-    }
-    out.flush();
-    return brr.toInput();
-   } finally {
-    out.close();
+class loder extends InputStream implements Callable,InputStreamSupplier {
+ ByteOut buff;
+ BufferedWriter wt;
+ int of;
+ Iterator<Map.Entry<String,cpys>> sections;
+ Iterator<Map.Entry<String,String>> keys;
+ public void next(int i) throws IOException {
+  do{
+   if (keys == null || !keys.hasNext()) {
+	Map.Entry<String, cpys> kvs;
+	HashMap v;
+	do{
+	 if (!sections.hasNext()) {
+	  wt.close();
+	  buff.sub();
+	  return;
+	 }
+	 kvs = sections.next();
+	 v = kvs.getValue().m;
+	}while(v.size() == 0);
+	wt.write('[');
+	wt.write(kvs.getKey());
+	wt.write(']');
+	wt.write('\n');
+	keys = v.entrySet().iterator();
+   } else {
+	Map.Entry<String, String> kv=keys.next();
+	wt.write(kv.getKey());
+	wt.write(':');
+	wt.write(kv.getValue());
+	wt.write('\n');
    }
-  } catch (Throwable e) {
-   log.e(this, e);
+   wt.flush();
+  }while(i > buff.size());
+ }
+ public int read() {
+  return 0;
+ }
+ public int read(byte[] b, int off, int len) throws IOException {
+  int s=buff.size() - of;
+  if (s <= 0) {
+   buff.reset();
+   of = 0;
   }
-  return null;
+  try {
+   if (s < len)next(len + of);
+  } catch (Throwable e) {
+   wt.close();
+   log.e(this, e);
+   return -1;
+  }
+  s = buff.size() - of;
+  if (s > len)s = len;
+  if (s > 0)System.arraycopy(buff.get(), of, b, off, s);
+  of += s;
+  return s;
+ }
+ public InputStream get() {
+  buff = new ByteOut();
+  wt = new BufferedWriter(new OutputStreamWriter(buff));
+  sections = ini.entrySet().iterator();
+  return this;
  }
  public Object call() throws Exception {
   try {
