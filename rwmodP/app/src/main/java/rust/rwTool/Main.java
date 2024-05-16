@@ -1,4 +1,4 @@
-package rust.rwp;
+package rust.rwTool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -16,8 +16,8 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import carsh.log;
 import java.io.File;
@@ -28,13 +28,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import rust.lib;
 import rust.rwmodProtect;
+import rust.savedump;
+import rust.zipmodify;
+import rust.rwmap;
 public class Main extends Activity {
  boolean init;
  SharedPreferences sha;
  Intent Intent;
  Intent sw;
  String pe[];
- EditText ed;
+ RadioGroup bu;
+ CheckBox pack;
  static ArrayAdapter arr;
  static TextView bar;
  public void finish() {
@@ -53,7 +57,8 @@ public class Main extends Activity {
   sha = sh;
   setContentView(R.layout.activity_main);
   bar = findViewById(R.id.lib);
-  ed = findViewById(R.id.ed);
+  bu = findViewById(R.id.rw);
+  pack = findViewById(R.id.pack);
   ListView list=findViewById(R.id.list);
   ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new LinkedList());
   list.setAdapter(ar);
@@ -63,12 +68,6 @@ public class Main extends Activity {
    CheckBox checkbox=findViewById(R.id.ch);
    checkbox.setChecked(def);
    init = def;
-  }
-  def = sh.getBoolean("0", false);
-  if (def) {
-   CheckBox ch=findViewById(R.id.log);
-   ch.setChecked(def);
-   carsh.log.debug = def;
   }
   Intent i=getIntent();
   if (i != null)st(i);
@@ -143,6 +142,10 @@ public class Main extends Activity {
   } else o = intent.getData();
   if (o != null)add(o);
  }
+ public static String out(File path, int i, String end) {
+  String name=path.getName();
+  return name.substring(0, name.length() - i).concat(end);
+ }
  public void add(Uri uri) {
   String type=uri.getScheme();
   String path=uri.getPath();
@@ -173,7 +176,24 @@ public class Main extends Activity {
   if (f.exists()) {
    cui cui=new cui(path);
    cui.ui = true;
-   new rwmodProtect(f, new File(f.getParent(), rwmodProtect.out(f)), cui);
+   Runnable run=null;
+   if (path.endsWith(".rwmod")) {
+	boolean pc=pack.isChecked();
+	int id=bu.getCheckedRadioButtonId();
+	if (id == R.id.pr)new rwmodProtect(f, new File(f.getParent(), out(f, 6, "_r.rwmod")), cui);
+	else {
+	 zipmodify za = new zipmodify(f, cui, pc);
+	 if (id == R.id.fa)za.fast = true;
+	 run = za;
+	}
+   } else if (path.endsWith(".apk")) {
+	new lib(f, new File(getExternalFilesDir(null), "lib.zip"), cui);
+   } else if (path.endsWith(".rwsave")||path.endsWith(".replay")) {
+	run = new savedump(f, new File(f.getParent(), out(f, 5, "tmx")), cui);
+   }else if(path.endsWith(".tmx")){
+	run = new rwmap(f, new File(f.getParent(), out(f, 4, "_r.tmx")), cui);
+   }
+   if (run != null) rust.ui.pool.execute(run);
    arr.add(cui);
   }
  }
@@ -200,15 +220,7 @@ public class Main extends Activity {
   }
  }
  public void sw(View v) {
-  String s=ed.getText().toString().trim();
-  File f;
-  if (s.length() != 0 && (f = new File(s)).exists()) {
-   init = true;
-   ed.setText("");
-   bar.setVisibility(0);
-   File lb=new File(getExternalFilesDir(null), "lib.zip");
-   new lib(f, lb, new cui("lib"));
-  } else startActivityForResult(sw, 1);
+  startActivityForResult(sw, 1);
  }
  public void ch(View v) {
   CheckBox ch=(CheckBox)v;
@@ -222,10 +234,6 @@ public class Main extends Activity {
   ed.apply();
  }
  public void log(View v) {
-  boolean debug = ((CheckBox)v).isChecked();
-  SharedPreferences.Editor ed=sha.edit();
-  log.debug = debug;
-  ed.putBoolean("0", debug);
-  ed.apply();
+  log.debug = ((CheckBox)v).isChecked();
  }
 }

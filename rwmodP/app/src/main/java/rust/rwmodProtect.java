@@ -52,14 +52,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   super(in, ou, ui);
   resmap = new ConcurrentHashMap();
  }
- public static String out(File path) {
-  String name=path.getName();
-  int l=name.length();
-  if (name.startsWith(".", l -= 6)) {
-   name = name.substring(0, l);
-  }
-  return name.concat("_r.rwmod");
- }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=toPath(str);
   if (za == null)return null;

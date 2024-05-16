@@ -32,6 +32,12 @@
 			android:text="lib"
 			android:onClick="ch"/>
 
+		<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="pack"
+			android:id="@+id/pack"/>
+
 	</LinearLayout>
 
 	<LinearLayout
@@ -47,11 +53,31 @@
 			android:textAllCaps="false"
 			android:onClick="sw"/>
 
-		<EditText
-			android:layout_width="match_parent"
+		<RadioGroup
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:hint="APK"
-			android:id="@+id/ed"/>
+			android:id="@+id/rw">
+
+			<RadioButton
+				android:checked="true"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="protect"
+				android:id="@+id/pr"/>
+
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="only"/>
+
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="fast"
+				android:id="@+id/fa"/>
+
+		</RadioGroup>
 
 	</LinearLayout>
 

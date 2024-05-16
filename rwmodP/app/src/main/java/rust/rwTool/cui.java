@@ -1,4 +1,4 @@
-package rust.rwp;
+package rust.rwTool;
 
 import android.widget.TextView;
 import rust.ui;
