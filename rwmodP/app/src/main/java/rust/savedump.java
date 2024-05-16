@@ -66,7 +66,7 @@ public class savedump implements Runnable {
 	   System.arraycopy(brr, brr.length - n, brr, 0, n);
 	   by.clear();
 	   by.position(n);
-	   by.limit(i + 8192);
+	   by.limit(n + 8192);
 	  }
 	 }
 	}

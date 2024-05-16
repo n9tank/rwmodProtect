@@ -32,12 +32,6 @@
 			android:text="lib"
 			android:onClick="ch"/>
 
-		<CheckBox
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="pack"
-			android:id="@+id/pack"/>
-
 	</LinearLayout>
 
 	<LinearLayout
@@ -69,13 +63,13 @@
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="only"/>
+				android:text="pack"
+				android:id="@+id/pack"/>
 
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="fast"
-				android:id="@+id/fa"/>
+				android:text="unpack"/>
 
 		</RadioGroup>
 

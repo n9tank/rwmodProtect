@@ -38,7 +38,6 @@ public class Main extends Activity {
  Intent sw;
  String pe[];
  RadioGroup bu;
- CheckBox pack;
  static ArrayAdapter arr;
  static TextView bar;
  public void finish() {
@@ -58,7 +57,6 @@ public class Main extends Activity {
   setContentView(R.layout.activity_main);
   bar = findViewById(R.id.lib);
   bu = findViewById(R.id.rw);
-  pack = findViewById(R.id.pack);
   ListView list=findViewById(R.id.list);
   ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new LinkedList());
   list.setAdapter(ar);
@@ -178,19 +176,14 @@ public class Main extends Activity {
    cui.ui = true;
    Runnable run=null;
    if (path.endsWith(".rwmod")) {
-	boolean pc=pack.isChecked();
 	int id=bu.getCheckedRadioButtonId();
 	if (id == R.id.pr)new rwmodProtect(f, new File(f.getParent(), out(f, 6, "_r.rwmod")), cui);
-	else {
-	 zipmodify za = new zipmodify(f, cui, pc);
-	 if (id == R.id.fa)za.fast = true;
-	 run = za;
-	}
+	else run = new zipmodify(f, cui, id == R.id.pack);
    } else if (path.endsWith(".apk")) {
 	new lib(f, new File(getExternalFilesDir(null), "lib.zip"), cui);
-   } else if (path.endsWith(".rwsave")||path.endsWith(".replay")) {
+   } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {
 	run = new savedump(f, new File(f.getParent(), out(f, 5, "tmx")), cui);
-   }else if(path.endsWith(".tmx")){
+   } else if (path.endsWith(".tmx")) {
 	run = new rwmap(f, new File(f.getParent(), out(f, 4, "_r.tmx")), cui);
    }
    if (run != null) rust.ui.pool.execute(run);
