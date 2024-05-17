@@ -76,6 +76,7 @@ public class savedump implements Runnable {
   } catch (Throwable e) {
    log.e(this, ex = e);
   }
+  if (ex != null)ou.delete();
   ui.end(ex);
  }
 }

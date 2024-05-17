@@ -1,63 +1,72 @@
 package rust;
 
-import carsh.log;
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.model.FileHeader;
+import java.util.Enumeration;
+import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import carsh.log;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 public class zipmodify implements Runnable {
- File f;
+ File in;
+ File ou;
  ui ui;
+ public boolean raw;
  boolean pack;
- public zipmodify(File in, ui u, boolean p) {
-  f = in;
+ public zipmodify(File i, File o, ui u, boolean pc, boolean rw) {
+  in = i;
+  ou = o;
   ui = u;
-  pack = p;
+  pack = pc;
+  raw = rw;
  }
  public void run() {
   Throwable ex=null;
   try {
-   ZipFile zip=new ZipFile(f);
-   zip.setRunInThread(false);
-   HashMap map=new HashMap();
+   ZipFile zip=new ZipFile(in);
+   ZipArchiveOutputStream zipout=pack ?new zipout(ou): new ZipArchiveOutputStream(ou);
+   zipout.setLevel(9);
+   ParallelScatterZipCreator cr=null;
+   if (!raw)cr = new ParallelScatterZipCreator();
    try {
-	List<FileHeader> ha=zip.getFileHeaders();
-	int i=ha.size();
-	while (--i >= 0) {
-	 FileHeader he=ha.get(i);
-	 String name=he.getFileName();
-	 int le=name.length();
+	Enumeration<ZipArchiveEntry> all=zip.getEntries();
+	while (all.hasMoreElements()) {
+	 ZipArchiveEntry en=all.nextElement();
+	 String name=en.getName();
+	 int n;
 	 if (pack) {
-	  int n=le - 4;
-	  if (!he.isDirectory() && !name.regionMatches(true, n, ".ogg", 0, 4) && !name.regionMatches(true, n, ".wav", 0, 4)) {
-	   he.setUncompressedSize(-1);
-	   he.setDirectory(true);
-	   map.put(name, name);
-	  }
+	  if (!en.isDirectory()) {
+	   if (!name.regionMatches(true, n = name.length() - 4, ".ogg", 0, 4) && !name.regionMatches(true, n, ".wav", 0, 4))name = name.concat("/");
+	  } else name = null;
 	 } else {
-	  long g;
-	  if (he.isDirectory() && (g = he.getCompressedSize()) != 0) {
-	   he.setUncompressedSize(g);
-	   he.setDirectory(false);
-	   map.put(name, name.substring(0, le - 1));
-	  }
+	  if (en.getCompressedSize() != 0) {
+	   if (en.isDirectory())name = name.substring(0, name.length() - 1);
+	  } else name = null;
+	 }
+	 if (name != null) {
+	  ZipArchiveEntry out=lib.getArc(name);
+	  if (raw)zipout.addRawArchiveEntry(out, zip.getRawInputStream(en));
+	  else cr.addArchiveEntry(out, new inputsu(zip, en));
 	 }
 	}
-	zip.renameFiles(map);
    } finally {
+	if (zipout != null) {
+	 if (cr != null) {
+	  try {
+	   cr.writeTo(zipout);
+	  } catch (Throwable e) {
+	   log.e(this, ex = e);
+	  }
+	 }
+	 zipout.close();
+	}
 	zip.close();
    }
   } catch (Throwable e) {
-   log.e(this, e);
-   ex = e;
+   log.e(this, ex = e);
   }
+  if (ex != null)ou.delete();
   ui.end(ex);
  }
 }

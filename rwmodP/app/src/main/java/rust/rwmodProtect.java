@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -24,10 +25,9 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import android.util.Log;
-import java.util.concurrent.atomic.LongAdder;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
+ Vector<rawcopy> rawq;
  ConcurrentHashMap resmap;
  ZipArchiveOutputStream out;
  ParallelScatterZipCreator cre;
@@ -36,6 +36,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  AtomicInteger adds[];
  String musicPath;
  Map grops;
+ boolean raw;
  static cpys defcs;
  static{
   cpys cp=new cpys();
@@ -48,9 +49,11 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static int[] cr;
  static ArrayList<String> ds;
  static HashMap<String,HashMap> Res;
- public rwmodProtect(File in, File ou, ui ui) {
+ public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
   resmap = new ConcurrentHashMap();
+  raw = rw;
+  if (rw)rawq = new Vector();
  }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=toPath(str);
@@ -349,7 +352,13 @@ public class rwmodProtect extends TaskWait implements Consumer {
 			}while(obj == "");
 			if (obj == null) {
 			 resmap.put(name, str = safeName(getType(name), bf));
-			 cre.addArchiveEntry(lib.getArc(str), new inputsu(Zip, ze));
+			 ZipArchiveEntry outen=lib.getArc(str);
+			 if (raw) {
+			  rawcopy craw=new rawcopy();
+			  craw.form = ze;
+			  craw.to = outen;
+			  rawq.add(craw);
+			 } else cre.addArchiveEntry(outen, new inputsu(Zip, ze));
 			} else str = (String)obj;
 		   }
 		   buff.append(str);
@@ -541,6 +550,15 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }
    is = 2;
    lods.parallelStream().forEach(this);
+   Vector arr=rawq;
+   if (arr != null) {
+	try {
+	 for (rawcopy arrs:rawq)
+	  out.addRawArchiveEntry((ZipArchiveEntry)arrs.to, Zip.getRawInputStream((ZipArchiveEntry)arrs.form));
+	} catch (Throwable ex) {
+	 log.e(this, e = ex);
+	}
+   }
   }
   ZipArchiveOutputStream zipout=out;
   if (zipout != null) {
@@ -568,12 +586,14 @@ public class rwmodProtect extends TaskWait implements Consumer {
   lowmap = lows;
   coeMap = new ConcurrentHashMap();
   StringBuilder mbuff = new StringBuilder();
-  ZipArchiveOutputStream zipout=null;
-  ParallelScatterZipCreator cr=null;
   try {
    ZipFile zip=new ZipFile(In);
    Zip = zip;
-   String name=null;
+   zipout zipout = new zipout(Ou);
+   out = zipout;
+   zipout.setLevel(9);
+   ParallelScatterZipCreator cr = new ParallelScatterZipCreator();
+   cre = cr;
    ZipArchiveEntry rules=zip.getEntry("rules.md");
    if (rules != null) {
     Properties grs=new Properties();
@@ -585,6 +605,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
      en.setValue(((String)en.getValue()).split(","));
     }
    }
+   String name=null;
    HashSet rset=new HashSet();
    Enumeration<? extends ZipArchiveEntry> zipEntrys=zip.getEntries();
    do{
@@ -594,16 +615,10 @@ public class rwmodProtect extends TaskWait implements Consumer {
     if (!rset.add(root) && (name == null || root.length() < name.length()))name = root;
     lows.putIfAbsent(fileName.toLowerCase(), zipEntry);
    }while(zipEntrys.hasMoreElements());
-   //if (name == null)name = "";
    rootPath = name;
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
-   zipout = new zipout(Ou);
-   out = zipout;
-   cr = new ParallelScatterZipCreator();
-   cre = cr;
    if (inf != null) {
     loder ini=new loder(zip.getInputStream(inf));
-    //ini.task = this;
     ini.call();
     HashMap info=ini.ini;
     cpys cp=(cpys)info.get("music");
@@ -635,7 +650,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
     }
    }while(zipEntrys.hasMoreElements());
    ato.decrement();
-   // tas.end();
   } catch (Throwable e) {
    down(e);
   }

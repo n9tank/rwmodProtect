@@ -20,7 +20,7 @@ namespace 'rust.rwTool'
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1
-        versionName "0.6.1"
+        versionName "0.6.2"
     }
     buildTypes {
         release {
@@ -40,7 +40,6 @@ targetCompatibility JavaVersion.VERSION_1_8
 }
 
 dependencies {
-implementation 'net.lingala.zip4j:zip4j:2.11.5'
 implementation "org.apache.commons:commons-compress:1.26.1"
 //implementation files("/data/user/0/aidepro.top/no_backup/.aide/maven/org/apache/commons/commons-compress/1.26.1/commons-compress-1.26.1.jar")
 implementation fileTree(dir: "libs", include: ["*.jar"])

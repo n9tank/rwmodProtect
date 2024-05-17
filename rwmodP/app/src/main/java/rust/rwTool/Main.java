@@ -27,10 +27,10 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import rust.lib;
+import rust.rwmap;
 import rust.rwmodProtect;
 import rust.savedump;
 import rust.zipmodify;
-import rust.rwmap;
 public class Main extends Activity {
  boolean init;
  SharedPreferences sha;
@@ -38,6 +38,7 @@ public class Main extends Activity {
  Intent sw;
  String pe[];
  RadioGroup bu;
+ CheckBox raw;
  static ArrayAdapter arr;
  static TextView bar;
  public void finish() {
@@ -57,6 +58,7 @@ public class Main extends Activity {
   setContentView(R.layout.activity_main);
   bar = findViewById(R.id.lib);
   bu = findViewById(R.id.rw);
+  raw = findViewById(R.id.raw);
   ListView list=findViewById(R.id.list);
   ArrayAdapter ar=new ArrayAdapter(this, android.R.layout.test_list_item, new LinkedList());
   list.setAdapter(ar);
@@ -140,9 +142,9 @@ public class Main extends Activity {
   } else o = intent.getData();
   if (o != null)add(o);
  }
- public static String out(File path, int i, String end) {
+ public static File out(File path, int i, String end) {
   String name=path.getName();
-  return name.substring(0, name.length() - i).concat(end);
+  return new File(path.getParent(), name.substring(0, name.length() - i).concat(end));
  }
  public void add(Uri uri) {
   String type=uri.getScheme();
@@ -177,14 +179,16 @@ public class Main extends Activity {
    Runnable run=null;
    if (path.endsWith(".rwmod")) {
 	int id=bu.getCheckedRadioButtonId();
-	if (id == R.id.pr)new rwmodProtect(f, new File(f.getParent(), out(f, 6, "_r.rwmod")), cui);
-	else run = new zipmodify(f, cui, id == R.id.pack);
+	boolean rab=raw.isChecked();
+	if (id == R.id.pr) {
+	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
+	} else run = new zipmodify(f, out(f, 6, "_f.rwmod"), cui, id == R.id.pack, rab);
    } else if (path.endsWith(".apk")) {
 	new lib(f, new File(getExternalFilesDir(null), "lib.zip"), cui);
    } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {
-	run = new savedump(f, new File(f.getParent(), out(f, 5, "tmx")), cui);
+	run = new savedump(f,  out(f, 5, "tmx"), cui);
    } else if (path.endsWith(".tmx")) {
-	run = new rwmap(f, new File(f.getParent(), out(f, 4, "_r.tmx")), cui);
+	run = new rwmap(f, out(f, 4, "_r.tmx"), cui);
    }
    if (run != null) rust.ui.pool.execute(run);
    arr.add(cui);

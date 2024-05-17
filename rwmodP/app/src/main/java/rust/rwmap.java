@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import carsh.log;
 
 public class rwmap implements Runnable {
-    
+
  ui ui;
  File in;
  File ou;
@@ -19,12 +19,13 @@ public class rwmap implements Runnable {
  }
  public void run() {
   Throwable ex=null;
-  try{
-   RwMapCompressor.output(new BufferedInputStream(new FileInputStream(in)),new BufferedOutputStream(new FileOutputStream(ou)),true);
-  }catch(Throwable e){
-   log.e(this,e);
-   ex=e;
+  try {
+   RwMapCompressor.output(new BufferedInputStream(new FileInputStream(in)), new BufferedOutputStream(new FileOutputStream(ou)), true);
+  } catch (Throwable e) {
+   log.e(this, e);
+   ex = e;
   }
+  if (ex != null)ou.delete();
   ui.end(ex);
  }
 }

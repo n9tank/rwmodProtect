@@ -32,6 +32,12 @@
 			android:text="lib"
 			android:onClick="ch"/>
 
+		<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="raw"
+			android:id="@+id/raw"/>
+
 	</LinearLayout>
 
 	<LinearLayout
