@@ -7,6 +7,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import carsh.log;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import java.util.zip.ZipEntry;
 
 public class zipmodify implements Runnable {
  File in;
@@ -46,8 +47,10 @@ public class zipmodify implements Runnable {
 	 }
 	 if (name != null) {
 	  ZipArchiveEntry out=lib.getArc(name);
-	  if (raw)zipout.addRawArchiveEntry(out, zip.getRawInputStream(en));
-	  else cr.addArchiveEntry(out, new inputsu(zip, en));
+	  if (raw) {
+	   if (!pack)out.setSize(en.getCompressedSize());
+	   zipout.addRawArchiveEntry(out, zip.getRawInputStream(en));
+	  } else cr.addArchiveEntry(out, new inputsu(zip, en));
 	 }
 	}
    } finally {
