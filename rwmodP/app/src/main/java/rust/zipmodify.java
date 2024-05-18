@@ -1,13 +1,12 @@
 package rust;
 
+import carsh.log;
 import java.io.File;
 import java.util.Enumeration;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-import carsh.log;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import java.util.zip.ZipEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 public class zipmodify implements Runnable {
  File in;
@@ -15,7 +14,7 @@ public class zipmodify implements Runnable {
  ui ui;
  public boolean raw;
  boolean pack;
- public zipmodify(File i, File o, ui u, boolean pc, boolean rw) {
+ public zipmodify(File i, File o, boolean pc, boolean rw, ui u) {
   in = i;
   ou = o;
   ui = u;
@@ -27,9 +26,8 @@ public class zipmodify implements Runnable {
   try {
    ZipFile zip=new ZipFile(in);
    ZipArchiveOutputStream zipout=pack ?new zipout(ou): new ZipArchiveOutputStream(ou);
-   zipout.setLevel(9);
    ParallelScatterZipCreator cr=null;
-   if (!raw)cr = new ParallelScatterZipCreator();
+   if (!raw)cr = lib.prc();
    try {
 	Enumeration<ZipArchiveEntry> all=zip.getEntries();
 	while (all.hasMoreElements()) {

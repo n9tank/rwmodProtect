@@ -5,6 +5,8 @@ import java.io.InputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import java.util.zip.ZipEntry;
+import org.apache.commons.compress.archivers.zip.GeneralPurposeBit;
+import java.nio.file.attribute.FileTime;
 
 public class zipout extends ZipArchiveOutputStream {
  public zipout(File path) throws IOException {

@@ -591,8 +591,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    Zip = zip;
    zipout zipout = new zipout(Ou);
    out = zipout;
-   zipout.setLevel(9);
-   ParallelScatterZipCreator cr = new ParallelScatterZipCreator();
+   ParallelScatterZipCreator cr = lib.prc();
    cre = cr;
    ZipArchiveEntry rules=zip.getEntry("rules.md");
    if (rules != null) {

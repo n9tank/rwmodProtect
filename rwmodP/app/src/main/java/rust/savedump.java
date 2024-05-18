@@ -9,6 +9,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.GZIPInputStream;
+import java.io.FileOutputStream;
 
 public class savedump implements Runnable {
  File in;
@@ -49,10 +50,10 @@ public class savedump implements Runnable {
 	  i = indexOf(brr, finds, i < 0 ?-i: 0, l);
 	  int size=by.getInt(i - 4);
 	  if (i >= 0) {
-	   RandomAccessFile o=new RandomAccessFile(ou, "rw");
+	   FileOutputStream o=new FileOutputStream(ou);
 	   FileChannel oc=o.getChannel();
 	   try {
-		o.setLength(size);
+		oc.write(ByteBuffer.allocateDirect(1),size);
 		int n=by.position() - i;
 		o.write(brr, i, n);
 		size -= n;

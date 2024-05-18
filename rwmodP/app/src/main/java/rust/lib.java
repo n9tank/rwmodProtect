@@ -8,7 +8,8 @@ import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import org.apache.commons.compress.archivers.zip.DefaultBackingStoreSupplier;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -39,6 +40,9 @@ public class lib extends TaskWait {
   en.setMethod(en.DEFLATED);
   return en;
  }
+ public static ParallelScatterZipCreator prc(){
+  return new ParallelScatterZipCreator(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()),new DefaultBackingStoreSupplier(null),9);
+ }
  public void end(Throwable e) {
   close = null;
   File ou=Ou;
@@ -51,8 +55,7 @@ public class lib extends TaskWait {
     }
     try {
      ZipArchiveOutputStream out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
-     out.setLevel(9);
-     ParallelScatterZipCreator cre = new ParallelScatterZipCreator();
+     ParallelScatterZipCreator cre = prc();
      try {
       for (loder lod:vl) {
        cre.addArchiveEntry(getArc(lod.str), lod);
