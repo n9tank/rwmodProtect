@@ -18,7 +18,7 @@ public class log implements Thread.UncaughtExceptionHandler {
  }
  public static void e(Object cla, Throwable e) {
   if (debug) log.log(Level.INFO, cla.toString(), e);
-  else Log.e("rust.rwp", cla.toString(), e);
+  else Log.e("rust.rwTool", cla.toString(), e);
  }
  public void uncaughtException(Thread thread, Throwable ex) {
   e(thread, ex);

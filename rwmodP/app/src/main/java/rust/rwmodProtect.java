@@ -21,10 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import java.io.InputStream;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  Vector<rawcopy> rawq;
@@ -553,8 +555,14 @@ public class rwmodProtect extends TaskWait implements Consumer {
    Vector arr=rawq;
    if (arr != null) {
 	try {
-	 for (rawcopy arrs:rawq)
-	  out.addRawArchiveEntry((ZipArchiveEntry)arrs.to, Zip.getRawInputStream((ZipArchiveEntry)arrs.form));
+	 for (rawcopy arrs:rawq) {
+	  InputStream io=Zip.getRawInputStream((ZipArchiveEntry)arrs.form);
+	  try {
+	   out.addRawArchiveEntry((ZipArchiveEntry)arrs.to, io);
+	  } finally {
+	   io.close();
+	  }
+	 }
 	} catch (Throwable ex) {
 	 log.e(this, e = ex);
 	}
@@ -635,18 +643,15 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }
    zipEntrys = zip.getEntries();
    do{
-    ZipArchiveEntry zipEntry=zipEntrys.nextElement();
-    if (zipEntry.getCompressedSize() != 0l) { 
-     name = zipEntry.getName();
-     int type=getType(name);
-     if (type == 2) {
-      addLoder(zipEntry, name, true);
-     } else if (type == 0) {
-      cr.addArchiveEntry(lib.getArc(loder.getName(name).concat("/")), new inputsu(zip, zipEntry));
-     } else if (type >= 5) {
-      cr.addArchiveEntry(lib.getArc(safeName(type, mbuff)), new inputsu(zip, zipEntry));
-     }
-    }
+    ZipArchiveEntry zipEntry=zipEntrys.nextElement();     name = zipEntry.getName();
+	int type=getType(name);
+	if (type == 2) {
+	 addLoder(zipEntry, name, true);
+	} else if (type == 0) {
+	 cr.addArchiveEntry(lib.getArc(loder.getName(name).concat("/")), new inputsu(zip, zipEntry));
+	} else if (type >= 5) {
+	 cr.addArchiveEntry(lib.getArc(safeName(type, mbuff)), new inputsu(zip, zipEntry));
+	}
    }while(zipEntrys.hasMoreElements());
    ato.decrement();
   } catch (Throwable e) {

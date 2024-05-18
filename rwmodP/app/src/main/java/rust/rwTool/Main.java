@@ -30,8 +30,8 @@ import rust.lib;
 import rust.rwmap;
 import rust.rwmodProtect;
 import rust.savedump;
+import rust.zipdump;
 import rust.zipmodify;
-import rust.ziprename;
 public class Main extends Activity {
  boolean init;
  SharedPreferences sha;
@@ -120,7 +120,7 @@ public class Main extends Activity {
   } else {
    pe = null;
    Intent intent=new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-   intent.setData(Uri.parse("package:rust.rwp"));
+   intent.setData(Uri.parse("package:rust.rwTool"));
    Intent = intent;
    startActivityForResult(intent, 0);
   }
@@ -183,8 +183,8 @@ public class Main extends Activity {
 	boolean rab=raw.isChecked();
 	if (id == R.id.pr) {
 	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
-	} else if (id != R.id.rename)run = new zipmodify(f, out(f, 6, "_f.rwmod"), id == R.id.pack, rab, cui);
-	else run = new ziprename(f, cui);
+	} else if (id == R.id.pack)run = new zipmodify(f, out(f, 6, "_p.rwmod"), rab, cui);
+	else run = new zipdump(f, cui);
    } else if (path.endsWith(".apk")) {
 	new lib(f, new File(getExternalFilesDir(null), "lib.zip"), cui);
    } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {

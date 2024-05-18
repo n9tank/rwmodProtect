@@ -15,6 +15,8 @@ public class zipout extends ZipArchiveOutputStream {
  public void addRawArchiveEntry(ZipArchiveEntry entry, InputStream rawStream) throws IOException {
   entry.setSize(0);
   entry.setCrc(1);
+  entry.setTime(347155200000L);
+  entry.setCompressedSize(-1);
   super.addRawArchiveEntry(entry, rawStream);
  } 
 }

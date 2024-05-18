@@ -53,7 +53,7 @@ public class savedump implements Runnable {
 	   FileOutputStream o=new FileOutputStream(ou);
 	   FileChannel oc=o.getChannel();
 	   try {
-		oc.write(ByteBuffer.allocateDirect(1),size);
+		oc.write(ByteBuffer.allocateDirect(1), size);
 		int n=by.position() - i;
 		o.write(brr, i, n);
 		size -= n;

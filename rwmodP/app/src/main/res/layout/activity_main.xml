@@ -77,12 +77,6 @@
 				android:layout_height="wrap_content"
 				android:text="unpack"/>
 
-			<RadioButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="rename"
-				android:id="@+id/rename"/>
-
 		</RadioGroup>
 
 	</LinearLayout>
