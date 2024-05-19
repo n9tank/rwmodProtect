@@ -53,9 +53,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static HashMap<String,HashMap> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
-  resmap = new ConcurrentHashMap();
   raw = rw;
-  if (rw)rawq = new Vector();
+  addN(this);
  }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=toPath(str);
@@ -585,6 +584,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
   back.end(e);
  }
  public void run() {
+  resmap = new ConcurrentHashMap();
+  if (raw)rawq = new Vector();
   AtomicInteger[] add=new AtomicInteger[4];
   adds = add;
   int i=4;
@@ -599,7 +600,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    Zip = zip;
    zipout zipout = new zipout(Ou);
    out = zipout;
-   ParallelScatterZipCreator cr = lib.prc();
+   ParallelScatterZipCreator cr = lib.prc(9);
    cre = cr;
    ZipArchiveEntry rules=zip.getEntry("rules.md");
    if (rules != null) {

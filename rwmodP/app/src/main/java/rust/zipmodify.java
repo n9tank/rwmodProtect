@@ -27,7 +27,7 @@ public class zipmodify implements Runnable {
    ZipFile zip= new ZipFile(in);
    ZipArchiveOutputStream zipout=new zipout(ou);
    ParallelScatterZipCreator cr=null;
-   if (!raw)cr = lib.prc();
+   if (!raw)cr = lib.prc(9);
    try {
 	Enumeration all=zip.getEntries();
 	while (all.hasMoreElements()) {

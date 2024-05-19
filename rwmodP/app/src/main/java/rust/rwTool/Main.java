@@ -30,14 +30,10 @@ import rust.lib;
 import rust.rwmap;
 import rust.rwmodProtect;
 import rust.savedump;
-import rust.zipdump;
 import rust.zipmodify;
+import rust.zipunpack;
 public class Main extends Activity {
  boolean init;
- SharedPreferences sha;
- Intent Intent;
- Intent sw;
- String pe[];
  RadioGroup bu;
  CheckBox raw;
  static ArrayAdapter arr;
@@ -55,7 +51,6 @@ public class Main extends Activity {
   super.onCreate(savedInstanceState);
   Thread.setDefaultUncaughtExceptionHandler(new log(this));
   SharedPreferences sh=getSharedPreferences("", MODE_PRIVATE);
-  sha = sh;
   setContentView(R.layout.activity_main);
   bar = findViewById(R.id.lib);
   bu = findViewById(R.id.rw);
@@ -77,22 +72,17 @@ public class Main extends Activity {
   if (sdk >= 23 && checkSelfPermission(s = "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
    String per[]=new String[]{s};
    requestPermissions(per, 0);
-   pe = per;
   } else {
    init();
   }
-  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-  intent.addCategory(Intent.CATEGORY_OPENABLE);
-  intent.setType("*/*");
-  intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-  sw = intent.createChooser(intent, "");
- }
+ }  
  public void lib() {
   bar.setVisibility(0);
   File li=new File(getExternalFilesDir(null), "lib.zip");
   cui ui=new cui("lib");
-  if (!li.exists())lib.exec(getResources().openRawResource(R.raw.lib), li, ui);
-  else new lib(li, null, ui);
+  if (!li.exists()) 
+   new lib(null, getResources().openRawResource(R.raw.lib), li, ui);
+  else new lib(li, null, null, ui);
  }
  public void init() {
   if (init)lib();
@@ -113,17 +103,15 @@ public class Main extends Activity {
  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
   super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-   pe = null;
    init();
   } else if (shouldShowRequestPermissionRationale("android.permission.WRITE_EXTERNAL_STORAGE")) {
-   requestPermissions(pe, 0);
-  } else {
-   pe = null;
-   Intent intent=new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-   intent.setData(Uri.parse("package:rust.rwTool"));
-   Intent = intent;
-   startActivityForResult(intent, 0);
-  }
+   requestPermissions(new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, 0);
+  } else toset();
+ }
+ public void toset() {
+  Intent intent=new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+  intent.setData(Uri.parse("package:rust.rwTool"));
+  startActivityForResult(intent, 0);
  }
  protected void onNewIntent(Intent intent) {
   super.onNewIntent(intent);
@@ -184,9 +172,9 @@ public class Main extends Activity {
 	if (id == R.id.pr) {
 	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
 	} else if (id == R.id.pack)run = new zipmodify(f, out(f, 6, "_p.rwmod"), rab, cui);
-	else run = new zipdump(f, cui);
+	else run = new zipunpack(f, out(f, 6, "_u.rwmod"), cui);
    } else if (path.endsWith(".apk")) {
-	new lib(f, new File(getExternalFilesDir(null), "lib.zip"), cui);
+	new lib(f, null, new File(getExternalFilesDir(null), "lib.zip"), cui);
    } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {
 	run = new savedump(f,  out(f, 5, "tmx"), cui);
    } else if (path.endsWith(".tmx")) {
@@ -200,9 +188,8 @@ public class Main extends Activity {
   super.onActivityResult(requestCode, resultCode, data);
   if (requestCode == 0) {
    if (checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE") == PackageManager.PERMISSION_GRANTED) {
-    Intent = null;
     init();
-   } else startActivityForResult(Intent, 0);
+   } else toset();
   } else if (resultCode == RESULT_OK) {
    Uri uri=data.getData();
    if (uri != null) {
@@ -219,7 +206,12 @@ public class Main extends Activity {
   }
  }
  public void sw(View v) {
-  startActivityForResult(sw, 1);
+  Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+  intent.addCategory(Intent.CATEGORY_OPENABLE);
+  intent.setType("*/*");
+  intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+  intent.createChooser(intent, "");
+  startActivityForResult(intent, 1);
  }
  public void ch(View v) {
   CheckBox ch=(CheckBox)v;
@@ -228,6 +220,7 @@ public class Main extends Activity {
    init = true;
    lib();
   }
+  SharedPreferences sha=getSharedPreferences("", MODE_PRIVATE);
   SharedPreferences.Editor ed=sha.edit();
   ed.putBoolean("", is);
   ed.apply();

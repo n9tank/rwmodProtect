@@ -22,7 +22,6 @@ public abstract class TaskWait implements Runnable,ui {
  ZipFile Zip;
  ui back;
  Map Zipmap;
- public static final InterruptedException cancel=new InterruptedException();
  public TaskWait(File in, File ou, ui ui) {
   In = in;
   Ou = ou;
@@ -31,7 +30,6 @@ public abstract class TaskWait implements Runnable,ui {
   Zipmap = new ConcurrentHashMap();
   back = ui;
   ato.increment();
-  addN(this);
  }
  public loder addLoder(ZipArchiveEntry za, String putkey, boolean isini) throws Throwable {
   loder lod = new loder(null);
@@ -66,7 +64,7 @@ public abstract class TaskWait implements Runnable,ui {
   }
   return true;
  }
- Future addN(Object o) {
+ public Future addN(Object o) {
   Future fu;
   ExecutorService pool=ui.pool;
   if (o instanceof Runnable)fu = pool.submit((Runnable)o);

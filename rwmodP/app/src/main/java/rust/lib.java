@@ -16,14 +16,16 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 public class lib extends TaskWait {
- InputStream inp;
+ public InputStream inp;
  static Map libMap;
  static lib close;
- public lib(File in, File ou, ui ui) {
+ public lib(File in, InputStream io, File ou, ui ui) {
   super(in, ou, ui);
+  inp = io;
   lib task=close;
-  if (task != null)task.down(TaskWait.cancel);
+  if (task != null)task.down(new InterruptedException());
   close = this;
+  addN(this);
  }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=Zip.getEntry(str);
@@ -31,17 +33,13 @@ public class lib extends TaskWait {
   str = str.toLowerCase();
   return addLoder(za, str, false);
  }
- public static void exec(InputStream in, File ou, ui ui) {
-  lib lib=new lib(null, ou, ui);
-  lib.inp = in;
- }
  public static ZipArchiveEntry getArc(String str) {
   ZipArchiveEntry en=new ZipArchiveEntry(str);
   en.setMethod(en.DEFLATED);
   return en;
  }
- public static ParallelScatterZipCreator prc(){
-  return new ParallelScatterZipCreator(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()),new DefaultBackingStoreSupplier(null),9);
+ public static ParallelScatterZipCreator prc(int i) {
+  return new ParallelScatterZipCreator(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()), new DefaultBackingStoreSupplier(null), i);
  }
  public void end(Throwable e) {
   close = null;
@@ -55,7 +53,7 @@ public class lib extends TaskWait {
     }
     try {
      ZipArchiveOutputStream out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(ou)));
-     ParallelScatterZipCreator cre = prc();
+     ParallelScatterZipCreator cre = prc(9);
      try {
       for (loder lod:vl) {
        cre.addArchiveEntry(getArc(lod.str), lod);
