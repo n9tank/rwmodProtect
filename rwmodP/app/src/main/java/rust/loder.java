@@ -3,79 +3,47 @@ package rust;
 import carsh.log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import rust.copyKey;
-class loder extends InputStream implements Callable,InputStreamSupplier {
- ByteOut buff;
- BufferedWriter wt;
- int of;
- Iterator<Map.Entry<String,cpys>> sections;
- Iterator<Map.Entry<String,String>> keys;
- public void next(int i) throws IOException {
-  do{
-   if (keys == null || !keys.hasNext()) {
-	Map.Entry<String, cpys> kvs;
-	HashMap v;
-	do{
-	 if (!sections.hasNext()) {
-	  wt.close();
-	  buff.sub();
-	  return;
-	 }
-	 kvs = sections.next();
-	 v = kvs.getValue().m;
-	}while(v.size() == 0);
-	wt.write('[');
-	wt.write(kvs.getKey());
-	wt.write(']');
-	wt.write('\n');
-	keys = v.entrySet().iterator();
-   } else {
-	Map.Entry<String, String> kv=keys.next();
-	wt.write(kv.getKey());
-	wt.write(':');
-	wt.write(kv.getValue());
-	wt.write('\n');
-   }
-   wt.flush();
-  }while(i > buff.size());
- }
- public int read() {
-  return 0;
- }
- public int read(byte[] b, int off, int len) throws IOException {
-  int s=buff.size() - of;
-  if (s <= 0) {
-   buff.reset();
-   of = 0;
-  }
-  try {
-   if (s < len)next(len + of);
-  } catch (Throwable e) {
-   wt.close();
-   log.e(this, e);
-   return -1;
-  }
-  s = buff.size() - of;
-  if (s > len)s = len;
-  if (s > 0)System.arraycopy(buff.get(), of, b, off, s);
-  of += s;
-  return s;
- }
+import org.apache.commons.io.input.NullInputStream;
+class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
-  buff = new ByteOut();
-  wt = new BufferedWriter(new OutputStreamWriter(buff));
-  sections = ini.entrySet().iterator();
-  return this;
+  if (ini.size() == 0)return new NullInputStream();
+  ByteOut out= new ByteOut();
+  BufferedWriter buf=new BufferedWriter(new OutputStreamWriter(out));
+  try {
+   try {
+	for (Map.Entry<String,cpys> ses:(Iterable<Map.Entry<String,cpys>>)ini.entrySet()) {
+	 HashMap v= ses.getValue().m;
+	 if (v.size() > 0) {
+	  buf.write('[');
+	  buf.write(ses.getKey());
+	  buf.write(']');
+	  buf.write('\n');
+	  for (Map.Entry<String,String> en:(Iterable<Map.Entry>)v.entrySet()) {
+	   buf.write(en.getKey());
+	   buf.write(':');
+	   buf.write(en.getValue());
+	   buf.write('\n');
+	  }
+	 }
+	}
+	buf.flush();
+   } finally {
+	buf.close();
+   }
+   return out.toInput();
+  } catch (Throwable e) {
+   task.down(e);
+  }
+  return null;
  }
  public Object call() throws Exception {
   try {

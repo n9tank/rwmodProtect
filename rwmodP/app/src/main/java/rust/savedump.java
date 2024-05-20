@@ -1,15 +1,16 @@
 package rust;
 
 import carsh.log;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.RandomAccessFile;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.GZIPInputStream;
-import java.io.FileOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 public class savedump implements Runnable {
  File in;
@@ -20,59 +21,74 @@ public class savedump implements Runnable {
   ou = o;
   ui = u;
  }
- public static int indexOf(byte arr[], byte find[], int off, int len) {
+ public static int indexOf(byte arr[], byte find[], int off, int start, int len) {
   int l=find.length;
-  for (int i=0;i < len;++i) {
-   if (arr[i] == find[off]) {
-	++off;
-	if (off == l)return i - l;
-   } else off = 0;
+  byte b=find[off];
+  for (int i=start;i < len;++i) {
+   if (arr[i] == b) {
+	if (++off == l)return ++i - l;
+	b = find[off];
+   } else if (off > 0) {
+	i--;
+	b = find[off = 0];
+   }
   }
   return -off - 1;
  }
  public void run() {
   Throwable ex=null;
   try {
-   FileInputStream f=new FileInputStream(in);
-   FileChannel c=f.getChannel();
+   BufferedInputStream buff=new BufferedInputStream(new FileInputStream(in));
    try {
-	byte[] brr=new byte[8200];
-	f.read(brr, 0, 200);
-	int i=indexOf(brr, new byte[]{(byte)0x1f,(byte)0x8b}, 0, 200);
+	byte[] brr=new byte[8199];
+	buff.mark(0);
+	buff.read(brr, 0, 200);
+	int i=indexOf(brr, new byte[]{(byte)0x1f,(byte)0x8b}, 0, 0, 200);
 	if (i > 0) {
-	 c.position(i);
-	 ByteBuffer by=ByteBuffer.wrap(brr);
-	 by.limit(8192);
-	 ReadableByteChannel gz=Channels.newChannel(new GZIPInputStream(f));
-	 byte[] finds=new byte[]{(byte)'<',(byte)'x',(byte)'m',(byte)'l'};
-	 int l;
-	 while ((l = gz.read(by)) > 0) {
-	  i = indexOf(brr, finds, i < 0 ?-i: 0, l);
-	  int size=by.getInt(i - 4);
-	  if (i >= 0) {
-	   FileOutputStream o=new FileOutputStream(ou);
-	   FileChannel oc=o.getChannel();
-	   try {
-		oc.write(ByteBuffer.allocateDirect(1), size);
-		int n=by.position() - i;
-		o.write(brr, i, n);
-		size -= n;
-		if (size > 0)oc.transferFrom(gz, n, size);
-	   } finally {
-		oc.close();
+	 buff.reset();
+	 buff.skip(i);
+	 GzipCompressorInputStream gz=new GzipCompressorInputStream(buff);
+	 byte[] finds=new byte[]{(byte)'<',(byte)'?',(byte)'x',(byte)'m'};
+	 int l,n=0;
+	 i = 0;
+	 try {
+	  while ((l = gz.read(brr, n, 8192)) > 0) {
+	   i = indexOf(brr, finds, i, n, l + n);
+	   if (i >= 0) {
+		ByteBuffer by=ByteBuffer.wrap(brr);
+		int size=by.getInt(i - 4);
+		FileOutputStream o=new FileOutputStream(ou);
+		FileChannel oc=o.getChannel();
+		try {
+		 oc.write(ByteBuffer.allocateDirect(1), size);
+		 n = l + n;
+		 o.write(brr, i, n -= i);
+		 size -= n;
+		 if (size > 0) {
+		  ReadableByteChannel gzc = Channels.newChannel(gz);
+		  try {
+		   oc.transferFrom(gzc, n, size);
+		  } finally {
+		   gzc.close();
+		  }
+		 }
+		} finally {
+		 oc.close();
+		}
+		break;
+	   } else {
+		int j=n;
+		i = -(++i);
+		n = i + 4;
+		System.arraycopy(brr, l + j - n, brr, 0, n);
 	   }
-	   break;
-	  } else if (i++ < 0) {
-	   int n=i + 4;
-	   System.arraycopy(brr, brr.length - n, brr, 0, n);
-	   by.clear();
-	   by.position(n);
-	   by.limit(n + 8192);
 	  }
+	 } finally {
+	  gz.close();
 	 }
 	}
    } finally {
-	c.close();
+	buff.close();
    }
   } catch (Throwable e) {
    log.e(this, ex = e);

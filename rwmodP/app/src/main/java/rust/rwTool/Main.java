@@ -30,7 +30,7 @@ import rust.lib;
 import rust.rwmap;
 import rust.rwmodProtect;
 import rust.savedump;
-import rust.zipmodify;
+import rust.zippack;
 import rust.zipunpack;
 public class Main extends Activity {
  boolean init;
@@ -171,12 +171,12 @@ public class Main extends Activity {
 	boolean rab=raw.isChecked();
 	if (id == R.id.pr) {
 	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
-	} else if (id == R.id.pack)run = new zipmodify(f, out(f, 6, "_p.rwmod"), rab, cui);
+	} else if (id == R.id.pack)run = new zippack(f, out(f, 6, "_p.rwmod"), rab, cui);
 	else run = new zipunpack(f, out(f, 6, "_u.rwmod"), cui);
    } else if (path.endsWith(".apk")) {
 	new lib(f, null, new File(getExternalFilesDir(null), "lib.zip"), cui);
    } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {
-	run = new savedump(f,  out(f, 5, "tmx"), cui);
+	run = new savedump(f,  out(f, 6, "tmx"), cui);
    } else if (path.endsWith(".tmx")) {
 	run = new rwmap(f, out(f, 4, "_r.tmx"), cui);
    }

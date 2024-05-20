@@ -627,6 +627,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
    if (inf != null) {
     loder ini=new loder(zip.getInputStream(inf));
+	ini.task = this;
     ini.call();
     HashMap info=ini.ini;
     cpys cp=(cpys)info.get("music");
