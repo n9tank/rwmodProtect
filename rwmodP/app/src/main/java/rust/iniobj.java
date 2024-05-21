@@ -3,10 +3,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class iniobj {
  public HashMap put;
@@ -154,54 +156,54 @@ public class iniobj {
   while (true) {
    i = str.indexOf("${", i);
    if (i >= 0) {
-    buff.append(str, j, i);
-    j = i;
-    int n=str.indexOf("}", i += 2);
-    if (n > 0) {
-     String key=str.substring(i, n).trim();
-     if (key.length() > 0) {
-      boolean isNumber=find1.matcher(key).find();
-      HashSet sset=set;
-      Matcher matcher=find0.matcher(key);
-      int q=0,st=buff.length();
-      while (matcher.find()) {
-       buff.append(key, q, matcher.start());
-       q = matcher.end();
-       String group = matcher.group(0);
-       Object o=null;
-       if (!sset.contains(group)) {
-        String list[]=group.split("\\.", 2);
-        String keyv=list[0];
-        if (list.length > 1) {
-         if (!keyv.equals("section") && !key.equals(eqz)) {
-          cpy = (cpys)map.get(keyv);
-          if (cpy == null)return null;
-         }
-         o = cpy.m.get(list[1]);
-        } else {
-         o = cpy.m.get("@define ".concat(keyv));
-         if (o == null)o = gl.get(keyv);
-        }
-        if (o == null)return null;
-       }
-       buff.append((String)o);
-      }
-      int m = key.length();
-      if (m > q)buff.append(key, q, m);
-      if (isNumber) {
-       key = buff.substring(st, buff.length());
-       buff.setLength(st);
-       cmpU cmp = new cmpU();
-       cmp.m = key;
-       cmp.t = key.charAt(0);
-       double b = cmp.cmp();
-       int intd=(int)b;
-       if (intd == b) buff.append(intd);
-       else buff.append(b);
-      }
-     }
-     j = i = ++n;
-    } else break;
+	buff.append(str, j, i);
+	j = i;
+	int n=str.indexOf("}", i += 2);
+	if (n > 0) {
+	 String key=str.substring(i, n).trim();
+	 if (key.length() > 0) {
+	  boolean isNumber=find1.matcher(key).find();
+	  HashSet sset=set;
+	  Matcher matcher=find0.matcher(key);
+	  int q=0,st=buff.length();
+	  while (matcher.find()) {
+	   buff.append(key, q, matcher.start());
+	   q = matcher.end();
+	   String group = matcher.group(0);
+	   Object o=null;
+	   if (!sset.contains(group)) {
+		String list[]=group.split("\\.", 2);
+		String keyv=list[0];
+		if (list.length > 1) {
+		 if (!keyv.equals("section") && !key.equals(eqz)) {
+		  cpy = (cpys)map.get(keyv);
+		  if (cpy == null)return null;
+		 }
+		 o = cpy.m.get(list[1]);
+		} else {
+		 o = cpy.m.get("@define ".concat(keyv));
+		 if (o == null)o = gl.get(keyv);
+		}
+		if (o == null)return null;
+	   }
+	   buff.append((String)o);
+	  }
+	  int m = key.length();
+	  if (m > q)buff.append(key, q, m);
+	  if (isNumber) {
+	   key = buff.substring(st, buff.length());
+	   buff.setLength(st);
+	   cmpU cmp = new cmpU();
+	   cmp.m = key;
+	   cmp.t = key.charAt(0);
+	   double b = cmp.cmp();
+	   int intd=(int)b;
+	   if (intd == b) buff.append(intd);
+	   else buff.append(b);
+	  }
+	 }
+	 j = i = ++n;
+	} else break;
    } else break;
   }
   if (buff.length() == 0)return str;

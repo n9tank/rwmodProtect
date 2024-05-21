@@ -50,7 +50,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static HashSet skip;
  static int[] cr;
  static ArrayList<String> ds;
- static HashMap<String,HashMap> Res;
+ static HashMap<String,Integer> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
   raw = rw;
@@ -313,7 +313,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
     if (!skip.contains(key)) {
      String value=en2.getValue();
      boolean eq= oldmap != null && value.equals(oldmap.get(key)); 
-     HashMap<String, HashMap> res=rwmodProtect.Res;
+     HashMap<String, Integer> res=rwmodProtect.Res;
      Object o=res.get(key);
      if (o != null) {
       int type = (Integer)o;
