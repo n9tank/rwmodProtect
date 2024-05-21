@@ -54,7 +54,6 @@ class loder implements Callable,InputStreamSupplier {
     try {
      StringBuilder bf=new StringBuilder();
      String str;
-	 ArrayList vdf=null;
      HashMap list=null;
      String last=null;
      HashMap table=new LinkedHashMap();
@@ -103,34 +102,11 @@ class loder implements Callable,InputStreamSupplier {
        if (value.length > 1) {
         if (list == null) {
          cpys cpy=new cpys();
-		 cpy.vdf = vdf = new ArrayList();
          cpy.m = list = new HashMap();
          table.put(last, cpy);
         }
         String key=value[0].trim();
-		/* 暂不可用
-		if (rwmodProtect.Res.containsKey(key)) {
-		 Pattern find0=iniobj.find;
-		 i = 0;
-		 while (true) {
-		  i = str.indexOf("${", i);
-		  if (i >= 0) {
-		   int n=str.indexOf("}", i += 2);
-		   if (n > 0) {
-			String def=str.substring(i, n).trim();
-			if (def.length() > 0) {
-			 Matcher defines=find0.matcher(key);
-			 while (defines.find()) {
-			  String add=defines.group(0);
-			  vdf.add(add);
-			 }
-			}
-			i = ++n;
-		   } else break;
-		  }
-		 }
-		}*/
-        String set=value[1].trim();
+		String set=value[1].trim();
         list.put(key, set);
        }
       }

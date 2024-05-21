@@ -93,7 +93,7 @@ public class iniobj {
    }
   }
  }
- cpys asFor(cpys cpy, String key) {
+ void asFor(cpys cpy, String key) {
   HashMap map=put;
   HashMap hash=cpy.m;
   String str = (String)hash.remove("@copyFromSection");
@@ -106,13 +106,14 @@ public class iniobj {
     String vl=list[l].trim();
     cpys set=(cpys)map.get(vl);
     HashMap as;
-    if (set != null && (as = asFor(set, vl).m) != null) {
+    if (set != null) {
+	 asFor(set, vl);
+	 as = set.m;
      for (Map.Entry<String,String> en:(Set<Map.Entry<String,String>>)as.entrySet())
       mapput.putIfAbsent(en.getKey(), en.getValue());
     }
    }
   }
-  return cpy;
  }
  public void as() {
   HashMap gl=new HashMap();
