@@ -296,7 +296,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
    String ac=en.getKey();
    cpys cpys=en.getValue();
    HashMap asmap = cpys.m;
-   HashMap asput = cpys.skip;
    cpys asold=(cpys)oldsrc.get(ac);
    HashMap oldmap;
    HashMap lastcoe;
@@ -325,7 +324,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
        boolean same=value.equals(next);
        eq &= same && (lastcoe != null && (coe = (loder)lastcoe.get(key)) != null && Arrays.equals(nowlist, AllPath(next, loder.getSuperPath(coe.src), type, buff)) && (!ws || (coe != null && coe.copy.all == all)));
        //补修宏绕过
-       if (!same || !eq && (asput == null || asput.containsKey(key))) {
+       if (!same || !eq) {
         if (list == null) {
          cpys cp=new cpys();
          cp.m = list = new HashMap();
@@ -375,7 +374,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
 	  }
 	 }
 	 //补修all-tmp删除key冲突
-	 if (!ws && list != null && eq)list.remove(key);
+	 if ((ini.isini && !ws) && list != null && eq)list.remove(key);
 	}
    }
    if (ms != null) {

@@ -4,5 +4,4 @@ class cpys {
  HashMap m;
  HashMap skip;
  HashMap coe;
- HashMap coeskip;
 }
