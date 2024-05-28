@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.compress.parallel.InputStreamSupplier;
 import org.apache.commons.io.input.NullInputStream;
 import rust.copyKey;
+import java.io.ByteArrayInputStream;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   if (ini.size() == 0)return new NullInputStream();
@@ -41,7 +42,7 @@ class loder implements Callable,InputStreamSupplier {
    } finally {
 	buf.close();
    }
-   return out.toInput();
+   return new ByteArrayInputStream(out.get(), 0, out.size() - 1);
   } catch (Throwable e) {
    task.down(e);
   }

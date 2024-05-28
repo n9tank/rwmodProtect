@@ -7,7 +7,7 @@ public class ByteOut extends ByteArrayOutputStream {
  public ByteOut() {
   super(256);
  }
- public InputStream toInput() {
-  return new ByteArrayInputStream(buf, 0, --count);
+ public byte[] get() {
+  return buf;
  }
 }

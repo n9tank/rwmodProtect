@@ -11,6 +11,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import java.io.BufferedOutputStream;
 
 public class savedump implements Runnable {
  File in;
@@ -48,9 +49,10 @@ public class savedump implements Runnable {
 	 buff.reset();
 	 buff.skip(i);
 	 GzipCompressorInputStream gz=new GzipCompressorInputStream(buff);
-	 byte[] finds=new byte[]{(byte)'<',(byte)'?',(byte)'x',(byte)'m'};
 	 int l,n=0;
 	 i = 0;
+	 byte[] finds=new byte[]{(byte)'<',(byte)'?',(byte)'x',(byte)'m'};
+	// byte[] finds2=new byte[]{(byte)'<',(byte)'m',(byte)'a',(byte)'p'};
 	 try {
 	  while ((l = gz.read(brr, n, 8192)) > 0) {
 	   i = indexOf(brr, finds, i, n, l + n);
