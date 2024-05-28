@@ -32,8 +32,9 @@ import rust.rwmodProtect;
 import rust.savedump;
 import rust.zippack;
 import rust.zipunpack;
+import android.widget.Toast;
 public class Main extends Activity {
- boolean init;
+ boolean uselib;
  RadioGroup bu;
  CheckBox raw;
  static ArrayAdapter arr;
@@ -63,7 +64,7 @@ public class Main extends Activity {
   if (def) {
    CheckBox checkbox=findViewById(R.id.ch);
    checkbox.setChecked(def);
-   init = def;
+   uselib = def;
   }
   Intent i=getIntent();
   if (i != null)st(i);
@@ -72,9 +73,7 @@ public class Main extends Activity {
   if (sdk >= 23 && checkSelfPermission(s = "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
    String per[]=new String[]{s};
    requestPermissions(per, 0);
-  } else {
-   init();
-  }
+  } else init();
  }  
  public void lib() {
   bar.setVisibility(0);
@@ -85,7 +84,7 @@ public class Main extends Activity {
   else new lib(li, null, null, ui);
  }
  public void init() {
-  if (init)lib();
+  if (uselib)lib();
   try {
    File su=getExternalFilesDir(null);
    File ini=new File(su, ".txt");
@@ -216,16 +215,19 @@ public class Main extends Activity {
  public void ch(View v) {
   CheckBox ch=(CheckBox)v;
   boolean is=ch.isChecked();
-  if (is && !init) {
-   init = true;
-   lib();
-  }
-  SharedPreferences sha=getSharedPreferences("", MODE_PRIVATE);
-  SharedPreferences.Editor ed=sha.edit();
-  ed.putBoolean("", is);
-  ed.apply();
+  uselib = is;
+  if (is && lib.libMap != null)lib();
  }
  public void log(View v) {
   log.debug = ((CheckBox)v).isChecked();
+ }
+ public void onSaveInstanceState(Bundle outState) {
+  super.onSaveInstanceState(outState);
+  SharedPreferences sha=getSharedPreferences("", MODE_PRIVATE);
+  if (sha.getBoolean("", false) != uselib) {
+   SharedPreferences.Editor ed=sha.edit();
+   ed.putBoolean("", uselib);
+   ed.apply();
+  }
  }
 }

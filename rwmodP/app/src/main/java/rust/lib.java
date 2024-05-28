@@ -17,7 +17,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 
 public class lib extends TaskWait {
  public InputStream inp;
- static Map libMap;
+ public static Map libMap;
  static lib close;
  public lib(File in, InputStream io, File ou, ui ui) {
   super(in, ou, ui);

@@ -199,9 +199,6 @@ class loder implements Callable,InputStreamSupplier {
  String src;
  InputStream read;
  TaskWait task;
- loder(InputStream inp) {
-  read = inp;
- }
  static String getName(String file) {
   int len=file.length();
   if (file.endsWith("/"))--len;

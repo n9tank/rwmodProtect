@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import carsh.log;
 
 public class rwmap implements Runnable {
-
  ui ui;
  File in;
  File ou;

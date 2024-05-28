@@ -2,13 +2,12 @@ package rust;
 
 import carsh.log;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import java.io.InputStream;
 
 public class zippack implements Runnable {
  File in;

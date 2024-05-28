@@ -4,6 +4,7 @@ import carsh.log;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,12 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import java.io.InputStream;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  Vector<rawcopy> rawq;
@@ -38,7 +37,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  AtomicInteger adds[];
  String musicPath;
  Map grops;
- boolean raw;
  static cpys defcs;
  static{
   cpys cp=new cpys();
@@ -53,7 +51,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static HashMap<String,Integer> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
-  raw = rw;
+  if (rw)rawq = new Vector();
   addN(this);
  }
  public loder getLoder(String str) throws Throwable {
@@ -353,11 +351,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
 			if (obj == null) {
 			 resmap.put(name, str = safeName(getType(name), bf));
 			 ZipArchiveEntry outen=lib.getArc(str);
-			 if (raw) {
+			 Vector raw=rawq;
+			 if (raw != null) {
 			  rawcopy craw=new rawcopy();
 			  craw.form = ze;
 			  craw.to = outen;
-			  rawq.add(craw);
+			  raw.add(craw);
 			 } else cre.addArchiveEntry(outen, new inputsu(Zip, ze));
 			} else str = (String)obj;
 		   }
@@ -584,7 +583,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  }
  public void run() {
   resmap = new ConcurrentHashMap();
-  if (raw)rawq = new Vector();
   AtomicInteger[] add=new AtomicInteger[4];
   adds = add;
   int i=4;
@@ -625,7 +623,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
    rootPath = name;
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
    if (inf != null) {
-    loder ini=new loder(zip.getInputStream(inf));
+    loder ini=new loder();
+	ini.read=zip.getInputStream(inf);
 	ini.task = this;
     ini.call();
     HashMap info=ini.ini;

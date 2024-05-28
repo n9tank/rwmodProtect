@@ -32,7 +32,7 @@ public abstract class TaskWait implements Runnable,ui {
   ato.increment();
  }
  public loder addLoder(ZipArchiveEntry za, String putkey, boolean isini) throws Throwable {
-  loder lod = new loder(null);
+  loder lod = new loder();
   loder obj=(loder)Zipmap.putIfAbsent(putkey, lod);
   if (obj == null) {
    lod.isini = isini;
