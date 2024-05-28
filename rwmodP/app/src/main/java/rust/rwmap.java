@@ -34,85 +34,85 @@ public class rwmap implements Runnable {
  public void run() {
   Throwable ex=null;
   try {
-   BufferedWriter buff=new BufferedWriter(new FileWriter(ou));
-   try {
-	DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	Document document = docBuilder.parse(in);
-	HashSet tileIds = new HashSet();
-	NodeList nodeList = document.getFirstChild().getChildNodes();
-	byte brr[]=new byte[8192];
-	for (int i = 0; i < nodeList.getLength(); i++) {
-	 Node item = nodeList.item(i);
-	 if (item.getNodeType() == Node.ELEMENT_NODE) {
-	  if (item.getNodeName().equals("layer")) {
-	   if (item.getAttributes().getNamedItem("name").getNodeValue().charAt(0) == 's') {
-		item.getParentNode().removeChild(item);
-		continue;
-	   }
-	   Node data = findChildNode(item, "data");
-	   String dataValue = data.getTextContent().trim();
-	   InputStream in =new ByteArrayInputStream(Base64.decode(dataValue, Base64.DEFAULT));
-	   if (data.getAttributes().getNamedItem("compression").getNodeValue().charAt(0) == 'g')
-		in = new GzipCompressorInputStream(in);
-	   else in = new InflaterInputStream(in);
-	   ByteOut outputStream = new ByteOut();
-	   int len;
-	   while ((len = in.read(brr)) > 0)outputStream.write(brr, 0, len);
-	   in.close();
-	   ByteBuffer buffer = ByteBuffer.wrap(outputStream.get(), 0, outputStream.size());
-	   buffer.order(ByteOrder.LITTLE_ENDIAN);
-	   while (buffer.hasRemaining())tileIds.add(buffer.getInt());
+   DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+   Document document = docBuilder.parse(in);
+   HashSet tileIds = new HashSet();
+   NodeList nodeList = document.getFirstChild().getChildNodes();
+   byte brr[]=new byte[8192];
+   for (int i = 0; i < nodeList.getLength(); i++) {
+	Node item = nodeList.item(i);
+	if (item.getNodeType() == Node.ELEMENT_NODE) {
+	 if (item.getNodeName().equals("layer")) {
+	  if (item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase().equals("set")) {
+	   item.getParentNode().removeChild(item);
+	   continue;
 	  }
+	  Node data = findChildNode(item, "data");
+	  String dataValue = data.getTextContent().trim();
+	  InputStream in =new ByteArrayInputStream(Base64.decode(dataValue, Base64.DEFAULT));
+	  if (data.getAttributes().getNamedItem("compression").getNodeValue().equals("gzip"))
+	   in = new GzipCompressorInputStream(in);
+	  else in = new InflaterInputStream(in);
+	  ByteOut outputStream = new ByteOut();
+	  int len;
+	  while ((len = in.read(brr)) > 0)outputStream.write(brr, 0, len);
+	  in.close();
+	  ByteBuffer buffer = ByteBuffer.wrap(outputStream.get(), 0, outputStream.size());
+	  buffer.order(ByteOrder.LITTLE_ENDIAN);
+	  while (buffer.hasRemaining())tileIds.add(buffer.getInt());
 	 }
 	}
-	for (int i= nodeList.getLength(); --i >= 0;) {
-	 Node item = nodeList.item(i);
-	 if (item.getNodeType() == Node.ELEMENT_NODE) {
-	  if (item.getNodeName().equals("tileset")) {
-	   NamedNodeMap attr = item.getAttributes();
-	   NodeList tilesetList = item.getChildNodes();
-	   for (int i2= tilesetList.getLength();--i2 >= 0;) {
-		Node child = tilesetList.item(i2);
-		if (child.getNodeType() == Node.ELEMENT_NODE) {
-		 String childName = child.getNodeName();
-		 int firstgId = Integer.valueOf(attr.getNamedItem("firstgid").getNodeValue());
-		 if (childName.equals("properties")) {
-		  Node property = findChildNode(child, "property");
-		  if (property.getAttributes().getNamedItem("name").getNodeValue().equals("embedded_png")) {
-		   int tileWidth = Integer.valueOf(attr.getNamedItem("tilewidth").getNodeValue());
-		   int tileHeight = Integer.valueOf(attr.getNamedItem("tileheight").getNodeValue());
-		   ByteArrayInputStream imgInput = new ByteArrayInputStream(Base64.decode(property.getTextContent().replaceAll("\\S", ""), Base64.DEFAULT));
-		   ByteArrayOutputStream imgOutput = new ByteArrayOutputStream();
-		   BitmapFactory.Options options = new BitmapFactory.Options();
-		   options.inMutable = true; // 设置为可变
-		   Bitmap bmp=BitmapFactory.decodeStream(imgInput, null, options);
-		   int imgWidth = bmp.getWidth();
-		   int imgHeight = bmp.getHeight();
-		   int tileColumnNum = (int) Math.floor(imgWidth / (float) tileWidth);
-		   for (int x = 0; x < imgWidth; x++) {
-			for (int y = 0; y < imgHeight; y++) {
-			 int tileX = (int) Math.floor(x / (float) tileWidth);
-			 int tileY = (int) Math.floor(y / (float) tileHeight);
-			 if (! tileIds.contains(firstgId + tileX + (tileY * tileColumnNum))) {
-			  bmp.setPixel(x, y, 0x00000000);
-			 }
+   }
+   for (int i= nodeList.getLength(); --i >= 0;) {
+	Node item = nodeList.item(i);
+	if (item.getNodeType() == Node.ELEMENT_NODE) {
+	 if (item.getNodeName().equals("tileset")) {
+	  NamedNodeMap attr = item.getAttributes();
+	  NodeList tilesetList = item.getChildNodes();
+	  for (int i2= tilesetList.getLength();--i2 >= 0;) {
+	   Node child = tilesetList.item(i2);
+	   if (child.getNodeType() == Node.ELEMENT_NODE) {
+		String childName = child.getNodeName();
+		int firstgId = Integer.valueOf(attr.getNamedItem("firstgid").getNodeValue());
+		if (childName.equals("properties")) {
+		 Node property = findChildNode(child, "property");
+		 if (property.getAttributes().getNamedItem("name").getNodeValue().equals("embedded_png")) {
+		  int tileWidth = Integer.valueOf(attr.getNamedItem("tilewidth").getNodeValue());
+		  int tileHeight = Integer.valueOf(attr.getNamedItem("tileheight").getNodeValue());
+		  ByteArrayInputStream imgInput = new ByteArrayInputStream(Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT));
+		  ByteArrayOutputStream imgOutput = new ByteArrayOutputStream();
+		  BitmapFactory.Options options = new BitmapFactory.Options();
+		  options.inMutable = true; // 设置为可变
+		  Bitmap bmp=BitmapFactory.decodeStream(imgInput, null, options);
+		  int imgWidth = bmp.getWidth();
+		  int imgHeight = bmp.getHeight();
+		  int tileColumnNum = (int) Math.floor(imgWidth / (float) tileWidth);
+		  for (int x = 0; x < imgWidth; x++) {
+		   for (int y = 0; y < imgHeight; y++) {
+			int tileX = (int) Math.floor(x / (float) tileWidth);
+			int tileY = (int) Math.floor(y / (float) tileHeight);
+			if (! tileIds.contains(firstgId + tileX + (tileY * tileColumnNum))) {
+			 bmp.setPixel(x, y, 0x00000000);
 			}
 		   }
-		   bmp.compress(Bitmap.CompressFormat.PNG, 80, imgOutput);
-		   property.setTextContent(Base64.encodeToString(imgOutput.toByteArray(), Base64.DEFAULT));
-		   imgInput.close();
-		   imgOutput.close();
 		  }
-		 } else if (childName.equals("tile")) {
-		  NamedNodeMap childAttr = child.getAttributes();
-		  int id = Integer.valueOf(childAttr.getNamedItem("id").getNodeValue());
-		  if (! tileIds.contains(firstgId + id))item.removeChild(child);
+		  bmp.compress(Bitmap.CompressFormat.PNG, 80, imgOutput);
+		  property.setTextContent(Base64.encodeToString(imgOutput.toByteArray(), Base64.DEFAULT));
+		  imgInput.close();
+		  imgOutput.close();
 		 }
+		} else if (childName.equals("tile")) {
+		 NamedNodeMap childAttr = child.getAttributes();
+		 int id = Integer.valueOf(childAttr.getNamedItem("id").getNodeValue());
+		 if (! tileIds.contains(firstgId + id))item.removeChild(child);
 		}
 	   }
 	  }
 	 }
 	}
+   }
+   BufferedWriter buff=new BufferedWriter(new FileWriter(ou));
+   try {
 	outxml(document, buff);
    } finally {
 	buff.close();
@@ -129,7 +129,7 @@ public class rwmap implements Runnable {
   for (int i=0,l=list.getLength();i < l;++i) {
    Node item=list.item(i);
    if (item.getNodeType() == Node.TEXT_NODE) {
-	out.write(item.getNodeValue().trim());
+	out.write(item.getNodeValue().replaceAll("\\s", ""));
 	continue;
    }
    out.write('<');

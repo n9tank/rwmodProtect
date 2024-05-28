@@ -51,11 +51,18 @@ public class savedump implements Runnable {
 	 GzipCompressorInputStream gz=new GzipCompressorInputStream(buff);
 	 int l,n=0;
 	 i = 0;
+	 //仅考虑大多数情况
 	 byte[] finds=new byte[]{(byte)'<',(byte)'?',(byte)'x',(byte)'m'};
-	// byte[] finds2=new byte[]{(byte)'<',(byte)'m',(byte)'a',(byte)'p'};
+	 byte[] finds2=new byte[]{(byte)'<',(byte)'m',(byte)'a',(byte)'p'};
 	 try {
 	  while ((l = gz.read(brr, n, 8192)) > 0) {
-	   i = indexOf(brr, finds, i, n, l + n);
+	   int k=l + n;
+	   int j = indexOf(brr, finds, i, n, k);
+	   if (j < 0) {
+		k = indexOf(brr, finds2, i, n, k);
+		if ((k > j && k > 0) || k < j)j = k;
+	   }
+	   i = j;
 	   if (i >= 0) {
 		ByteBuffer by=ByteBuffer.wrap(brr);
 		int size=by.getInt(i - 4);
@@ -79,7 +86,7 @@ public class savedump implements Runnable {
 		}
 		break;
 	   } else {
-		int j=n;
+		j = n;
 		i = -(++i);
 		n = i + 4;
 		System.arraycopy(brr, l + j - n, brr, 0, n);

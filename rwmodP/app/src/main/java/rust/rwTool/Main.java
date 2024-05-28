@@ -137,14 +137,14 @@ public class Main extends Activity {
  public void add(Uri uri) {
   String type=uri.getScheme();
   String path=uri.getPath();
-  if (type.startsWith("c")) {
+  if (type.charAt(0) == 'c') {
    String ab=uri.getAuthority();
    if (ab.startsWith("com.android.externalstorage")) {
     path = "sdcard/".concat(path.substring(18));
    } else if (ab.startsWith("com.android.providers.downloads")) {
     String ids=path.substring(14);
     //raw: msf:
-    if (!path.startsWith("w", 12)) {
+    if (path.charAt(12) != 'w') {
      ContentResolver contentResolver = getContentResolver();
      Cursor cursor = contentResolver.query(MediaStore.Downloads.getContentUri("external"), new String[]{"_data"}, "_id=?", new String[]{ids}, null);
      if (cursor != null) {
