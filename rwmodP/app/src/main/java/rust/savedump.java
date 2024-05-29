@@ -10,8 +10,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.GZIPInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import java.io.BufferedOutputStream;
 
 public class savedump implements Runnable {
  File in;
@@ -48,7 +46,7 @@ public class savedump implements Runnable {
 	if (i > 0) {
 	 buff.reset();
 	 buff.skip(i);
-	 GzipCompressorInputStream gz=new GzipCompressorInputStream(buff);
+	 GZIPInputStream gz=new GZIPInputStream(buff);
 	 int l,n=0;
 	 i = 0;
 	 //仅考虑大多数情况

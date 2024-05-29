@@ -5,17 +5,18 @@ import android.util.Base64;
 import carsh.log;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashSet;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -50,13 +51,19 @@ public class rwmap implements Runnable {
 	  Node data = findChildNode(item, "data");
 	  String dataValue = data.getTextContent().trim();
 	  InputStream in =new ByteArrayInputStream(Base64.decode(dataValue, Base64.DEFAULT));
-	  if (data.getAttributes().getNamedItem("compression").getNodeValue().equals("gzip"))
-	   in = new GzipCompressorInputStream(in);
+	  Node acm=data.getAttributes().getNamedItem("compression");
+	  if (acm.getNodeValue().equals("gzip"))in = new GZIPInputStream(in);
 	  else in = new InflaterInputStream(in);
 	  ByteOut outputStream = new ByteOut();
 	  int len;
 	  while ((len = in.read(brr)) > 0)outputStream.write(brr, 0, len);
 	  in.close();
+	  ByteOut barr=new ByteOut();
+	  DeflaterOutputStream zlb=new DeflaterOutputStream(barr, new Deflater(9));
+	  outputStream.writeTo(zlb);
+	  zlb.close();
+	  acm.setNodeValue("zlib");
+	  data.setTextContent(Base64.encodeToString(barr.get(), 0, barr.size(), Base64.DEFAULT));
 	  ByteBuffer buffer = ByteBuffer.wrap(outputStream.get(), 0, outputStream.size());
 	  buffer.order(ByteOrder.LITTLE_ENDIAN);
 	  while (buffer.hasRemaining())tileIds.add(buffer.getInt());
@@ -80,7 +87,7 @@ public class rwmap implements Runnable {
 		  int tileWidth = Integer.valueOf(attr.getNamedItem("tilewidth").getNodeValue());
 		  int tileHeight = Integer.valueOf(attr.getNamedItem("tileheight").getNodeValue());
 		  ByteArrayInputStream imgInput = new ByteArrayInputStream(Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT));
-		  ByteArrayOutputStream imgOutput = new ByteArrayOutputStream();
+		  ByteOut imgOutput = new ByteOut();
 		  BitmapFactory.Options options = new BitmapFactory.Options();
 		  options.inMutable = true; // 设置为可变
 		  Bitmap bmp=BitmapFactory.decodeStream(imgInput, null, options);
@@ -97,9 +104,8 @@ public class rwmap implements Runnable {
 		   }
 		  }
 		  bmp.compress(Bitmap.CompressFormat.PNG, 80, imgOutput);
-		  property.setTextContent(Base64.encodeToString(imgOutput.toByteArray(), Base64.DEFAULT));
-		  imgInput.close();
-		  imgOutput.close();
+		  bmp.recycle();
+		  property.setTextContent(Base64.encodeToString(imgOutput.get(), 0, imgOutput.size(), Base64.DEFAULT));
 		 }
 		} else if (childName.equals("tile")) {
 		 NamedNodeMap childAttr = child.getAttributes();
