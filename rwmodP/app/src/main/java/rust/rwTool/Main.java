@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import carsh.log;
+import com.googlecode.pngtastic.core.PngOptimizer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -27,18 +28,18 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import rust.lib;
+import rust.png;
 import rust.rwmap;
 import rust.rwmodProtect;
 import rust.savedump;
 import rust.zippack;
 import rust.zipunpack;
-import android.widget.Toast;
 public class Main extends Activity {
  boolean uselib;
  RadioGroup bu;
  CheckBox raw;
  static ArrayAdapter arr;
- static TextView bar;
+ public static TextView bar;
  public void finish() {
   moveTaskToBack(true);
  }
@@ -141,12 +142,13 @@ public class Main extends Activity {
    String ab=uri.getAuthority();
    if (ab.startsWith("com.android.externalstorage")) {
     path = "sdcard/".concat(path.substring(18));
-   } else if (ab.startsWith("com.android.providers.downloads")) {
-    String ids=path.substring(14);
+   } else if (ab.startsWith("com.android.providers")) {
+   int i=path.indexOf(':');
+    String ids=path.substring(i+1);
     //raw: msf:
-    if (path.charAt(12) != 'w') {
+    if (path.charAt(i-1) != 'w') {
      ContentResolver contentResolver = getContentResolver();
-     Cursor cursor = contentResolver.query(MediaStore.Downloads.getContentUri("external"), new String[]{"_data"}, "_id=?", new String[]{ids}, null);
+     Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"), new String[]{"_data"}, "_id=?", new String[]{ids}, null);
      if (cursor != null) {
       cursor.moveToFirst();
       try {
@@ -165,9 +167,9 @@ public class Main extends Activity {
    cui cui=new cui(path);
    cui.ui = true;
    Runnable run=null;
-   if (path.endsWith(".rwmod")) {
+  if (path.endsWith(".rwmod")) {
+  boolean rab=raw.isChecked();
 	int id=bu.getCheckedRadioButtonId();
-	boolean rab=raw.isChecked();
 	if (id == R.id.pr) {
 	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
 	} else if (id == R.id.pack)run = new zippack(f, out(f, 6, "_p.rwmod"), rab, cui);
@@ -178,7 +180,9 @@ public class Main extends Activity {
 	run = new savedump(f,  out(f, 6, "tmx"), cui);
    } else if (path.endsWith(".tmx")) {
 	run = new rwmap(f, out(f, 4, "_r.tmx"), cui);
-   }
+   } else if (path.endsWith(".png")) {
+  run= new png(f,out(f,4,"_r.png"),cui);
+	 }
    if (run != null) rust.ui.pool.execute(run);
    arr.add(cui);
   }

@@ -3,8 +3,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import carsh.log;
+import com.googlecode.pngtastic.core.PngImage;
+import com.googlecode.pngtastic.core.PngOptimizer;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -40,6 +43,7 @@ public class rwmap implements Runnable {
    HashSet tileIds = new HashSet();
    NodeList nodeList = document.getFirstChild().getChildNodes();
    byte brr[]=new byte[8192];
+    PngOptimizer opt=new PngOptimizer();
    for (int i = 0; i < nodeList.getLength(); i++) {
 	Node item = nodeList.item(i);
 	if (item.getNodeType() == Node.ELEMENT_NODE) {
@@ -48,7 +52,7 @@ public class rwmap implements Runnable {
 	   item.getParentNode().removeChild(item);
 	   continue;
 	  }
-	  Node data = findChildNode(item, "data");
+	  Node data = findChildNode(item);
 	  String dataValue = data.getTextContent().trim();
 	  InputStream in =new ByteArrayInputStream(Base64.decode(dataValue, Base64.DEFAULT));
 	  Node acm=data.getAttributes().getNamedItem("compression");
@@ -82,13 +86,14 @@ public class rwmap implements Runnable {
 		String childName = child.getNodeName();
 		int firstgId = Integer.valueOf(attr.getNamedItem("firstgid").getNodeValue());
 		if (childName.equals("properties")) {
-		 Node property = findChildNode(child, "property");
+		 Node property = findChildNode(child);
 		 if (property.getAttributes().getNamedItem("name").getNodeValue().equals("embedded_png")) {
 		  int tileWidth = Integer.valueOf(attr.getNamedItem("tilewidth").getNodeValue());
 		  int tileHeight = Integer.valueOf(attr.getNamedItem("tileheight").getNodeValue());
 		  ByteArrayInputStream imgInput = new ByteArrayInputStream(Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT));
 		  ByteOut imgOutput = new ByteOut();
 		  BitmapFactory.Options options = new BitmapFactory.Options();
+		  options.inPreferredConfig = Bitmap.Config.RGB_565;
 		  options.inMutable = true; // 设置为可变
 		  Bitmap bmp=BitmapFactory.decodeStream(imgInput, null, options);
 		  int imgWidth = bmp.getWidth();
@@ -103,9 +108,12 @@ public class rwmap implements Runnable {
 			}
 		   }
 		  }
-		  bmp.compress(Bitmap.CompressFormat.PNG, 80, imgOutput);
+		  bmp.compress(Bitmap.CompressFormat.PNG, 100, imgOutput);
 		  bmp.recycle();
-		  property.setTextContent(Base64.encodeToString(imgOutput.get(), 0, imgOutput.size(), Base64.DEFAULT));
+     PngImage png= opt.optimize(new PngImage(new ByteArrayInputStream(imgOutput.get(),0,imgOutput.size())),false,9); 
+     imgOutput.reset();
+      png.writeDataOutputStream(new DataOutputStream(imgOutput));                                                       
+		  property.setTextContent(Base64.encodeToString(imgOutput.get(),0,imgOutput.size(),Base64.DEFAULT));
 		 }
 		} else if (childName.equals("tile")) {
 		 NamedNodeMap childAttr = child.getAttributes();
@@ -163,7 +171,7 @@ public class rwmap implements Runnable {
    }
   }
  }
- private static Node findChildNode(Node from, String name) {
+ private static Node findChildNode(Node from) {
   NodeList nodeList = from.getChildNodes();
   for (int i = 0; i < nodeList.getLength(); i++) {
    Node item = nodeList.item(i);
