@@ -42,6 +42,7 @@ public class rwmap implements Runnable {
  ui ui;
  File in;
  File ou;
+  static HashMap<String,HashSet> remove;
  public rwmap(File i, File u, ui uo) {
   in = i;
   ou = u;
@@ -87,7 +88,12 @@ public class rwmap implements Runnable {
    for (int i =nodeList.getLength();--i >= 0;) {
 	Node item = nodeList.item(i);
 	if (item.getNodeType() == Node.ELEMENT_NODE) {
-	 if (item.getNodeName().equals("layer")) {
+    String type=item.getNodeName(); 
+   if(type.equals("objectgroup")&&item.getChildNodes().getLength()==0){
+     map.removeChild(item);
+     continue;       
+   }              
+	 if (type.equals("layer")) {
       String name;          
 	  if ((name = item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase()).equals("set")) {
 	   map.removeChild(item);
@@ -218,7 +224,6 @@ public class rwmap implements Runnable {
 	if (item.getNodeType() == Node.ELEMENT_NODE) {
 	 if (item.getNodeName().equals("tileset")) {
     NamedNodeMap attr=item.getAttributes();
-    if(attr.getNamedItem("name")!=null)attr.removeNamedItem("name");       
 	  int firstgId = Ipare(attr, "firstgid");
    if(!tiles.containsKey(item)){      
    int c= Ipare(attr,"tilecount");
@@ -277,16 +282,24 @@ public class rwmap implements Runnable {
 	continue;
    }
    out.write('<');
-   out.write(item.getNodeName());
+  String name=item.getNodeName();
+   out.write(name);
    NamedNodeMap maps=item.getAttributes();
    if (maps != null) {
 	int j=maps.getLength();
-	if (j > 0)out.write(' ');
+	boolean st=true;
+   HashSet all=remove.get(name);     
 	for (;--j >= 0;) {
 	 Node kv=maps.item(j);
-	 out.write(kv.getNodeName());
-	 out.write("=\"");
-	 out.write(kv.getNodeValue());
+   name= kv.getNodeName();
+ if(all!=null&&all.contains(name))continue;    
+  if(st){
+  out.write(' ');   
+  st=false;
+  }             
+  out.write(name);
+  out.write("=\"");
+  out.write(kv.getNodeValue());
 	 out.write('\"');
 	}
    }

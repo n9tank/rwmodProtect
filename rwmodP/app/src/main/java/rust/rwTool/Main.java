@@ -22,7 +22,9 @@ import android.widget.TextView;
 import carsh.log;
 import com.googlecode.pngtastic.core.PngOptimizer;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -90,10 +92,10 @@ public class Main extends Activity {
    File su=getExternalFilesDir(null);
    File ini=new File(su, ".txt");
    if (ini.exists())rwmodProtect.dictionary(new FileReader(ini));
-   Reader io;
+   InputStream io;
    ini = new File(su, ".ini");
-   if (ini.exists())io = new FileReader(ini);
-   else io = new InputStreamReader(getResources().openRawResource(R.raw.def));
+   if (ini.exists())io = new FileInputStream(ini);
+   else io = getResources().openRawResource(R.raw.def);
    rwmodProtect.init(io);
   } catch (Throwable e) {
    log.e(this, e);

@@ -26,6 +26,8 @@ import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import rust.loder;
+import rust.rwmap;
 public class rwmodProtect extends TaskWait implements Consumer {
  HashMap lowmap;
  Vector<rawcopy> rawq;
@@ -73,12 +75,22 @@ public class rwmodProtect extends TaskWait implements Consumer {
    buff.close();
   }
  }
- public static void init(Reader io)throws Exception {
-  Properties set=new Properties();
-  set.load(io);
+ public static void init(InputStream io)throws Exception {
+  loder ini=new loder();
+  ini.read=io;
+  ini.call(); 
+  HashMap<String,cpys> src=ini.ini;
   String file;
+  HashMap re=src.get("tmx").m;
+  for(Map.Entry<String,Object> en:(Set<Map.Entry>)re.entrySet()){
+   HashSet add=new HashSet();
+    Collections.addAll(add,((String)en.getValue()).split(","));  
+    en.setValue(add);
+  }  
+  rwmap.remove=re;
+  HashMap<String,String> set=src.get("ini").m;  
   if (ds == null) {
-   file = set.getProperty("chars");
+   file = set.get("chars");
    int i=0,len=file.length();
    int irr[]= new int[len];
    int cou=0;
@@ -92,18 +104,18 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   HashSet put=new HashSet();
   skip = put;
-  Collections.addAll(put, set.getProperty("skip").split(","));
+  Collections.addAll(put, set.get("skip").split(","));
   HashMap res=new HashMap();
   Res = res;
-  String[] list=set.getProperty("image").split(",");
+  String[] list=set.get("image").split(",");
   Integer rp=Integer.valueOf(-1);
   for (String str:list)
    res.put(str, rp);
-  list = set.getProperty("images").split(",");
+  list = set.get("images").split(",");
   rp = Integer.valueOf(0);
   for (String str:list)
    res.put(str, rp);
-  list = set.getProperty("music").split(",");
+  list = set.get("music").split(",");
   rp = Integer.valueOf(1);
   for (String str:list)
    res.put(str, rp);
