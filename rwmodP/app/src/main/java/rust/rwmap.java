@@ -80,6 +80,7 @@ public class rwmap implements Runnable {
    Node  pr= getFirst(0,map);
    ByteOut out=new ByteOut();
    ByteOut barr=new ByteOut();
+   int max=0;
    ArrayList layer=new ArrayList();         
    if (pr.getNodeName().equals("properties"))map.removeChild(pr);
    NodeList nodeList =map.getChildNodes();
@@ -118,8 +119,12 @@ public class rwmap implements Runnable {
        cmpdata(data, buffer, barr);
       }                           
 	  buffer.order(ByteOrder.LITTLE_ENDIAN);
-      Integer em=-1;
-	  while (buffer.hasRemaining())tiles.putIfAbsent(buffer.getInt(), em);
+      Integer em=0;
+	  while (buffer.hasRemaining()){
+    int n=buffer.getInt()&536870911;
+    if(n>max)max=n;                
+    tiles.putIfAbsent(n, em);
+     }         
 	 }
     }
    }
@@ -211,10 +216,11 @@ public class rwmap implements Runnable {
    ByteBuffer warp= (ByteBuffer)layer.get(--i);   
     int j=warp.limit();
     while ((j -= 4) >= 0) {
-     Integer  to= tiles.get(warp.getInt(j));    
+   int rt=warp.getInt(j);
+     Integer to= tiles.get(rt&536870911);    
      if (to != null) {
       int u = to;
-      if (u >=0)warp.putInt(j,u);
+      if (u >0)warp.putInt(j,(rt&-536870912)|u);
      }  
     }
     cmpdata(data, warp, barr);
@@ -231,6 +237,7 @@ public class rwmap implements Runnable {
    Node node= getFirst(i+1,map);
      if(node.getNodeName().equals("tileset"))
       c=Ipare(node.getAttributes(),"firstgid");
+      else c=max;          
     } else c+=firstgId; 
    tag:         
    if(c>=0){  
@@ -252,7 +259,7 @@ public class rwmap implements Runnable {
         if (key == null) item.removeChild(child);
         else {
           id = key;             
-          if (id >= 0)idn.setNodeValue(String.valueOf(id-firstgId));
+          if (id > 0)idn.setNodeValue(String.valueOf(id-firstgId));
          }               
       	}
        }
