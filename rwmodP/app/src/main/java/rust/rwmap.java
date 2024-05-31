@@ -69,6 +69,10 @@ public class rwmap implements Runnable {
     if(node==null)return -1;
   return Integer.parseInt(node.getNodeValue());
  }
+  public void remove(NamedNodeMap attr,String str){
+  if(attr.getNamedItem(str)!=null)
+    attr.removeNamedItem(str);
+  }
  //https://github.com/Timeree/RwMapCompressor
  public void run() {
   Throwable ex=null;
@@ -90,12 +94,46 @@ public class rwmap implements Runnable {
 	Node item = nodeList.item(i);
 	if (item.getNodeType() == Node.ELEMENT_NODE) {
     String type=item.getNodeName(); 
-   if(type.equals("objectgroup")&&item.getChildNodes().getLength()==0){
+     String name; 
+   if(type.equals("objectgroup")){
+    if(item.getChildNodes().getLength()==0){
      map.removeChild(item);
+      continue;        
+     }       
+      NodeList objlist=item.getChildNodes()  ;    
+      if ((name = item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase()).equals("unitobject")){
+      for(int i2=objlist.getLength();--i2>=0;){
+       Node next=objlist.item(i2);  
+        if(next.getNodeType()==Node.ELEMENT_NODE){            
+      NamedNodeMap  node=  next.getAttributes();
+     remove(node,"width");
+      remove(node,"height");     
+      remove(node,"rotation");          
+      }}
+      }else{
+     HashSet pot=remove.get("point");   
+      HashSet no=remove.get("none");            
+      for(int i2=objlist.getLength();--i2>=0;){
+      Node next=objlist.item(i2);  
+        if(next.getNodeType()==Node.ELEMENT_NODE){                      
+      NamedNodeMap  node=  next.getAttributes();
+      Node nodetype=node.getNamedItem("type");
+     String ltype=nodetype==null?null:nodetype.getNodeValue().toLowerCase();         
+    boolean none=nodetype==null||no.contains(ltype);
+    if(none||pot.contains(ltype))  {       
+    remove(node,"width") ;   
+     remove(node,"height") ;           
+    }
+   if(none){
+   node.getNamedItem("x").setNodeValue("0");
+   node.getNamedItem("y").setNodeValue("0");             
+   }             
+    if(nodetype==null) remove(node,"id") ;
+    }
+    }}
      continue;       
    }              
 	 if (type.equals("layer")) {
-      String name;          
 	  if ((name = item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase()).equals("set")) {
 	   map.removeChild(item);
 	   continue;
@@ -159,7 +197,11 @@ public class rwmap implements Runnable {
            if (name.equals("embedded_png")) {
            tiles.put(item,null);            
           Node img= getFirst(i2+1,item);  
-           if(img.getNodeName().equals("image"))item.removeChild(img);                  
+           if(img.getNodeName().equals("image"))item.removeChild(img);  
+           if(tlname.equals("export_units")){
+            item.removeChild(property);
+            continue;              
+            }
             int tileWidth = Ipare(attr, "tilewidth");
             int tileHeight = Ipare(attr, "tileheight");
             Node columns=attr.getNamedItem("columns");          
@@ -172,11 +214,11 @@ public class rwmap implements Runnable {
             String str=String.valueOf(size);          
             columns.setNodeValue("1");
             tilecount.setNodeValue(str);                   
-            ByteArrayInputStream imgInput = new ByteArrayInputStream(Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT));
+          byte imgarr[] = Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT);
            Bitmap.Config cf=tlname.equals("items")?Bitmap.Config.ARGB_8888:Bitmap.Config.RGB_565;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig =cf;
-            Bitmap bmp=BitmapFactory.decodeStream(imgInput, null, options);
+            Bitmap bmp=BitmapFactory.decodeByteArray(imgarr,0,imgarr.length, options);
             Bitmap bm2= Bitmap.createBitmap(tileWidth, tileHeight * size, cf);                               
             Canvas cv= new Canvas(bm2);
             Paint pt= new Paint();

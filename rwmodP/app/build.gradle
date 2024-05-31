@@ -44,6 +44,7 @@ namespace 'rust.rwTool'
 }
 
 dependencies {
+//implementation 'com.ndahlquist:pngquant-android:0.2'
 implementation 'com.github.depsypher:pngtastic:1.7'
 implementation "org.apache.commons:commons-compress:1.26.1"
 implementation fileTree(dir: "libs", include: ["*.jar"])
