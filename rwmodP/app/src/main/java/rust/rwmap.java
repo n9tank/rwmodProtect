@@ -64,7 +64,9 @@ public class rwmap implements Runnable {
   data.setTextContent(Base64.encodeToString(barr.get(), 0, barr.size(), Base64.DEFAULT));
  }
  public int Ipare(NamedNodeMap attr, String str) {
-  return Integer.parseInt(attr.getNamedItem(str).getNodeValue());
+ Node  node= attr.getNamedItem(str);
+    if(node==null)return -1;
+  return Integer.parseInt(node.getNodeValue());
  }
  //https://github.com/Timeree/RwMapCompressor
  public void run() {
@@ -72,7 +74,7 @@ public class rwmap implements Runnable {
   try {
    DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
    Document document = docBuilder.parse(in);
-   HashMap<Integer,Integer> tiles = new HashMap();
+   HashMap<Object,Integer> tiles = new HashMap();
    Node  map= document.getFirstChild();
    Node  pr= getFirst(0,map);
    ByteOut out=new ByteOut();
@@ -144,6 +146,7 @@ public class rwmap implements Runnable {
             continue;                  
            }                                     
            if (name.equals("embedded_png")) {
+           tiles.put(item,null);            
           Node img= getFirst(i2+1,item);  
            if(img.getNodeName().equals("image"))item.removeChild(img);                  
             int tileWidth = Ipare(attr, "tilewidth");
@@ -215,17 +218,28 @@ public class rwmap implements Runnable {
 	if (item.getNodeType() == Node.ELEMENT_NODE) {
 	 if (item.getNodeName().equals("tileset")) {
     NamedNodeMap attr=item.getAttributes();
-    Node tname=attr.getNamedItem("name");
-     if(tname==null) continue;
+    if(attr.getNamedItem("name")!=null)attr.removeNamedItem("name");       
 	  int firstgId = Ipare(attr, "firstgid");
+   if(!tiles.containsKey(item)){      
+   int c= Ipare(attr,"tilecount");
+    if(c<0){
+   Node node= getFirst(i+1,map);
+     if(node.getNodeName().equals("tileset"))
+      c=Ipare(node.getAttributes(),"firstgid");
+    } else c+=firstgId; 
+   tag:         
+   if(c>=0){  
+    for(;--c>=firstgId;)
+    if(tiles.containsKey(c)) break tag;           
+      map.removeChild(item);        
+      continue;
+    }}     
 	  NodeList tilesetList = item.getChildNodes();
-     boolean skip=true;         
 	  for (int i2=tilesetList.getLength();--i2 >= 0;) {
 	   Node child = tilesetList.item(i2);
 	   if (child.getNodeType() == Node.ELEMENT_NODE) {
 		String childName = child.getNodeName();
         if (childName.equals("tile")) {
-           skip=false;     
 		 NamedNodeMap childAttr = child.getAttributes();
          Node idn=  childAttr.getNamedItem("id"); 
            int id = Integer.parseInt(idn.getNodeValue());
@@ -238,7 +252,6 @@ public class rwmap implements Runnable {
       	}
        }
       }
-    if(skip&&tilesetList.getLength()<=1)map.removeChild(item);
      }
     }
    }
