@@ -14,3 +14,6 @@
 
 - [地图精简](https://github.com/Timeree/RwMapCompressor)
 基于RwMapCompressor爆改的地图压缩器，提供强力的压缩效果，仍有一些优化空间，仅用于Android。（其他平台需要移值）
+
+- png压缩
+一般般的无损压缩，该功能不会有很好的效果。
