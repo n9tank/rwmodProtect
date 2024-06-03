@@ -79,7 +79,7 @@ public class rwmap implements Runnable {
   try {
    DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
    Document document = docBuilder.parse(in);
-   HashMap<Object,Integer> tiles = new HashMap();
+   HashMap tiles = new HashMap();
    Node  map= document.getFirstChild();
    Node  pr= getFirst(0,map);
    ByteOut out=new ByteOut();
@@ -108,7 +108,8 @@ public class rwmap implements Runnable {
       NamedNodeMap  node=  next.getAttributes();
      remove(node,"width");
       remove(node,"height");     
-      remove(node,"rotation");          
+      remove(node,"rotation");    
+      remove(node,"name") ;                 
       }}
       }else{
      HashSet pot=remove.get("point");   
@@ -157,11 +158,10 @@ public class rwmap implements Runnable {
        cmpdata(data, buffer, barr);
       }                           
 	  buffer.order(ByteOrder.LITTLE_ENDIAN);
-      Integer em=0;
 	  while (buffer.hasRemaining()){
     int n=buffer.getInt()&536870911;
     if(n>max)max=n;                
-    tiles.putIfAbsent(n, em);
+    tiles.putIfAbsent(n, name);
      }         
 	 }
     }
@@ -173,7 +173,6 @@ public class rwmap implements Runnable {
 	  NamedNodeMap attr = item.getAttributes();
       Node tname=attr.getNamedItem("name");
      if(tname==null) continue; 
-     String tlname=tname.getNodeValue().toLowerCase();      
       int firstgId = Ipare(attr, "firstgid");          
 	  NodeList tilesetList = item.getChildNodes();
 	  for (int i2= tilesetList.getLength();--i2 >= 0;) {
@@ -195,22 +194,32 @@ public class rwmap implements Runnable {
             continue;                  
            }                                     
            if (name.equals("embedded_png")) {
-           tiles.put(item,null);            
           Node img= getFirst(i2+1,item);  
            if(img.getNodeName().equals("image"))item.removeChild(img);  
-           if(tlname.equals("export_units")){
-            item.removeChild(property);
-            continue;              
-            }
             int tileWidth = Ipare(attr, "tilewidth");
             int tileHeight = Ipare(attr, "tileheight");
             Node columns=attr.getNamedItem("columns");          
             int tilew =Integer.parseInt(columns.getNodeValue());
             Node tilecount=attr.getNamedItem("tilecount");                 
             int tilec = Integer.parseInt(tilecount.getNodeValue());
-           int size=0;
-            for(int c=firstgId+tilec;--c>=firstgId;)
-            if(tiles.containsKey(c))++size;
+           String tlname=null;
+            int size=0;
+            for(int c=firstgId+tilec;--c>=firstgId;){
+            Object o;              
+            if((o=tiles.get(c))!=null){
+              if(tlname==null)tlname=(String)o;              
+              ++size;
+              }              
+           } 
+            if(size==0) {
+            map.removeChild(item);              
+              continue;
+            }
+           tiles.put(item,null);                                             
+            if(tlname.equals("units")){
+            item.removeChild(property);
+            continue;              
+            }            
             String str=String.valueOf(size);          
             columns.setNodeValue("1");
             tilecount.setNodeValue(str);                   
@@ -259,9 +268,9 @@ public class rwmap implements Runnable {
     int j=warp.limit();
     while ((j -= 4) >= 0) {
    int rt=warp.getInt(j);
-     Integer to= tiles.get(rt&536870911);    
-     if (to != null) {
-      int u = to;
+     Object to= tiles.get(rt&536870911);    
+     if (to != null&& to instanceof Integer) {
+      int u = (Integer)to;
       if (u >0)warp.putInt(j,(rt&-536870912)|u);
      }  
     }
@@ -297,10 +306,10 @@ public class rwmap implements Runnable {
 		 NamedNodeMap childAttr = child.getAttributes();
          Node idn=  childAttr.getNamedItem("id"); 
            int id = Integer.parseInt(idn.getNodeValue());
-         Integer key= tiles.get(firstgId + id);
+         Object key= tiles.get(firstgId + id);
         if (key == null) item.removeChild(child);
-        else {
-          id = key;             
+        else if(key instanceof Integer){
+          id = (Integer)key;             
           if (id > 0)idn.setNodeValue(String.valueOf(id-firstgId));
          }               
       	}
