@@ -6,13 +6,9 @@ public class copyKey {
  public loder all;
  public int hashCode;
  public copyKey(loder copy[], loder al) {
-  int hash = Arrays.hashCode(copy);
-  if (al != null) {
-   all = al;
-   if (hash == 0)hash = 1;
-   hash = hash * 31 + al.hashCode();
-  }
-  hashCode = hash;
+  int hash =17;
+  hash=hash*31+Arrays.hashCode(copy);
+  hashCode = hash * 31 +((all=al)==null?0: al.hashCode());
   this.copy = copy;
  }
  public int hashCode() {
