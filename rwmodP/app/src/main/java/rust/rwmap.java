@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class rwmap implements Runnable {
- public static class key implements Comparable,Cloneable {
+ public static class key implements Comparable {
   public int hash;  
   public String str;
 //  public String type;  
@@ -375,7 +375,7 @@ old.put("NukeLaucher","nukeLaucher");
       continue;        
      }       
      NodeList objlist=item.getChildNodes()  ;    
-     if ((name = item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase()).equals("unitobjects") || name.equals("unitsobject")) {
+     if ((name = item.getAttributes().getNamedItem("name").getNodeValue()).equalsIgnoreCase("unitobjects") || name.equalsIgnoreCase("unitsobject")) {
       unitnode = item;       
      } else {
       HashSet pot=remove.get("point");   
@@ -400,7 +400,7 @@ old.put("NukeLaucher","nukeLaucher");
       }}
      continue;       
     } else if ("layer".equals(type)) {
-     if ((name = item.getAttributes().getNamedItem("name").getNodeValue().toLowerCase()).equals("set")) {
+     if ((name = item.getAttributes().getNamedItem("name").getNodeValue()).equalsIgnoreCase("set")) {
       map.removeChild(item);
       continue;
      }
@@ -502,12 +502,12 @@ old.put("NukeLaucher","nukeLaucher");
            map.removeChild(item);              
            continue;
           }
-          if (tlname.equals("units")) {
+          if (tlname.equalsIgnoreCase("units")) {
            item.removeChild(property);
            continue;              
           }                  
           byte imgarr[] = Base64.decode(property.getTextContent().replaceAll("\\s", ""), Base64.DEFAULT);
-          Bitmap.Config cf=tlname.equals("items") ?Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565;
+          Bitmap.Config cf=tlname.equalsIgnoreCase("items") ?Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565;
           BitmapFactory.Options options = new BitmapFactory.Options();
           options.inPreferredConfig = cf;
           Bitmap bmp=BitmapFactory.decodeByteArray(imgarr, 0, imgarr.length, options);
@@ -551,7 +551,7 @@ old.put("NukeLaucher","nukeLaucher");
     int w=Ipare(attr, "tilewidth");        
     for (int i=0,l=layer.size();i < l;i += 2) {
      Node o=(Node)layer.get(i);
-     if (o.getAttributes().getNamedItem("name").getNodeValue().toLowerCase().equals("units")) {
+     if (o.getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("units")) {
       unitlayer = (ByteBuffer)layer.get(i + 1);
      }   
     }
@@ -645,7 +645,7 @@ old.put("NukeLaucher","nukeLaucher");
    while (--i > 0) {
     ByteBuffer warp= (ByteBuffer)layer.get(i);   
     Node data=(Node)layer.get(--i);    
-    if (!data.getAttributes().getNamedItem("name").getNodeValue().toLowerCase().equals("units")) {  
+    if (!data.getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("units")) {  
      int j=warp.limit();
      while ((j -= 4) >= 0) {
       int rt=warp.getInt(j);
