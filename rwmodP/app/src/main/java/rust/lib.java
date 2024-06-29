@@ -25,7 +25,6 @@ public class lib extends TaskWait {
   lib task=close;
   if (task != null)task.down(new InterruptedException());
   close = this;
-  addN(this);
  }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=Zip.getEntry(str);

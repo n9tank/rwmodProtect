@@ -173,11 +173,11 @@ public class Main extends Activity {
   boolean rab=raw.isChecked();
 	int id=bu.getCheckedRadioButtonId();
 	if (id == R.id.pr) {
-	 new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
+	 run=new rwmodProtect(f, out(f, 6, "_r.rwmod"), cui, rab);
 	} else if (id == R.id.pack)run = new zippack(f, out(f, 6, "_p.rwmod"), rab, cui);
 	else run = new zipunpack(f, out(f, 6, "_u.rwmod"), cui);
    } else if (path.endsWith(".apk")) {
-	new lib(f, null, new File(getExternalFilesDir(null), "lib.zip"), cui);
+	run=new lib(f, null, new File(getExternalFilesDir(null), "lib.zip"), cui);
    } else if (path.endsWith(".rwsave") || path.endsWith(".replay")) {
 	run = new savedump(f,  out(f, 6, "tmx"), cui);
    } else if (path.endsWith(".tmx")) {
@@ -185,8 +185,10 @@ public class Main extends Activity {
    } else if (path.endsWith(".png")) {
   run= new png(f,out(f,4,"_r.png"),cui);
 	 }
-   if (run != null) rust.ui.pool.execute(run);
+   if (run != null){
+  rust.ui.pool.execute(run);
    arr.add(cui);
+   }     
   }
  }
  public void onActivityResult(int requestCode, int resultCode, Intent data) {

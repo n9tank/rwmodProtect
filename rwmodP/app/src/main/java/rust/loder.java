@@ -107,7 +107,7 @@ class loder implements Callable,InputStreamSupplier {
          table.put(last, cpy);
         }
         String key=value[0].trim();
-		String set=value[1].trim();
+        String set=value[1].trim();
         list.put(key, set);
        }
       }
@@ -176,7 +176,7 @@ class loder implements Callable,InputStreamSupplier {
      if (all != null && !all.finsh)break tag;
      if (tas.lod(this))break tag2;
     }
-    tas.addN(this);
+    if(tas.err==null)ui.pool.submit(this);
     return null;
    }
    finsh = true;

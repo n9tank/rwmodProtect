@@ -54,7 +54,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
   if (rw)rawq = new Vector();
-  addN(this);
  }
  public loder getLoder(String str) throws Throwable {
   ZipArchiveEntry za=toPath(str);
@@ -365,6 +364,10 @@ public class rwmodProtect extends TaskWait implements Consumer {
 			 ZipArchiveEntry outen=lib.getArc(str);
 			 Vector raw=rawq;
 			 if (raw != null) {
+       /* synchronized(this){//锁颗粒太大？
+        raw.add(ze);
+        raw.add(outen);                                     
+        }  */                                          
 			  rawcopy craw=new rawcopy();
 			  craw.form = ze;
 			  craw.to = outen;

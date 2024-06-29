@@ -18,7 +18,6 @@ public abstract class TaskWait implements Runnable,ui {
  File Ou;
  File In;
  Throwable err;
- Vector<Future> ar;
  ZipFile Zip;
  ui back;
  Map Zipmap;
@@ -26,7 +25,6 @@ public abstract class TaskWait implements Runnable,ui {
   In = in;
   Ou = ou;
   ato = new LongAdder();
-  ar = new Vector();
   Zipmap = new ConcurrentHashMap();
   back = ui;
   ato.increment();
@@ -64,35 +62,16 @@ public abstract class TaskWait implements Runnable,ui {
   }
   return true;
  }
- public Future addN(Object o) {
-  Future fu;
-  ExecutorService pool=ui.pool;
-  if (o instanceof Runnable)fu = pool.submit((Runnable)o);
-  else fu = pool.submit((Callable)o);
-  ar.add(fu);
-  return fu;
- }
- void add(Object o) throws Throwable {
+ void add(Callable o) throws Throwable {
   Throwable er=err;
   if (er != null)throw er;
   ato.increment();
-  Future fu=addN(o);
-  er = err;
-  if (er != null) {
-   fu.cancel(true);
-   throw er;
-  }
+  pool.submit((Callable)o);
  }
  public void down(Throwable e) {
   if (e != null)log.e(this, e);
   if (err != null)return;
-  if (e != null) {
-   err = e;
-   Vector<Future> arr=ar;
-   int s=arr.size();
-   while (--s >= 0)arr.get(s).cancel(true);
-   arr.clear();
-  }
+  if (e != null)err = e;
   ui ui=back;
   LongAdder at=ato;
   if (e == null) {

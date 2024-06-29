@@ -24,7 +24,7 @@
 请避免多态，对宏以及多态资源的实现基于暴力衍射，这可能引起一些兼容问题和格外的性能代价。
 
 ## 配置
-配置路径移动到/sdcard/Android/data/rust.rwp/files，避免卸载残留。
+配置路径移动到/sdcard/Android/data/rust.rwTool/files，避免卸载残留。
 * .ini<br>默认的加载配置，这将覆盖安装包内的加载配置。
 * .txt<br>默认的加载字典，每行一项，这将覆盖默认的字符计算。
 * lib.zip<br>默认的加载依赖，用于copyFrom:CORE:实现。
