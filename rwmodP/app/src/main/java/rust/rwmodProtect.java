@@ -41,7 +41,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  int arr[];
  AtomicInteger adds[];
  String musicPath;
- static int minNameSplit; 
  static int maxsplitLen;
  static HashSet skip;
  static int[] cr;
@@ -97,9 +96,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
    if (cou < len)irr = Arrays.copyOf(irr, cou);
    cr = irr;
   }
-  String open[]= set.get("open").split(",");
-  minNameSplit = Integer.parseInt(open[0]);
-  maxsplitLen = Integer.parseInt(open[1]);
+  String open= set.get("split");
+  maxsplitLen = Integer.parseInt(open);
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.get("skip").split(","));
@@ -126,7 +124,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   return za;
  }
- void appendName(int i, StringBuilder buff) {
+ void append(int i, StringBuilder buff) {
   if (i >= 0) {
    ArrayList srr=ds;
    int l;
@@ -141,13 +139,23 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }while(i > 0);
   }
  }
+ void appendName(int i,StringBuilder buff){
+  int max=maxsplitLen;  
+  i+=max;  
+  if(max>0){
+   int end=i%max;
+    i-=end;
+    append(i,buff);
+    buff.append('/');
+    append(end+1,buff);
+   }else append(i,buff);
+ } 
  String safeName(int ini, StringBuilder buff) {
- Log.e("rwTool",""+ini); 
   buff.setLength(0);
   if (ini < 4) {
    AtomicInteger add=adds[--ini];
    int i=((int)add.incrementAndGet() - 1);
-   if(ini>0)--i; 
+   if (ini > 0)--i; 
    appendName(i, buff);
    String ed;
    switch (ini) {
@@ -167,9 +175,14 @@ public class rwmodProtect extends TaskWait implements Consumer {
    if (ini > 0) {  
     buff.append("￸/");
     if (ini > 1)buff.append("[noloop]");
-    }    
-    appendName(i, buff);
-    buff.append(ini>0?".ogg":".ini");
+   } 
+  if(ini==0){   
+   appendName(i, buff);
+   buff.append(".ini");
+   }else{
+    append(i,buff);
+    buff.append(".ogg"); 
+   }    
   }
   if (ini == 0)buff.append('/');  
   return buff.toString();
@@ -198,11 +211,11 @@ public class rwmodProtect extends TaskWait implements Consumer {
   StringBuilder buff=new StringBuilder();
   StringBuilder bf=new StringBuilder();
   String file=ini.src;
-  boolean ws=minNameSplit > 0;  
+  boolean ws=maxsplitLen > 0;  
   file = loder.getSuperPath(file);
   HashMap map=ini.ini;
   copyKey copy=ini.copy;
-  if ((orr = copy.copy) != null || alls!=null) {
+  if ((orr = copy.copy) != null || alls != null) {
    cpys cp=(cpys)map.get("core");
    HashMap core;
    if (cp == null) {
@@ -210,20 +223,20 @@ public class rwmodProtect extends TaskWait implements Consumer {
     cp.m = core = new HashMap();
     map.put("core", cp);
    } else core = cp.m;
-   if (alls!=null) {
-  boolean notmp=false;
-  if (orr != null) {
-   for (loder lod:orr) {
-	if (alls == lod.all) {
-     notmp = true;        
-     break;         
-    }
-   }
-  } 
-  if(!notmp){    
-  buff.append(alls.str);
-  buff.append(',');
-   }       
+   if (alls != null) {
+    boolean notmp=false;
+    if (orr != null) {
+     for (loder lod:orr) {
+      if (alls == lod.all) {
+       notmp = true;        
+       break;         
+      }
+     }
+    } 
+    if (!notmp) {    
+     buff.append(alls.str);
+     buff.append(',');
+    }       
    }
    if (orr != null) {
     int i=0,len=orr.length;
@@ -329,7 +342,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
 	 if (list != null && eq)list.remove(key);
 	}}}
   cre.addArchiveEntry(lib.getArc(ini.str), ini);
-}
+ }
  static int ResTry(String file, boolean isimg, StringBuilder buff) {
   int st=0;
   if (isimg) {
@@ -429,8 +442,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
    Object[] vl=Zipmap.values().toArray();
    StringBuilder bf=new StringBuilder(); 
    for (Object obj:vl) {
-  loder lod=(loder)obj;
-  lod.str = safeName(lod.isini?4:1, bf);
+    loder lod=(loder)obj;
+    lod.str = safeName(lod.isini ?4: 1, bf);
    }
    Stream.of(vl).parallel().forEach(this);
    is = 1;
