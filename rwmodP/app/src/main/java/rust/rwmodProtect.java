@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,6 +66,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    while ((str = buff.readLine()) != null) {
     srr.add(str);
    }
+  Collections.shuffle(srr);
   } finally {
    buff.close();
   }
@@ -94,6 +96,13 @@ public class rwmodProtect extends TaskWait implements Consumer {
     ++cou;
    }while(i < len);
    if (cou < len)irr = Arrays.copyOf(irr, cou);
+    Random rand = new Random();
+		for (i = 0; i < cou; i++) {
+			int randomIndexToSwap = rand.nextInt(cou);
+			int temp = irr[randomIndexToSwap];
+			irr[randomIndexToSwap] = irr[i];
+			irr[i] = temp;
+		}
    cr = irr;
   }
   String open= set.get("split");
