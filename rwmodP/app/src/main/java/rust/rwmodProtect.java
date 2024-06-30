@@ -42,6 +42,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
  int arr[];
  AtomicInteger adds[];
  String musicPath;
+ static String musicPut; 
  static int maxsplitLen;
  static HashSet skip;
  static char[] cr;
@@ -56,6 +57,14 @@ public class rwmodProtect extends TaskWait implements Consumer {
   if (za == null)return null;
   str = za.getName();
   return addLoder(za, str, getType(str) == 4);
+ }
+ public static void shuffle(char irr[],Random rand) {
+ for (int i = 0,cou=irr.length; i < cou; i++) {
+	int randomIndexToSwap = rand.nextInt(cou);
+	char temp = irr[randomIndexToSwap];
+	irr[randomIndexToSwap] = irr[i];
+	irr[i] = temp;
+	}
  }
  public static void init(InputStream io)throws Exception {
   loder ini=new loder();
@@ -74,16 +83,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
   int max = Integer.parseInt(set.get("split"));
   maxsplitLen=max;     
    file = set.get("chars");
-   char irr[]= file.toCharArray();
-   cr=irr; 
-   scr=Arrays.copyOf(irr,max);
-    Random rand = new Random();
-		for (int i = 0,cou=irr.length; i < cou; i++) {
-			int randomIndexToSwap = rand.nextInt(cou);
-			char temp = irr[randomIndexToSwap];
-			irr[randomIndexToSwap] = irr[i];
-			irr[i] = temp;
-		}
+  Random rand=new Random();
+  char irr[]= file.toCharArray();
+  char[] i2rr=Arrays.copyOf(irr,max);
+  shuffle(scr=i2rr,rand);  
+  shuffle(cr=irr,rand);
+  musicPut=String.valueOf(irr[0]);    
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.get("skip").split(","));
@@ -150,7 +155,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
   } else {
    int i=++arr[ini -= 4] - 2;
    if (ini > 0) {  
-    buff.append("￸/");
+    buff.append(musicPut);
+    buff.append('/');  
     if (ini > 1)buff.append("[noloop]");
    } 
   if(ini==0){   
@@ -502,7 +508,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
       str = str.replace("\\", "/").replaceFirst("^/+", "");
       if (str.length() > 0 && !str.endsWith("/"))str = str.concat("/");
       musicPath = str;
-      map.put("sourceFolder", "￸");
+      map.put("sourceFolder", musicPut);
      }
     }
     cre.addArchiveEntry(lib.getArc("mod-info.txt/"), ini);

@@ -13,6 +13,7 @@ import java.util.Collections;
 
 public class test {
  static cmpU cm;
+ 
  public static void srot(ArrayList crr, int type) {
   cmpU cmp=cm;
   cmp.type = type;

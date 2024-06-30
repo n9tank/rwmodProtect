@@ -75,7 +75,6 @@ class loder implements Callable,InputStreamSupplier {
         int k = str.indexOf("\"\"\"", j);
         int m;
         if (k < 0) {
-         if (bf.length() == 0 && !c)break tag;
          m = k;
          k = str.length();
         } else {
@@ -87,11 +86,11 @@ class loder implements Callable,InputStreamSupplier {
        }
        if (c)str = buff.readLine().trim();
        else {
+       if (skip)continue wh;
         str = bf.toString();
         break;
        }
       }
-      if (skip)continue;
       int i=str.length() - 1;
       if (str.startsWith("[") && str.indexOf(']', 1) == i) {
        if (str.startsWith("comment_", 1))last = null;
