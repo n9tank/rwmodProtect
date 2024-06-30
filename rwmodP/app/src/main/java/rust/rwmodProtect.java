@@ -46,7 +46,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static int maxsplitLen;
  static HashSet skip;
  static char[] cr;
- static char[] scr; 
  static HashMap<String,Integer> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
@@ -58,9 +57,11 @@ public class rwmodProtect extends TaskWait implements Consumer {
   str = za.getName();
   return addLoder(za, str, getType(str) == 4);
  }
- public static void shuffle(char irr[],Random rand) {
- for (int i = 0,cou=irr.length; i < cou; i++) {
-	int randomIndexToSwap = rand.nextInt(cou);
+ public static void shuffle(char irr[],int i,int end,Random rand) {
+ int start=i;
+ int off=end-start;     
+ for (; i < end; i++) {
+	int randomIndexToSwap = rand.nextInt(off)+start;
 	char temp = irr[randomIndexToSwap];
 	irr[randomIndexToSwap] = irr[i];
 	irr[i] = temp;
@@ -71,7 +72,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   ini.read = io;
   ini.call(); 
   HashMap<String,cpys> src=ini.ini;
-  String file;
   HashMap re=src.get("tmx").m;
   for (Map.Entry<String,Object> en:(Set<Map.Entry>)re.entrySet()) {
    HashSet add=new HashSet();
@@ -80,14 +80,16 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }  
   rwmap.remove = re;
   HashMap<String,String> set=src.get("ini").m;  
-  int max = Integer.parseInt(set.get("split"));
-  maxsplitLen=max;     
-   file = set.get("chars");
+  String spilt[]=set.get("split").split(",");  
+  int max = Integer.parseInt(spilt[0]);
+  int shlen=Integer.parseInt(spilt[1]);
+  maxsplitLen=max; 
+  String file = set.get("chars");
   Random rand=new Random();
   char irr[]= file.toCharArray();
-  char[] i2rr=Arrays.copyOf(irr,max);
-  shuffle(scr=i2rr,rand);  
-  shuffle(cr=irr,rand);
+  shuffle(cr=irr,0,max,rand); 
+  shuffle(irr,max,shlen,rand);  
+  shuffle(irr,shlen,irr.length,rand);
   musicPut=String.valueOf(irr[0]);    
   HashSet put=new HashSet();
   skip = put;
@@ -112,9 +114,9 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   return za;
  }
- void append(int i,boolean shot, StringBuilder buff) {
+ void append(int i, StringBuilder buff) {
   if (i >= 0) {
-   char[] irr=shot?scr:cr;
+   char[] irr=cr;
    int l = irr.length;
    do{
     int u=i % l;
@@ -127,10 +129,10 @@ public class rwmodProtect extends TaskWait implements Consumer {
   int max=maxsplitLen;  
   if(max>0){
    int end=i%max;
-    append(i-end,false,buff);
+    append(i-end,buff);
     buff.append('/');
-    append(end,true,buff);
-   }else append(i,false,buff);
+    append(end,buff);
+   }else append(i,buff);
  }
  String safeName(int ini, StringBuilder buff) {
   buff.setLength(0);
@@ -163,7 +165,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    appendName(i, buff);
    buff.append(".ini");
    }else{
-    append(i,false,buff);
+    append(i,buff);
     buff.append(".ogg"); 
    }    
   }

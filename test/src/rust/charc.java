@@ -1,17 +1,13 @@
 package rust;
-import android.graphics.Rect;
-import android.graphics.Paint;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-public class charc{
-public int pix;
-public int x;
-public int y;
-public String s;
-public charc(String c,int xm,int ym,int pi){
-s=c;
-x=xm;
-y=ym;
-pix=pi;
-}
+import java.text.Bidi;
+import java.util.Comparator;
+public class charc implements Comparator<String> {
+ public int compare(String o1, String o2) {
+  return cons(o1) - cons(o2);
+ }
+ public static int cons(String text) {
+  Bidi bidi = new Bidi(text, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+  if (bidi.isRightToLeft())return 1;
+  return 0;
+ }
 }
