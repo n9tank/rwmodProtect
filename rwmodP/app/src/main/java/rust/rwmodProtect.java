@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -57,16 +58,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   str = za.getName();
   return addLoder(za, str, getType(str) == 4);
  }
- public static void shuffle(char irr[],int i,int end,Random rand) {
- int start=i;
- int off=end-start;     
- for (; i < end; i++) {
-	int randomIndexToSwap = rand.nextInt(off)+start;
-	char temp = irr[randomIndexToSwap];
-	irr[randomIndexToSwap] = irr[i];
-	irr[i] = temp;
-	}
- }
  public static void init(InputStream io)throws Exception {
   loder ini=new loder();
   ini.read = io;
@@ -80,17 +71,9 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }  
   rwmap.remove = re;
   HashMap<String,String> set=src.get("ini").m;  
-  String spilt[]=set.get("split").split(",");  
-  int max = Integer.parseInt(spilt[0]);
-  int shlen=Integer.parseInt(spilt[1]);
+  int max = Integer.parseInt(set.get("split"));
   maxsplitLen=max; 
-  String file = set.get("chars");
-  Random rand=new Random();
-  char irr[]= file.toCharArray();
-  shuffle(cr=irr,0,max,rand); 
-  shuffle(irr,max,shlen,rand);  
-  shuffle(irr,shlen,irr.length,rand);
-  musicPut=String.valueOf(irr[0]);    
+  cr= set.get("chars").toCharArray();
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.get("skip").split(","));
@@ -425,15 +408,16 @@ public class rwmodProtect extends TaskWait implements Consumer {
  }
  public void end(Throwable e) {
   if (e == null) {
-   Object[] vl=Zipmap.values().toArray();
-   StringBuilder bf=new StringBuilder(); 
+   List vl=Arrays.asList(Zipmap.values().toArray());
+   vl.parallelStream().forEach(this);
+   is = 1;
+   Collections.shuffle(vl); 
+   StringBuilder bf=new StringBuilder();
    for (Object obj:vl) {
     loder lod=(loder)obj;
     lod.str = safeName(lod.isini ?4: 1, bf);
-   }
-   Stream.of(vl).parallel().forEach(this);
-   is = 1;
-   Stream.of(vl).parallel().forEach(this);
+   }   
+   vl.parallelStream().forEach(this);
    Vector arr=rawq;
    if (arr != null) { 
 	try {
@@ -467,6 +451,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   back.end(e);
  }
  public void run() {
+  char irr[]=cr;  
   resmap = new ConcurrentHashMap();
   AtomicInteger[] add=new AtomicInteger[3];
   adds = add;
@@ -498,8 +483,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    ZipArchiveEntry inf=toPath(name.concat("mod-info.txt"));
    if (inf != null) {
     loder ini=new loder();
-	ini.read = zip.getInputStream(inf);
-	ini.task = this;
+    ini.read = zip.getInputStream(inf);
     ini.call();
     HashMap info=ini.ini;
     cpys cp=(cpys)info.get("music");
@@ -510,14 +494,15 @@ public class rwmodProtect extends TaskWait implements Consumer {
       str = str.replace("\\", "/").replaceFirst("^/+", "");
       if (str.length() > 0 && !str.endsWith("/"))str = str.concat("/");
       musicPath = str;
-      map.put("sourceFolder", musicPut);
+      map.put("sourceFolder",musicPut=String.valueOf(irr[new Random().nextInt(irr.length)]));
      }
     }
     cre.addArchiveEntry(lib.getArc("mod-info.txt/"), ini);
    }
    zipEntrys = zip.getEntries();
    do{
-    ZipArchiveEntry zipEntry=zipEntrys.nextElement();     name = zipEntry.getName();
+  ZipArchiveEntry zipEntry=zipEntrys.nextElement();
+  name = zipEntry.getName();
 	int type=getType(name);
 	if (type == 4) {
 	 addLoder(zipEntry, name, true);
