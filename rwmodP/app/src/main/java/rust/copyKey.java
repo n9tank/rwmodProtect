@@ -1,21 +1,19 @@
 package rust;
 import java.util.Arrays;
+import rust.copyKey;
 
 public class copyKey {
  public loder copy[];
- public loder all;
  public int hashCode;
- public copyKey(loder copy[], loder al) {
+ public copyKey(loder copy[]) {
   int hash =17;
-  hash=hash*31+Arrays.hashCode(copy);
-  hashCode = hash * 31 +((all=al)==null?0: al.hashCode());
+  hashCode=hash*31+Arrays.hashCode(copy);
   this.copy = copy;
  }
  public int hashCode() {
   return hashCode;
  }
  public boolean equals(Object obj) {
-  copyKey co;
-  return hashCode == obj.hashCode() && (all == (co = (copyKey)obj).all) && Arrays.equals(copy, co.copy);
+  return hashCode == obj.hashCode() && Arrays.equals(copy, ((copyKey)obj).copy);
  }
 }

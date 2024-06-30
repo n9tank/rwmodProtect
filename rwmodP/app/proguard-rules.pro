@@ -23,3 +23,5 @@
 -dontpreverify
 #-keep class net.**{*;}
 #-dontwarn net.**
+-keepattributes LineNumberTable
+-keep class rust.**{*;}

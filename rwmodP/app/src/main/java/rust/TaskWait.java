@@ -11,6 +11,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.LongAdder;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import rust.copyKey;
+import rust.iniobj;
+import rust.loder;
 
 public abstract class TaskWait implements Runnable,ui {
  LongAdder ato;
@@ -42,6 +45,16 @@ public abstract class TaskWait implements Runnable,ui {
   return lod;
  }
  public abstract loder getLoder(String str) throws Throwable;
+ public static void lod(iniobj ini,loder orr[],loder all){
+  if(orr!=null){
+  int i=orr.length;
+    while (--i >= 0) {
+     loder lod=orr[i];
+     ini.put(lod.put, lod);
+    }
+  }
+  if(all!=null)ini.put(all.put,all); 
+ }
  public boolean lod(loder ini) {
   HashMap map=ini.ini;
   if (Ou != null)map = iniobj.clone(map);
@@ -52,12 +65,7 @@ public abstract class TaskWait implements Runnable,ui {
   loder[] orr=key.copy;
   if (orr != null) {
    if (old == null) {
-    int i=orr.length;
-    while (--i >= 0) {
-     loder lod=orr[i];
-     iniobj put = lod.put;
-     obj.put(put, lod);
-    }
+    lod(obj,orr,null);  
    } else obj.put(old, null);
   }
   return true;

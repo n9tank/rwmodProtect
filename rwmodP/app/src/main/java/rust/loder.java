@@ -16,6 +16,7 @@ import org.apache.commons.compress.parallel.InputStreamSupplier;
 import org.apache.commons.io.input.NullInputStream;
 import rust.copyKey;
 import java.io.ByteArrayInputStream;
+import rust.loder;
 class loder implements Callable,InputStreamSupplier {
  public InputStream get() {
   if (ini.size() == 0)return new NullInputStream();
@@ -50,6 +51,7 @@ class loder implements Callable,InputStreamSupplier {
  }
  public Object call() throws Exception {
   try {
+   TaskWait tas=task;   
    if (ini == null) {
     BufferedReader buff=new BufferedReader(new InputStreamReader(read));
     try {
@@ -135,10 +137,10 @@ class loder implements Callable,InputStreamSupplier {
          String con;
          if (str.startsWith("ROOT:")) {
           str = str.substring(5);
-          con = task.rootPath;
+          con = tas.rootPath;
          } else con = file;
          str = str.replaceFirst("^/+", "");
-         lod = task.getLoder(con.concat(str));
+         lod = tas.getLoder(con.concat(str));
         } else lod = (loder)lib.libMap.get(str.replaceFirst("^CORE:/*", "").toLowerCase());
         orr[i] = lod;
        }
@@ -158,12 +160,12 @@ class loder implements Callable,InputStreamSupplier {
        bf.setLength(i + 1);
       }
      }
-     copy = new copyKey(orr, all);
+   copy = new copyKey(orr);
+    this.all=all;    
     } finally {
      buff.close();
     }
    }
-   TaskWait tas=task;
    loder all=null;
    tag2: {
     tag: {
@@ -172,7 +174,6 @@ class loder implements Callable,InputStreamSupplier {
       for (loder orr:or)
        if (!orr.finsh)break tag;
      }
-     all = copy.all;
      if (all != null && !all.finsh)break tag;
      if (tas.lod(this))break tag2;
     }
@@ -188,10 +189,9 @@ class loder implements Callable,InputStreamSupplier {
   }
   return null;
  }
- int acou;
  iniobj put;
  iniobj old;
- boolean notmp;
+ loder all; 
  boolean finsh;
  boolean isini;
  HashMap ini;

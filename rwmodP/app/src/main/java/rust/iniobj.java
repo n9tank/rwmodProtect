@@ -43,28 +43,20 @@ public class iniobj {
   for (Map.Entry<String,cpys>en:(Set<Map.Entry>)drc.put.entrySet()) {
    String ac=en.getKey();
    HashMap list=null;
-   HashMap skip=null;
-   HashMap skipdrc=null;
    cpys cpy = (cpys)src.get(ac);
    if (cpy != null) {
     list = cpy.m;
-    skip = cpy.skip;
    } else {
     cpy = new cpys();
     src.put(ac, cpy);
    }
    String str=list == null ?null: (String)list.get("@copyFrom_skipThisSection");
    boolean has="1".equals(str) || "true".equals(str);
+  if(!has){
    cpys cp = en.getValue();
    HashMap listdrc=cp.m;
    HashMap cpcoe=cp.coe;
-   HashMap cpskip = cp.skip;
-   if (cpskip == null)cpskip = listdrc;
-   if (str != null && !has) {
-    listdrc = cpskip;
-   } else if (has)skipdrc = cpskip;
    HashMap coe=cpy.coe;
-   if (!has) {
     if (list == null) {
      cpy.m = (HashMap)listdrc.clone();
      if (path == null && cpcoe != null) {
@@ -76,12 +68,6 @@ public class iniobj {
      for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet())
       list.putIfAbsent(en2.getKey(), en2.getValue());
     }
-   }
-   if (skipdrc != null) {
-    if (skip == null)cpy.skip = skip = (HashMap)list.clone();
-    for (Map.Entry en2:(Set<Map.Entry>)skipdrc.entrySet())
-     skip.putIfAbsent(en2.getKey(), en2.getValue());
-   }
    if (cpcoe != null) {
 	if (path != null) {
 	 for (Object s:(Set)cpcoe.keySet())
@@ -90,7 +76,7 @@ public class iniobj {
 	 for (Map.Entry s:(Set<Map.Entry>)cpcoe.entrySet())
 	  coe.putIfAbsent(s.getKey(), s.getValue());
 	}
-   }
+   }}
   }
  }
  void asFor(cpys cpy, String key) {
@@ -121,7 +107,6 @@ public class iniobj {
   HashMap map=put;
   for (cpys cpy:(Collection<cpys>)map.values()) {
    Iterator<Map.Entry<String,String>> ite2=cpy.m.entrySet().iterator();
-   cpy.skip = cpy.m;
    while (ite2.hasNext()) {
     Map.Entry<String,String> en2=ite2.next();
     String key=en2.getKey();
