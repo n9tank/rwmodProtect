@@ -90,10 +90,8 @@ public class Main extends Activity {
   if (uselib)lib();
   try {
    File su=getExternalFilesDir(null);
-   File ini=new File(su, ".txt");
-   if (ini.exists())rwmodProtect.dictionary(new FileReader(ini));
    InputStream io;
-   ini = new File(su, ".ini");
+  File ini = new File(su, ".ini");
    if (ini.exists())io = new FileInputStream(ini);
    else io = getResources().openRawResource(R.raw.def);
    rwmodProtect.init(io);

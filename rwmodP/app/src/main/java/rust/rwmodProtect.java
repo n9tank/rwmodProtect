@@ -45,7 +45,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
  static int maxsplitLen;
  static HashSet skip;
  static int[] cr;
- static ArrayList<String> ds;
  static HashMap<String,Integer> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
@@ -56,20 +55,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   if (za == null)return null;
   str = za.getName();
   return addLoder(za, str, getType(str) == 4);
- }
- public static void dictionary(Reader io) throws IOException {
-  BufferedReader buff= new BufferedReader(io);
-  try {
-   ArrayList srr=new ArrayList();
-   ds = srr;
-   String str;
-   while ((str = buff.readLine()) != null) {
-    srr.add(str);
-   }
-  Collections.shuffle(srr);
-  } finally {
-   buff.close();
-  }
  }
  public static void init(InputStream io)throws Exception {
   loder ini=new loder();
@@ -85,7 +70,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }  
   rwmap.remove = re;
   HashMap<String,String> set=src.get("ini").m;  
-  if (ds == null) {
    file = set.get("chars");
    int i=0,len=file.length();
    int irr[]= new int[len];
@@ -104,7 +88,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
 			irr[i] = temp;
 		}
    cr = irr;
-  }
   String open= set.get("split");
   maxsplitLen = Integer.parseInt(open);
   HashSet put=new HashSet();
@@ -112,19 +95,16 @@ public class rwmodProtect extends TaskWait implements Consumer {
   Collections.addAll(put, set.get("skip").split(","));
   HashMap res=new HashMap();
   Res = res;
-  String[] list=set.get("image").split(",");
-  Integer rp=Integer.valueOf(-1);
-  for (String str:list)
-   res.put(str, rp);
-  list = set.get("images").split(",");
-  rp = Integer.valueOf(0);
-  for (String str:list)
-   res.put(str, rp);
-  list = set.get("music").split(",");
-  rp = Integer.valueOf(1);
-  for (String str:list)
-   res.put(str, rp);
+  putType(res,set,"image",-1);
+  putType(res,set,"images",0);
+  putType(res,set,"music",1);  
  }
+ public static void putType(HashMap res,HashMap set,String key,int type) {
+	String[] list=((String)set.get(key)).split(",");
+  Integer rp=Integer.valueOf(type);
+  for (String str:list)
+   res.put(str, rp);
+ } 
  public ZipArchiveEntry toPath(String str) {
   ZipArchiveEntry za=Zip.getEntry(str);
   if (za == null) {
@@ -135,16 +115,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
  }
  void append(int i, StringBuilder buff) {
   if (i >= 0) {
-   ArrayList srr=ds;
-   int l;
    int[] irr=cr;
-   if (srr == null)l = irr.length;
-   else l = srr.size();
+   int l = irr.length;
    do{
     int u=i % l;
     i /= l;
-    if (srr == null)buff.appendCodePoint(irr[u]);
-    else buff.append(srr.get(u));
+    buff.appendCodePoint(irr[u]);
    }while(i > 0);
   }
  }
@@ -158,7 +134,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
     buff.append('/');
     append(end+1,buff);
    }else append(i,buff);
- } 
+ }
  String safeName(int ini, StringBuilder buff) {
   buff.setLength(0);
   if (ini < 4) {
