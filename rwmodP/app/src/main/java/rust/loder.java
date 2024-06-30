@@ -160,13 +160,13 @@ class loder implements Callable,InputStreamSupplier {
        bf.setLength(i + 1);
       }
      }
-   copy = new copyKey(orr);
+    copy = new copyKey(orr);
     this.all=all;    
     } finally {
      buff.close();
     }
    }
-   loder all=null;
+   loder all=this.all;
    tag2: {
     tag: {
      loder[] or=copy.copy;

@@ -176,7 +176,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
   } else if (obj instanceof iniobj) {
    old.put((iniobj)obj, null);
   } else return false;
-  ini.old = old;  
+  ini.old = old;
   super.lod(ini);
   return true;
  }
@@ -301,8 +301,9 @@ public class rwmodProtect extends TaskWait implements Consumer {
 			  craw.form = ze;
 			  craw.to = outen;
 			  raw.add(craw);
-			 } else cre.addArchiveEntry(outen, new inputsu(Zip, ze));
-			} else str = (String)obj;
+			 } else {
+      cre.addArchiveEntry(outen, new inputsu(Zip, ze));
+			}} else str = (String)obj;
 		   }
 		   buff.append(str);
 		   if (i > 0)buff.append(add, i, add.length());

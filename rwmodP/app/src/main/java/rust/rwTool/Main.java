@@ -82,9 +82,10 @@ public class Main extends Activity {
   bar.setVisibility(0);
   File li=new File(getExternalFilesDir(null), "lib.zip");
   cui ui=new cui("lib");
-  if (!li.exists()) 
-   new lib(null, getResources().openRawResource(R.raw.lib), li, ui);
-  else new lib(li, null, null, ui);
+  Runnable run;  
+  if (!li.exists())run=new lib(null, getResources().openRawResource(R.raw.lib), li, ui);
+  else run=new lib(li, null, null, ui);
+  ui.pool.execute(run);
  }
  public void init() {
   if (uselib)lib();

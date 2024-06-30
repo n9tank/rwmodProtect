@@ -1,4 +1,5 @@
 package rust;
+import android.util.Log;
 import carsh.log;
 import java.io.File;
 import java.util.HashMap;
