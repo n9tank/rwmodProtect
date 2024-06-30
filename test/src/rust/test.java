@@ -19,7 +19,7 @@ public class test {
   Collections.sort(crr, cmp);
  }
  public static void charList() throws Exception {
-  char to=0x07FF;
+  char to=0xFFFF;
   int index=to - 32;
   ArrayList crr=new ArrayList();
   StringBuilder dump=new StringBuilder();
@@ -38,11 +38,11 @@ public class test {
    }
    String s=String.valueOf(to--);
    if (pain.hasGlyph(s)) {
-   /* //float x=pain.measureText(s);
-    //if (x <= 0) {
+    float x=pain.measureText(s);
+    if (x <= 0) {
      pain.getTextBounds(s, 0, 1, rec);
      int h=rec.height();
-    // if (h > 0)continue;
+    if (h > 0)continue;
      int w=rec.width();
       vs.drawText(s, -rec.left, -rec.top, pain);
       map.getPixels(pixes, 0, w, 0, 0, w, h);
@@ -56,20 +56,20 @@ public class test {
      charc c=new charc(s, w, h, pi);
      crr.add(c);
      map.eraseColor(0);
-    //}*/
+    }
    } else {
     dump.append(s);
    }
   }
- /* cm = new cmpU();
+  cm = new cmpU();
   int size=crr.size();
-  srot(crr, 0);*/
+  srot(crr, 0);
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
- /* int i=0;
+ int i=0;
   do{
    charc c=(charc)crr.get(i);
    buff.write(c.s);
-  }while(++i < size>>3);*/
+  }while(++i < size);
   buff.write(dump.toString());
   buff.flush();
   buff.close();

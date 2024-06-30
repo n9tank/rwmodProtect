@@ -44,7 +44,8 @@ public class rwmodProtect extends TaskWait implements Consumer {
  String musicPath;
  static int maxsplitLen;
  static HashSet skip;
- static int[] cr;
+ static char[] cr;
+ static char[] scr; 
  static HashMap<String,Integer> Res;
  public rwmodProtect(File in, File ou, ui ui, boolean rw) {
   super(in, ou, ui);
@@ -70,26 +71,19 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }  
   rwmap.remove = re;
   HashMap<String,String> set=src.get("ini").m;  
+  int max = Integer.parseInt(set.get("split"));
+  maxsplitLen=max;     
    file = set.get("chars");
-   int i=0,len=file.length();
-   int irr[]= new int[len];
-   int cou=0;
-   do{
-    irr[cou] = file.codePointAt(i);
-    i = file.offsetByCodePoints(i, 1);
-    ++cou;
-   }while(i < len);
-   if (cou < len)irr = Arrays.copyOf(irr, cou);
+   char irr[]= file.toCharArray();
+   cr=irr; 
+   scr=Arrays.copyOf(irr,max);
     Random rand = new Random();
-		for (i = 0; i < cou; i++) {
+		for (int i = 0,cou=irr.length; i < cou; i++) {
 			int randomIndexToSwap = rand.nextInt(cou);
-			int temp = irr[randomIndexToSwap];
+			char temp = irr[randomIndexToSwap];
 			irr[randomIndexToSwap] = irr[i];
 			irr[i] = temp;
 		}
-   cr = irr;
-  String open= set.get("split");
-  maxsplitLen = Integer.parseInt(open);
   HashSet put=new HashSet();
   skip = put;
   Collections.addAll(put, set.get("skip").split(","));
@@ -113,27 +107,25 @@ public class rwmodProtect extends TaskWait implements Consumer {
   }
   return za;
  }
- void append(int i, StringBuilder buff) {
+ void append(int i,boolean shot, StringBuilder buff) {
   if (i >= 0) {
-   int[] irr=cr;
+   char[] irr=shot?scr:cr;
    int l = irr.length;
    do{
     int u=i % l;
     i /= l;
-    buff.appendCodePoint(irr[u]);
+    buff.append(irr[u]);
    }while(i > 0);
   }
  }
  void appendName(int i,StringBuilder buff){
   int max=maxsplitLen;  
-  i+=max;  
   if(max>0){
    int end=i%max;
-    i-=end;
-    append(i,buff);
+    append(i-end,false,buff);
     buff.append('/');
-    append(end+1,buff);
-   }else append(i,buff);
+    append(end,true,buff);
+   }else append(i,false,buff);
  }
  String safeName(int ini, StringBuilder buff) {
   buff.setLength(0);
@@ -165,7 +157,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    appendName(i, buff);
    buff.append(".ini");
    }else{
-    append(i,buff);
+    append(i,false,buff);
     buff.append(".ogg"); 
    }    
   }
