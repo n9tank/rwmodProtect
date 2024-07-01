@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class test {
  public static void charList(int start, int max, BufferedWriter buff) throws Exception {
@@ -57,11 +58,12 @@ public class test {
    }
    buff.write(c);
   }
+  buff.write('\n');
   System.out.println("len:"+crr.size());
  }
  public static void main(String arg[])throws Exception {
   BufferedWriter buff=new BufferedWriter(new FileWriter("sdcard/a.txt"));
-  charList(33, 0x7f, buff);
+   charList(33, 0x7f, buff);
   charList(0x80, 0x07ff, buff);
   charList(0x0800, 0xffff, buff);
   buff.close();

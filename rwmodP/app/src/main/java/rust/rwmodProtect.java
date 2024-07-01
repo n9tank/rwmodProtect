@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -494,11 +495,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
       str = str.replace("\\", "/").replaceFirst("^/+", "");
       if (str.length() > 0 && !str.endsWith("/"))str = str.concat("/");
       musicPath = str;
-      map.put("sourceFolder",musicPut=String.valueOf(irr[new Random().nextInt(irr.length)]));
+      map.put("sourceFolder",musicPut=String.valueOf(irr[new Random().nextInt(96)]));
      }
     }
     cre.addArchiveEntry(lib.getArc("mod-info.txt/"), ini);
    }
+   ArrayList<ZipArchiveEntry> ogg=new ArrayList();
    zipEntrys = zip.getEntries();
    do{
   ZipArchiveEntry zipEntry=zipEntrys.nextElement();
@@ -509,9 +511,12 @@ public class rwmodProtect extends TaskWait implements Consumer {
 	} else if (type == 0) {
 	 cr.addArchiveEntry(lib.getArc(loder.getName(name).concat("/")), new inputsu(zip, zipEntry));
 	} else if (type >= 5) {
-	 cr.addArchiveEntry(lib.getArc(safeName(type, mbuff)), new inputsu(zip, zipEntry));
-	}
+   ogg.add(zipEntry);     
+	 }
    }while(zipEntrys.hasMoreElements());
+   Collections.shuffle(ogg);
+   for(ZipArchiveEntry en:ogg)
+    cr.addArchiveEntry(lib.getArc(safeName(getType(en.getName()), mbuff)), new inputsu(zip, en));
    ato.decrement();
   } catch (Throwable e) {
    down(e);
