@@ -123,7 +123,6 @@ public class rwmodProtect extends TaskWait implements Consumer {
   if (ini < 4) {
    AtomicInteger add=adds[--ini];
    int i=((int)add.incrementAndGet() - 1);
-   if (ini > 0)--i; 
    appendName(i, buff);
    String ed;
    switch (ini) {
@@ -139,7 +138,7 @@ public class rwmodProtect extends TaskWait implements Consumer {
    }
    buff.append(ed);
   } else {
-   int i=++arr[ini -= 4] - 2;
+   int i=arr[ini -= 4]++;
    if (ini > 0) {  
     buff.append(musicPut);
     buff.append('/');  
