@@ -65,10 +65,12 @@ public class iniobj {
      } else coe = new HashMap();
      cpy.coe = coe ;
     } else {
+     coe.putAll(new MapResize(listdrc));   
      for (Map.Entry en2:(Set<Map.Entry>)listdrc.entrySet())
       list.putIfAbsent(en2.getKey(), en2.getValue());
     }
    if (cpcoe != null) {
+   coe.putAll(new MapResize(cpcoe));     
 	if (path != null) {
 	 for (Object s:(Set)cpcoe.keySet())
 	  coe.putIfAbsent(s, path);
@@ -87,16 +89,12 @@ public class iniobj {
    HashMap mapput = (HashMap)hash.clone();
    cpy.m = mapput;
    String list[]=str.split(",");
-   int l=list.length;
-   while (--l >= 0) {
-    String vl=list[l].trim();
+    for(String vl:list){
+    vl=vl.trim();
     cpys set=(cpys)map.get(vl);
-    HashMap as;
     if (set != null) {
 	 asFor(set, vl);
-	 as = set.m;
-     for (Map.Entry<String,String> en:(Set<Map.Entry<String,String>>)as.entrySet())
-      mapput.putIfAbsent(en.getKey(), en.getValue());
+	 mapput.putAll(set.m);
     }
    }
   }
