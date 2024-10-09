@@ -16,6 +16,6 @@ public class pngOpt implements Runnable {
  }
  public void run() {
   LibPngQuant.pngQuantFile(in, ou, 65, 80, 1, 0.5f);
-  ui.accept((List)Collections.emptyList());
+  ui.accept(null);
  }
 }
